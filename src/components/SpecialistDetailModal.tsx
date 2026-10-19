@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { formatPrice } from '../lib/storage';
 import {
@@ -26,6 +26,7 @@ export function SpecialistDetailModal() {
   const {
     selectedSpecialist,
     setSelectedSpecialist,
+    selectedSpecialistTab,
     openBookingModal,
     toggleFavorite,
     isFavorite,
@@ -35,6 +36,12 @@ export function SpecialistDetailModal() {
 
   const [activeTab, setActiveTab] = useState<'services' | 'portfolio' | 'reviews'>('services');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (selectedSpecialistTab) {
+      setActiveTab(selectedSpecialistTab);
+    }
+  }, [selectedSpecialist, selectedSpecialistTab]);
 
   // Review form state
   const [reviewAuthor, setReviewAuthor] = useState('');

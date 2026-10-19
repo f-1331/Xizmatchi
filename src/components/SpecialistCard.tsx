@@ -17,6 +17,7 @@ import {
   Calendar,
   Eye,
   Award,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 interface SpecialistCardProps {
@@ -25,7 +26,7 @@ interface SpecialistCardProps {
 
 export function SpecialistCard({ specialist }: SpecialistCardProps) {
   const {
-    setSelectedSpecialist,
+    openSpecialistDetail,
     openBookingModal,
     toggleFavorite,
     isFavorite,
@@ -150,6 +151,44 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
             </span>
           )}
         </div>
+
+        {/* Portfolio Visual Preview Strip */}
+        {specialist.portfolio && specialist.portfolio.length > 0 && (
+          <div className="mt-3 pt-2.5 border-t border-slate-100">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[11px] font-bold text-slate-600 flex items-center gap-1">
+                <ImageIcon className="w-3.5 h-3.5 text-blue-600" />
+                Ish natijalari ({specialist.portfolio.length})
+              </span>
+              <button
+                type="button"
+                onClick={() => openSpecialistDetail(specialist, 'portfolio')}
+                className="text-[11px] font-bold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
+              >
+                Barchasini ko&apos;rish →
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-1.5">
+              {specialist.portfolio.slice(0, 3).map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => openSpecialistDetail(specialist, 'portfolio')}
+                  className="relative rounded-xl overflow-hidden aspect-video bg-slate-100 cursor-pointer group/thumb shadow-2xs border border-slate-200/80 hover:border-blue-400 transition-all"
+                  title={item.title}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover group-hover/thumb:scale-108 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-slate-900/10 group-hover/thumb:bg-transparent transition-colors" />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Pricing and Action Footer */}
@@ -189,8 +228,8 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
             </a>
           ) : (
             <button
-              onClick={() => setSelectedSpecialist(specialist)}
-              className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition-colors"
+              onClick={() => openSpecialistDetail(specialist, 'services')}
+              className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
             >
               <Eye className="w-3.5 h-3.5" />
               <span>Profil</span>
@@ -201,8 +240,8 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
         {/* Secondary Buttons Row */}
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setSelectedSpecialist(specialist)}
-            className="flex-1 py-2 px-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5"
+            onClick={() => openSpecialistDetail(specialist, 'portfolio')}
+            className="flex-1 py-2 px-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <Eye className="w-3.5 h-3.5 text-slate-400" />
             <span>Portfolio & Sharhlar</span>
@@ -210,7 +249,7 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
 
           <button
             onClick={() => openBookingModal(specialist)}
-            className="flex-1 py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 active:scale-95"
+            className="flex-1 py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
           >
             <Calendar className="w-3.5 h-3.5" />
             <span>Chaqirish</span>

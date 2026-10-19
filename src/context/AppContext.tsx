@@ -50,6 +50,9 @@ interface AppContextType {
   // Modals & Drawers
   selectedSpecialist: Specialist | null;
   setSelectedSpecialist: (specialist: Specialist | null) => void;
+  selectedSpecialistTab: 'services' | 'portfolio' | 'reviews';
+  setSelectedSpecialistTab: (tab: 'services' | 'portfolio' | 'reviews') => void;
+  openSpecialistDetail: (specialist: Specialist, tab?: 'services' | 'portfolio' | 'reviews') => void;
 
   isBookingModalOpen: boolean;
   bookingSpecialist: Specialist | null;
@@ -114,6 +117,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Modals state
   const [selectedSpecialist, setSelectedSpecialist] = useState<Specialist | null>(null);
+  const [selectedSpecialistTab, setSelectedSpecialistTab] = useState<'services' | 'portfolio' | 'reviews'>('services');
+
+  const openSpecialistDetail = (specialist: Specialist, tab: 'services' | 'portfolio' | 'reviews' = 'services') => {
+    setSelectedSpecialist(specialist);
+    setSelectedSpecialistTab(tab);
+  };
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [bookingSpecialist, setBookingSpecialist] = useState<Specialist | null>(null);
   const [bookingCategory, setBookingCategory] = useState<string | null>(null);
@@ -493,6 +502,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
         selectedSpecialist,
         setSelectedSpecialist,
+        selectedSpecialistTab,
+        setSelectedSpecialistTab,
+        openSpecialistDetail,
 
         isBookingModalOpen,
         bookingSpecialist,

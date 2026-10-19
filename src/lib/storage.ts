@@ -1,7 +1,7 @@
 import { Specialist, BookingRequest, Review } from '../types';
 import { INITIAL_SPECIALISTS, INITIAL_BOOKINGS } from '../data/mockData';
 
-const SPECIALISTS_STORAGE_KEY = 'xizmatchi_specialists_v1';
+const SPECIALISTS_STORAGE_KEY = 'xizmatchi_specialists_v2';
 const BOOKINGS_STORAGE_KEY = 'xizmatchi_bookings_v1';
 const FAVORITES_STORAGE_KEY = 'xizmatchi_favorites_v1';
 
@@ -21,20 +21,28 @@ export function getStoredSpecialists(): Specialist[] {
       return INITIAL_SPECIALISTS;
     }
 
-    // Merge any missing specialists from INITIAL_SPECIALISTS to ensure all districts are always covered
-    const existingIds = new Set(parsed.map((p: Specialist) => p.id));
-    let hasNew = false;
-    const merged = [...parsed];
+    // Map initial specialists to update static properties like portfolio and services
+    const initialMap = new Map(INITIAL_SPECIALISTS.map((s) => [s.id, s]));
+    const userAdded = parsed.filter((p: Specialist) => !initialMap.has(p.id));
+
+    const updated = [...userAdded];
     for (const spec of INITIAL_SPECIALISTS) {
-      if (!existingIds.has(spec.id)) {
-        merged.push(spec);
-        hasNew = true;
+      // Find existing reviews added by user for this specialist
+      const existing = parsed.find((p: Specialist) => p.id === spec.id);
+      if (existing && existing.reviews && existing.reviews.length > spec.reviews.length) {
+        // Keep user-submitted reviews
+        updated.push({
+          ...spec,
+          reviews: existing.reviews,
+          reviewsCount: existing.reviews.length,
+        });
+      } else {
+        updated.push(spec);
       }
     }
-    if (hasNew) {
-      localStorage.setItem(SPECIALISTS_STORAGE_KEY, JSON.stringify(merged));
-    }
-    return merged;
+
+    localStorage.setItem(SPECIALISTS_STORAGE_KEY, JSON.stringify(updated));
+    return updated;
   } catch (error) {
     console.error('Failed to get specialists from localStorage:', error);
     return INITIAL_SPECIALISTS;
