@@ -1,0 +1,61 @@
+import { ThemeOption, ThemeId } from '../types';
+
+export const THEME_STORAGE_KEY = 'xizmatchi_theme_v2';
+
+export const THEMES: ThemeOption[] = [
+  {
+    id: 'eye-comfort',
+    name: "Ko'z himoyasi (Iliq pastel)",
+    tagline: "Ko'zni og'ritmaydi, yumshoq iliq ranglar",
+    badge: "Tavsiya etiladi",
+    iconName: 'SunMedium',
+    previewBg: 'bg-[#fcf8f2]',
+    previewCard: 'bg-[#fffdfa] border-[#eaddcd]',
+    previewAccent: 'bg-[#d97706]',
+    description: "Yumshoq qaymoq rangli fon va iliq kahrabo aksentlar. Oq rangning ko'zga urilishini butunlay yo'qotadi.",
+  },
+  {
+    id: 'dark-night',
+    name: "Tungi rejim (Qorong'u)",
+    tagline: "Qorong'uda ko'zni asraydi, batareyani tejaydi",
+    badge: "Ommabop",
+    iconName: 'Moon',
+    previewBg: 'bg-[#0b0f19]',
+    previewCard: 'bg-[#131b2e] border-[#1e2d4a]',
+    previewAccent: 'bg-[#3b82f6]',
+    description: "Chuqur quyuq fon, ko'zni qamashtirmaydigan yumshoq matnlar. Kechki va tungi vaqtlar uchun ayni muddao.",
+  },
+  {
+    id: 'nature-emerald',
+    name: "Shinam Zumrad (Yashil)",
+    tagline: "Asab va ko'zni tinchlantiruvchi tabiat ohangi",
+    badge: "Sokin",
+    iconName: 'Leaf',
+    previewBg: 'bg-[#f2f8f5]',
+    previewCard: 'bg-[#ffffff] border-[#bbf7d0]',
+    previewAccent: 'bg-[#059669]',
+    description: "Tinchlantiruvchi zumrad va yalpiz ranglari. Ko'rish nervlarini dam oldiradi va charchoqni ketkazadi.",
+  },
+  {
+    id: 'minimal-slate',
+    name: "Minimalist Kulrang",
+    tagline: "Sokin monoxrom, ortiqcha yorug'liksiz",
+    badge: "Minimal",
+    iconName: 'Feather',
+    previewBg: 'bg-[#f1f5f9]',
+    previewCard: 'bg-[#ffffff] border-[#cbd5e1]',
+    previewAccent: 'bg-[#334155]',
+    description: "Ortiqcha yorqin ranglarsiz neytral kulrang va sokin grafit uslubi. O'qish uchun juda qulay.",
+  },
+  {
+    id: 'modern-blue',
+    name: "Klassik Moviy",
+    tagline: "Standart yorqin moviy interfeys",
+    badge: "Standart",
+    iconName: 'Palette',
+    previewBg: 'bg-[#f8fafc]',
+    previewCard: 'bg-[#ffffff] border-[#e2e8f0]',
+    previewAccent: 'bg-[#2563eb]',
+    description: "An'anaviy platforma dizayni, yorqin ko'k va zamonaviy oq ranglar uyg'unligi.",
+  },
+];

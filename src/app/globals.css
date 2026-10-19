@@ -1,0 +1,388 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --secondary: #10b981;
+    --accent: #f59e0b;
+    --bg-page: #f8fafc;
+    --bg-card: #ffffff;
+    --text-heading: #0f172a;
+    --text-body: #334155;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+body {
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--text-body);
+  background-color: var(--bg-page);
+  min-height: 100vh;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Safe area for mobile notch and gesture navigation */
+.pb-safe {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ========================================================
+   THEME 1: KO'Z HIMOYASI (EYE COMFORT / WARM PASTEL)
+   Soothing warm cream, zero glare, relieves eye fatigue
+   ======================================================== */
+[data-theme="eye-comfort"] {
+  --primary: #d97706;
+  --primary-hover: #b45309;
+}
+
+[data-theme="eye-comfort"] body {
+  background-color: #fbf7ee !important;
+  color: #292524 !important;
+}
+
+[data-theme="eye-comfort"] .bg-white {
+  background-color: #fffdfa !important;
+  border-color: #ebdccb !important;
+}
+
+[data-theme="eye-comfort"] .bg-slate-50,
+[data-theme="eye-comfort"] .bg-slate-100,
+[data-theme="eye-comfort"] .bg-slate-100\/70,
+[data-theme="eye-comfort"] .bg-slate-100\/90 {
+  background-color: #f5eedf !important;
+}
+
+[data-theme="eye-comfort"] .border-slate-200,
+[data-theme="eye-comfort"] .border-slate-100,
+[data-theme="eye-comfort"] .border-slate-200\/80,
+[data-theme="eye-comfort"] .border-slate-200\/90 {
+  border-color: #e5d7c3 !important;
+}
+
+[data-theme="eye-comfort"] .text-slate-900,
+[data-theme="eye-comfort"] .text-slate-800 {
+  color: #292524 !important;
+}
+
+[data-theme="eye-comfort"] .text-slate-700,
+[data-theme="eye-comfort"] .text-slate-600 {
+  color: #57534e !important;
+}
+
+[data-theme="eye-comfort"] .text-slate-500,
+[data-theme="eye-comfort"] .text-slate-400 {
+  color: #78716c !important;
+}
+
+[data-theme="eye-comfort"] header {
+  background-color: rgba(251, 247, 238, 0.94) !important;
+  border-color: #e5d7c3 !important;
+}
+
+[data-theme="eye-comfort"] .hero-gradient,
+[data-theme="eye-comfort"] section.bg-gradient-to-b {
+  background: linear-gradient(180deg, #451a03 0%, #292524 60%, #1c1917 100%) !important;
+}
+
+[data-theme="eye-comfort"] .bg-blue-600 {
+  background-color: #d97706 !important;
+}
+[data-theme="eye-comfort"] .hover\:bg-blue-700:hover {
+  background-color: #b45309 !important;
+}
+[data-theme="eye-comfort"] .text-blue-600,
+[data-theme="eye-comfort"] .text-blue-700 {
+  color: #b45309 !important;
+}
+[data-theme="eye-comfort"] .bg-blue-50 {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+/* ========================================================
+   THEME 2: TUNGI REJIM (DARK NIGHT / EYE DEFENSE)
+   Deep dark charcoal, zero glare, protects eyes in darkness
+   ======================================================== */
+[data-theme="dark-night"] {
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+}
+
+[data-theme="dark-night"] body {
+  background-color: #0b0f19 !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark-night"] .bg-white {
+  background-color: #131b2e !important;
+  border-color: #1e2d4a !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark-night"] .bg-slate-50,
+[data-theme="dark-night"] .bg-slate-100,
+[data-theme="dark-night"] .bg-slate-100\/70,
+[data-theme="dark-night"] .bg-slate-100\/90 {
+  background-color: #0d1527 !important;
+}
+
+[data-theme="dark-night"] .border-slate-200,
+[data-theme="dark-night"] .border-slate-100,
+[data-theme="dark-night"] .border-slate-200\/80,
+[data-theme="dark-night"] .border-slate-200\/90 {
+  border-color: #1b263b !important;
+}
+
+[data-theme="dark-night"] .text-slate-900,
+[data-theme="dark-night"] .text-slate-800 {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark-night"] .text-slate-700,
+[data-theme="dark-night"] .text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark-night"] .text-slate-500,
+[data-theme="dark-night"] .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark-night"] header {
+  background-color: rgba(11, 15, 25, 0.94) !important;
+  border-color: #1b263b !important;
+}
+
+[data-theme="dark-night"] .hero-gradient,
+[data-theme="dark-night"] section.bg-gradient-to-b {
+  background: linear-gradient(180deg, #060911 0%, #0d1322 50%, #060911 100%) !important;
+}
+
+[data-theme="dark-night"] input,
+[data-theme="dark-night"] select,
+[data-theme="dark-night"] textarea {
+  background-color: #111827 !important;
+  color: #f8fafc !important;
+  border-color: #1f2937 !important;
+}
+
+[data-theme="dark-night"] .bg-blue-50 {
+  background-color: #172554 !important;
+  color: #93c5fd !important;
+}
+
+[data-theme="dark-night"] .bg-emerald-50 {
+  background-color: #064e3b !important;
+  color: #a7f3d0 !important;
+}
+
+[data-theme="dark-night"] .bg-amber-50 {
+  background-color: #451a03 !important;
+  color: #fde68a !important;
+}
+
+[data-theme="dark-night"] .bg-rose-50 {
+  background-color: #4c0519 !important;
+  color: #fecdd3 !important;
+}
+
+/* ========================================================
+   THEME 3: SHINAM ZUMRAD (NATURE EMERALD)
+   Lush forest and calming mint hues, relaxes optic nerves
+   ======================================================== */
+[data-theme="nature-emerald"] {
+  --primary: #059669;
+  --primary-hover: #047857;
+}
+
+[data-theme="nature-emerald"] body {
+  background-color: #f2f8f5 !important;
+  color: #06281e !important;
+}
+
+[data-theme="nature-emerald"] .bg-white {
+  background-color: #ffffff !important;
+  border-color: #c7ead9 !important;
+}
+
+[data-theme="nature-emerald"] .bg-slate-50,
+[data-theme="nature-emerald"] .bg-slate-100,
+[data-theme="nature-emerald"] .bg-slate-100\/70,
+[data-theme="nature-emerald"] .bg-slate-100\/90 {
+  background-color: #e5f2eb !important;
+}
+
+[data-theme="nature-emerald"] .border-slate-200,
+[data-theme="nature-emerald"] .border-slate-100,
+[data-theme="nature-emerald"] .border-slate-200\/80,
+[data-theme="nature-emerald"] .border-slate-200\/90 {
+  border-color: #c2e6d4 !important;
+}
+
+[data-theme="nature-emerald"] .text-slate-900,
+[data-theme="nature-emerald"] .text-slate-800 {
+  color: #06281e !important;
+}
+
+[data-theme="nature-emerald"] .text-slate-700,
+[data-theme="nature-emerald"] .text-slate-600 {
+  color: #174233 !important;
+}
+
+[data-theme="nature-emerald"] .text-slate-500,
+[data-theme="nature-emerald"] .text-slate-400 {
+  color: #376353 !important;
+}
+
+[data-theme="nature-emerald"] header {
+  background-color: rgba(242, 248, 245, 0.94) !important;
+  border-color: #c2e6d4 !important;
+}
+
+[data-theme="nature-emerald"] .hero-gradient,
+[data-theme="nature-emerald"] section.bg-gradient-to-b {
+  background: linear-gradient(180deg, #064e3b 0%, #033327 60%, #021f18 100%) !important;
+}
+
+[data-theme="nature-emerald"] .bg-blue-600 {
+  background-color: #059669 !important;
+}
+[data-theme="nature-emerald"] .hover\:bg-blue-700:hover {
+  background-color: #047857 !important;
+}
+[data-theme="nature-emerald"] .text-blue-600,
+[data-theme="nature-emerald"] .text-blue-700 {
+  color: #047857 !important;
+}
+[data-theme="nature-emerald"] .bg-blue-50 {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+}
+
+/* ========================================================
+   THEME 4: MINIMALIST KULRANG (MINIMAL SLATE)
+   Monochrome, quiet, distraction-free reading
+   ======================================================== */
+[data-theme="minimal-slate"] {
+  --primary: #334155;
+  --primary-hover: #1e293b;
+}
+
+[data-theme="minimal-slate"] body {
+  background-color: #f1f5f9 !important;
+  color: #1e293b !important;
+}
+
+[data-theme="minimal-slate"] .bg-white {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="minimal-slate"] .bg-slate-50,
+[data-theme="minimal-slate"] .bg-slate-100,
+[data-theme="minimal-slate"] .bg-slate-100\/70,
+[data-theme="minimal-slate"] .bg-slate-100\/90 {
+  background-color: #e2e8f0 !important;
+}
+
+[data-theme="minimal-slate"] .border-slate-200,
+[data-theme="minimal-slate"] .border-slate-100,
+[data-theme="minimal-slate"] .border-slate-200\/80,
+[data-theme="minimal-slate"] .border-slate-200\/90 {
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="minimal-slate"] header {
+  background-color: rgba(241, 245, 249, 0.94) !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="minimal-slate"] .hero-gradient,
+[data-theme="minimal-slate"] section.bg-gradient-to-b {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 60%, #020617 100%) !important;
+}
+
+[data-theme="minimal-slate"] .bg-blue-600 {
+  background-color: #334155 !important;
+}
+[data-theme="minimal-slate"] .hover\:bg-blue-700:hover {
+  background-color: #1e293b !important;
+}
+[data-theme="minimal-slate"] .text-blue-600,
+[data-theme="minimal-slate"] .text-blue-700 {
+  color: #334155 !important;
+}
+
+/* ========================================================
+   THEME 5: KLASSIK MOVIY (MODERN BLUE)
+   Standard default light style
+   ======================================================== */
+[data-theme="modern-blue"] body {
+  background-color: #f8fafc;
+  color: #1e293b;
+}

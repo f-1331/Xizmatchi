@@ -1,0 +1,19 @@
+[
+  {
+    "booking": {
+      "id": "REQ-TEST",
+      "clientName": "Alisher Navoiy",
+      "clientPhone": "+998 90 123 45 67",
+      "district": "Chilonzor tumani",
+      "address": "Bunyodkor shox ko'chasi, 2-uy",
+      "categoryId": "santexnika",
+      "urgency": "urgent",
+      "description": "Oshxona krani sinib suv oqmoqda",
+      "estimatedResponseTime": "10-15 daqiqa"
+    },
+    "deliveredCount": 0,
+    "subscribersCount": 0,
+    "errors": [],
+    "sentAt": "2026-10-19T12:32:20.736Z"
+  }
+]

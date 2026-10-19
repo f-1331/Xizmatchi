@@ -1,6 +1,6 @@
-# UstaTop — Local Home Services & Craftsmen Platform (O'zbekiston)
+# Xizmatchi — Local Home Services & Craftsmen Platform (O'zbekiston)
 
-**UstaTop** — xonadonlar, kottejlar va ofislar uchun ishonchli, tekshirilgan va malakali ustalarni (santexnik, elektrik, maishiy texnika ta'miri, klining, mebel ustalari va boshqalar) 2 daqiqada topish imkonini beruvchi zamonaviy veb-platforma.
+**Xizmatchi** — xonadonlar, kottejlar va ofislar uchun ishonchli, tekshirilgan va malakali ustalarni (santexnik, elektrik, maishiy texnika ta'miri, klining, mebel ustalari va boshqalar) 2 daqiqada topish imkonini beruvchi zamonaviy veb-platforma.
 
 ---
 
