@@ -16,10 +16,10 @@ export function Logo({
   return (
     <div className={`flex items-center gap-3 group select-none ${className}`}>
       {/* Brand Icon Emblem */}
-      <div className="relative w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 p-0.5 shadow-md shadow-blue-500/20 group-hover:shadow-lg group-hover:shadow-blue-500/30 group-hover:scale-105 transition-all duration-300 shrink-0">
-        <div className="w-full h-full rounded-[14px] bg-slate-950/20 backdrop-blur-xs flex items-center justify-center text-white">
+      <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 p-0.5 shadow-md shadow-blue-500/20 group-hover:shadow-lg group-hover:shadow-blue-500/30 group-hover:scale-105 transition-all duration-300 shrink-0">
+        <div className="w-full h-full rounded-[10px] sm:rounded-[14px] bg-slate-950/20 backdrop-blur-xs flex items-center justify-center text-white">
           <svg
-            className="w-6 h-6"
+            className="w-5 h-5 sm:w-6 sm:h-6"
             viewBox="0 0 32 32"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -57,7 +57,7 @@ export function Logo({
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5 leading-none">
             <span
-              className={`text-2xl font-black tracking-tight transition-colors ${
+              className={`text-xl sm:text-2xl font-black tracking-tight transition-colors ${
                 isDark
                   ? 'text-white group-hover:text-blue-400'
                   : 'text-slate-900 group-hover:text-blue-600'
