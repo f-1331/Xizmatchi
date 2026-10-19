@@ -1,29 +1,31 @@
+'use client';
+
 import React from 'react';
-import { Search, PhoneCall, CheckCircle2, Star, ShieldCheck, Sparkles } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { Search, PhoneCall, CheckCircle2, Star, Sparkles } from 'lucide-react';
 
 export function HowItWorksSection() {
+  const { t } = useLanguage();
+
   const steps = [
     {
       step: '01',
-      title: "Usta yoki xizmatni tanlang",
-      description:
-        "O'zingizga kerakli sohani (santexnika, elektr, ta'mir) tanlang va tumaningizdagi eng tajribali ustalarni ko'rib chiqing.",
+      title: t('how.step1_title'),
+      description: t('how.step1_desc'),
       icon: Search,
       badgeColor: 'bg-blue-100 text-blue-700',
     },
     {
       step: '02',
-      title: "Narx va sharhlarni solishtiring",
-      description:
-        "Ustalarning portfolio rasmlari, narxlari va boshqa mijozlar qoldirgan haqiqiy sharhlar bilan batafsil tanishing.",
+      title: t('how.step2_title'),
+      description: t('how.step2_desc'),
       icon: Star,
       badgeColor: 'bg-amber-100 text-amber-700',
     },
     {
       step: '03',
-      title: "Bog'laning yoki ariza qoldiring",
-      description:
-        "To'g'ridan-to'g'ri telefon qiling, Telegram orqali yozing yoki platformada ariza qoldiring. Usta 15 daqiqada javob beradi.",
+      title: t('how.step3_title'),
+      description: t('how.step3_desc'),
       icon: PhoneCall,
       badgeColor: 'bg-emerald-100 text-emerald-700',
     },
@@ -37,10 +39,10 @@ export function HowItWorksSection() {
             <Sparkles className="w-3.5 h-3.5" /> Oddiy va qulay jarayon
           </div>
           <h2 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            Xizmatchi qanday ishlaydi?
+            {t('how.title')}
           </h2>
           <p className="text-sm sm:text-base text-slate-600">
-            Endi tanish-bilishlardan usta surishtirishga hojat yo&apos;q. 3 ta oson qadamda muammongizga yechim toping:
+            {t('how.subtitle')}
           </p>
         </div>
 

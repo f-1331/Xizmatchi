@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import {
   Home,
   Wrench,
@@ -21,6 +22,8 @@ export function MobileBottomNav() {
     setIsThemeModalOpen,
     theme,
   } = useApp();
+
+  const { t } = useLanguage();
 
   const pendingCount = bookings.filter((b) => b.status === 'pending' || b.status === 'accepted').length;
 
@@ -60,7 +63,7 @@ export function MobileBottomNav() {
           className="flex flex-col items-center justify-center gap-1 text-slate-600 hover:text-blue-600 active:scale-95 transition-all cursor-pointer py-1"
         >
           <Home className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Asosiy</span>
+          <span className="text-[10px] font-bold">{t('nav.home')}</span>
         </button>
 
         {/* Services Catalog */}
@@ -70,7 +73,7 @@ export function MobileBottomNav() {
           className="flex flex-col items-center justify-center gap-1 text-slate-600 hover:text-blue-600 active:scale-95 transition-all cursor-pointer py-1"
         >
           <Wrench className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Xizmatlar</span>
+          <span className="text-[10px] font-bold">{t('nav.services_short')}</span>
         </button>
 
         {/* Specialists */}
@@ -80,7 +83,7 @@ export function MobileBottomNav() {
           className="flex flex-col items-center justify-center gap-1 text-slate-600 hover:text-blue-600 active:scale-95 transition-all cursor-pointer py-1"
         >
           <Users className="w-5 h-5" />
-          <span className="text-[10px] font-bold">Ustalar</span>
+          <span className="text-[10px] font-bold">{t('nav.specialists_short')}</span>
         </button>
 
         {/* My Bookings */}
@@ -97,7 +100,7 @@ export function MobileBottomNav() {
               </span>
             )}
           </div>
-          <span className="text-[10px] font-bold">Buyurtma</span>
+          <span className="text-[10px] font-bold">{t('nav.my_bookings_short')}</span>
         </button>
 
         {/* Theme Switcher */}
@@ -108,7 +111,7 @@ export function MobileBottomNav() {
           title="Dizayn rejimini almashtirish"
         >
           {getThemeIcon()}
-          <span className="text-[10px] font-bold">Dizayn</span>
+          <span className="text-[10px] font-bold">{t('nav.theme')}</span>
         </button>
       </div>
     </nav>

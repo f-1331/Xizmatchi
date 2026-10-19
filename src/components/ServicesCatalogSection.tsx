@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import { POPULAR_SERVICES_CATALOG } from '../data/mockData';
 import {
   Wrench,
@@ -18,6 +19,7 @@ import {
 
 export function ServicesCatalogSection() {
   const { openBookingModal, setFilters, filters } = useApp();
+  const { t, getCategoryName } = useLanguage();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
@@ -55,7 +57,7 @@ export function ServicesCatalogSection() {
     { id: 'elektr', name: 'Elektr' },
     { id: 'maishiy-texnika', name: 'Maishiy texnika' },
     { id: 'konditsioner', name: 'Konditsioner' },
-    { id: 'tamirlash', name: 'Uy ta\'miri' },
+    { id: 'tamirlash', name: "Uy ta'miri" },
     { id: 'tozalash', name: 'Klining' },
     { id: 'mebel', name: 'Mebel' },
     { id: 'qulflar', name: 'Qulflar' },
@@ -69,18 +71,18 @@ export function ServicesCatalogSection() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider mb-2">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-600" /> Standart narxlar katalogi
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600" /> {t('catalog.badge')}
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              Ommabop xizmatlar va narxlar (38 ta ish turi)
+              {t('catalog.title')}
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 mt-1">
-              Har bir ish bo&apos;yicha bozor narxlari, bajarilish vaqti va to&apos;g&apos;ridan-to&apos;g&apos;ri usta chaqirish
+              {t('catalog.subtitle')}
             </p>
             {filters.district && filters.district !== 'all' && (
               <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800">
                 <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Tanlangan tuman: <strong>{filters.district}</strong> — xizmatlar ushbu hududda mavjud</span>
+                <span>Tanlangan tuman: <strong>{filters.district}</strong></span>
               </div>
             )}
           </div>
@@ -104,13 +106,13 @@ export function ServicesCatalogSection() {
             <button
               key={c.id}
               onClick={() => setSelectedCategory(c.id)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === c.id
                   ? 'bg-blue-600 text-white shadow-xs'
                   : 'bg-white hover:bg-slate-200/80 text-slate-700 border border-slate-200'
               }`}
             >
-              {c.name}
+              {c.id === 'all' ? t('categories.all_button') : getCategoryName(c.id, c.name)}
             </button>
           ))}
         </div>
@@ -125,12 +127,12 @@ export function ServicesCatalogSection() {
               <div>
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <span className="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold">
-                    {job.categoryName}
+                    {getCategoryName(job.categoryId, job.categoryName)}
                   </span>
 
                   {job.popular && (
                     <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold">
-                      🔥 Top xizmat
+                      🔥 Top
                     </span>
                   )}
                 </div>
@@ -164,18 +166,18 @@ export function ServicesCatalogSection() {
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => handleViewSpecialists(job.categoryId)}
-                    className="py-2 px-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition-colors flex items-center justify-center gap-1"
+                    className="py-2 px-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition-colors flex items-center justify-center gap-1 cursor-pointer"
                   >
-                    <span>Ustalarni ko&apos;rish</span>
+                    <span>{t('card.profile_btn')}</span>
                     <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                   </button>
 
                   <button
                     onClick={() => handleQuickBook(job.name, job.categoryId)}
-                    className="py-2 px-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1"
+                    className="py-2 px-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
                   >
                     <Calendar className="w-3.5 h-3.5" />
-                    <span>Chaqirish</span>
+                    <span>{t('card.book_btn')}</span>
                   </button>
                 </div>
               </div>

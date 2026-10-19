@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { useLanguage, LANGUAGES } from '../context/LanguageContext';
 import { DISTRICTS } from '../data/mockData';
 import { Logo } from './Logo';
 import {
@@ -24,6 +25,9 @@ import {
   Layers,
   HelpCircle,
   ChevronRight,
+  ChevronDown,
+  Globe,
+  Check,
 } from 'lucide-react';
 
 export function Header() {
@@ -42,9 +46,14 @@ export function Header() {
     refreshData,
   } = useApp();
 
+  const { lang, setLang, t } = useLanguage();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const currentLangObj = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
 
   const pendingBookingsCount = bookings.filter(
     (b) => b.status === 'pending' || b.status === 'accepted'
@@ -106,7 +115,7 @@ export function Header() {
               >
                 {DISTRICTS.map((d) => (
                   <option key={d.id} value={d.id === 'all' ? 'all' : d.name}>
-                    {d.name}
+                    {d.id === 'all' ? t('nav.all_districts') : d.name}
                   </option>
                 ))}
               </select>
@@ -114,7 +123,7 @@ export function Header() {
                 type="button"
                 onClick={handleHeaderRefresh}
                 disabled={isRefreshing}
-                title="Saytni yangilash"
+                title={t('nav.refresh')}
                 className="p-1 rounded-full text-slate-500 hover:text-blue-600 hover:bg-slate-200/80 transition-colors ml-0.5 cursor-pointer"
               >
                 <RefreshCw
@@ -130,37 +139,77 @@ export function Header() {
               href="#categories-section"
               className="hover:text-blue-600 transition-colors py-1"
             >
-              Kategoriyalar
+              {t('nav.categories')}
             </a>
             <a
               href="#services-catalog"
               className="hover:text-blue-600 transition-colors py-1"
             >
-              Xizmatlar (38)
+              {t('nav.services')}
             </a>
             <a
               href="#specialists-section"
               className="hover:text-blue-600 transition-colors py-1"
             >
-              Barcha ustalar
+              {t('nav.specialists')}
             </a>
             <button
               onClick={handleEmergencyClick}
               className="flex items-center gap-1 text-rose-600 hover:text-rose-700 font-bold transition-colors py-1 cursor-pointer"
             >
               <Flame className="w-4 h-4 fill-rose-500 text-rose-500 animate-pulse" />
-              <span>24/7 Shoshilinch</span>
+              <span>{t('nav.emergency_24_7')}</span>
             </button>
             <a
               href="#how-it-works"
               className="hover:text-blue-600 transition-colors py-1"
             >
-              Qanday ishlaydi?
+              {t('nav.how_it_works')}
             </a>
           </nav>
 
           {/* Action Buttons: Responsive & Always Visible */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0 ml-auto">
+            {/* Language Switcher (Desktop & Tablet) */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+                className="flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-slate-200/90 hover:border-blue-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 transition-colors cursor-pointer shrink-0 shadow-2xs"
+                title="Tilni almashtirish / Сменить язык / Change language"
+              >
+                <Globe className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span className="text-xs sm:text-sm">{currentLangObj.flag}</span>
+                <span className="uppercase text-xs font-black">{currentLangObj.short}</span>
+                <ChevronDown className="w-3 h-3 text-slate-400 shrink-0 hidden sm:inline" />
+              </button>
+
+              {langDropdownOpen && (
+                <div className="absolute right-0 mt-1.5 w-36 rounded-2xl bg-white border border-slate-200 shadow-2xl p-1.5 z-50 animate-scale-up space-y-1">
+                  {LANGUAGES.map((l) => (
+                    <button
+                      key={l.code}
+                      onClick={() => {
+                        setLang(l.code);
+                        setLangDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+                        lang === l.code
+                          ? 'bg-blue-50 text-blue-700'
+                          : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <span>{l.flag}</span>
+                        <span>{l.label}</span>
+                      </span>
+                      {lang === l.code && <Check className="w-3.5 h-3.5 text-blue-600" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {/* Theme / Dizayn button (Tablet & Desktop, mobile has it in Tier 2 & Bottom Nav) */}
             <button
               onClick={() => setIsThemeModalOpen(true)}
@@ -168,14 +217,14 @@ export function Header() {
               title="Dizayn rejimini almashtirish"
             >
               <Palette className="w-4 h-4 text-amber-500" />
-              <span className="hidden xl:inline text-xs font-semibold">Dizayn</span>
+              <span className="hidden xl:inline text-xs font-semibold">{t('nav.theme')}</span>
             </button>
 
             {/* Favorites button (Tablet & Desktop, mobile has it in Tier 2) */}
             <button
               onClick={() => setIsFavoritesOpen(true)}
               className="hidden sm:flex relative p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 hover:text-rose-600 hover:bg-rose-50/80 transition-colors border border-slate-200/80 shrink-0 cursor-pointer"
-              title="Saqlangan ustalar"
+              title={t('nav.favorites')}
             >
               <Heart className="w-4 h-4 text-rose-500" />
               {favorites.length > 0 && (
@@ -189,10 +238,10 @@ export function Header() {
             <button
               onClick={() => setIsMyBookingsOpen(true)}
               className="hidden sm:flex relative items-center gap-1.5 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 hover:text-blue-600 hover:bg-blue-50/80 transition-colors border border-slate-200/80 text-xs font-medium shrink-0 cursor-pointer"
-              title="Mening buyurtmalarim"
+              title={t('nav.my_bookings')}
             >
               <ClipboardList className="w-4 h-4 text-blue-600" />
-              <span className="hidden 2xl:inline">Buyurtmalar</span>
+              <span className="hidden 2xl:inline">{t('nav.my_bookings')}</span>
               {pendingBookingsCount > 0 && (
                 <span className="w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center">
                   {pendingBookingsCount}
@@ -206,7 +255,7 @@ export function Header() {
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                   className="flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100/80 border border-blue-200 text-xs font-semibold text-blue-900 transition-colors shrink-0 cursor-pointer"
-                  title="Mening hisobim"
+                  title={t('nav.my_account')}
                 >
                   <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] sm:text-xs font-bold">
                     {currentUser.name ? currentUser.name[0].toUpperCase() : 'U'}
@@ -236,7 +285,7 @@ export function Header() {
                       className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
                     >
                       <ClipboardList className="w-3.5 h-3.5 text-blue-600" />
-                      <span>Buyurtmalarim</span>
+                      <span>{t('nav.my_bookings')}</span>
                     </button>
                     <button
                       onClick={() => {
@@ -246,7 +295,7 @@ export function Header() {
                       className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium text-rose-600 hover:bg-rose-50 flex items-center gap-2 cursor-pointer"
                     >
                       <LogOut className="w-3.5 h-3.5" />
-                      <span>Chiqish</span>
+                      <span>{t('nav.logout')}</span>
                     </button>
                   </div>
                 )}
@@ -255,10 +304,10 @@ export function Header() {
               <button
                 onClick={() => setIsAuthModalOpen(true)}
                 className="flex items-center gap-1 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-blue-600/30 text-blue-700 bg-blue-50/80 hover:bg-blue-100/80 transition-colors text-xs font-semibold shrink-0 cursor-pointer"
-                title="Tizimga kirish"
+                title={t('nav.login')}
               >
                 <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 shrink-0" />
-                <span className="text-xs">Kirish</span>
+                <span className="text-xs">{t('nav.login')}</span>
               </button>
             )}
 
@@ -268,15 +317,15 @@ export function Header() {
               className="flex items-center gap-1 px-2 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-xs hover:shadow-md transition-all active:scale-95 shrink-0 cursor-pointer"
             >
               <PlusCircle className="w-3.5 h-3.5 stroke-[2.2] shrink-0" />
-              <span className="hidden sm:inline">Usta bo&apos;lish</span>
-              <span className="sm:hidden font-bold">Usta</span>
+              <span className="hidden sm:inline">{t('nav.become_specialist')}</span>
+              <span className="sm:hidden font-bold">{t('nav.become_specialist_short')}</span>
             </button>
 
             {/* Hamburger Button (Screen width < 1024px) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="flex items-center gap-1 p-2 rounded-xl text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 lg:hidden shrink-0 cursor-pointer transition-colors"
-              aria-label="Menyu"
+              aria-label={t('nav.menu')}
             >
               {mobileMenuOpen ? (
                 <X className="w-5 h-5 text-slate-800" />
@@ -284,7 +333,7 @@ export function Header() {
                 <>
                   <Menu className="w-5 h-5 text-slate-800" />
                   <span className="text-[11px] font-bold text-slate-700 hidden sm:inline">
-                    Menyu
+                    {t('nav.menu')}
                   </span>
                 </>
               )}
@@ -308,7 +357,7 @@ export function Header() {
             >
               {DISTRICTS.map((d) => (
                 <option key={d.id} value={d.id === 'all' ? 'all' : d.name}>
-                  {d.name.replace(' tumani', '')}
+                  {d.id === 'all' ? t('nav.all_districts') : d.name.replace(' tumani', '')}
                 </option>
               ))}
             </select>
@@ -316,8 +365,8 @@ export function Header() {
               type="button"
               onClick={handleHeaderRefresh}
               disabled={isRefreshing}
-              title="Saytni yangilash"
-              className="p-1 rounded text-slate-500 hover:text-blue-600 hover:bg-slate-100 transition-colors shrink-0"
+              title={t('nav.refresh')}
+              className="p-1 rounded text-slate-500 hover:text-blue-600 hover:bg-slate-100 transition-colors shrink-0 cursor-pointer"
             >
               <RefreshCw
                 className={`w-3.5 h-3.5 text-emerald-600 ${isRefreshing ? 'animate-spin' : ''}`}
@@ -325,22 +374,35 @@ export function Header() {
             </button>
           </div>
 
+          {/* Language Switcher Button (Mobile) */}
+          <button
+            onClick={() => {
+              const next = lang === 'uz' ? 'ru' : lang === 'ru' ? 'en' : 'uz';
+              setLang(next);
+            }}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100/80 border border-blue-200 text-blue-900 font-bold shrink-0 shadow-2xs transition-colors cursor-pointer"
+            title="Tilni almashtirish"
+          >
+            <span>{currentLangObj.flag}</span>
+            <span>{currentLangObj.short}</span>
+          </button>
+
           {/* Theme Switcher Button */}
           <button
             onClick={() => setIsThemeModalOpen(true)}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 border border-amber-200 text-amber-900 font-bold shrink-0 shadow-2xs transition-colors"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 border border-amber-200 text-amber-900 font-bold shrink-0 shadow-2xs transition-colors cursor-pointer"
           >
             <Palette className="w-3.5 h-3.5 text-amber-600" />
-            <span>Dizayn</span>
+            <span>{t('nav.theme')}</span>
           </button>
 
           {/* Favorites Button */}
           <button
             onClick={() => setIsFavoritesOpen(true)}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100/80 border border-rose-200 text-rose-800 font-bold shrink-0 shadow-2xs transition-colors"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100/80 border border-rose-200 text-rose-800 font-bold shrink-0 shadow-2xs transition-colors cursor-pointer"
           >
             <Heart className="w-3.5 h-3.5 text-rose-500" />
-            <span>{favorites.length > 0 ? `(${favorites.length})` : 'Sevimlilar'}</span>
+            <span>{favorites.length > 0 ? `(${favorites.length})` : t('nav.favorites')}</span>
           </button>
         </div>
 
@@ -351,7 +413,7 @@ export function Header() {
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 text-slate-800 hover:text-blue-600 font-bold shadow-2xs transition-colors"
           >
             <Wrench className="w-3.5 h-3.5 text-blue-600" />
-            <span>Xizmatlar (38)</span>
+            <span>{t('nav.services')}</span>
           </a>
 
           <a
@@ -359,7 +421,7 @@ export function Header() {
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 text-slate-800 hover:text-blue-600 font-bold shadow-2xs transition-colors"
           >
             <Layers className="w-3.5 h-3.5 text-indigo-600" />
-            <span>Kategoriyalar</span>
+            <span>{t('nav.categories')}</span>
           </a>
 
           <a
@@ -367,15 +429,15 @@ export function Header() {
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 text-slate-800 hover:text-blue-600 font-bold shadow-2xs transition-colors"
           >
             <User className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Ustalar</span>
+            <span>{t('nav.specialists_short')}</span>
           </a>
 
           <button
             onClick={handleEmergencyClick}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold shadow-xs transition-colors"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold shadow-xs transition-colors cursor-pointer"
           >
             <Flame className="w-3.5 h-3.5 fill-white text-white animate-pulse" />
-            <span>24/7 Shoshilinch</span>
+            <span>{t('nav.emergency_24_7')}</span>
           </button>
 
           <a
@@ -383,7 +445,7 @@ export function Header() {
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-semibold shadow-2xs transition-colors"
           >
             <HelpCircle className="w-3.5 h-3.5 text-amber-500" />
-            <span>Qanday ishlaydi?</span>
+            <span>{t('nav.how_it_works')}</span>
           </a>
         </div>
       </div>
@@ -411,11 +473,11 @@ export function Header() {
                   logout();
                   setMobileMenuOpen(false);
                 }}
-                className="px-2.5 py-1.5 rounded-xl text-rose-600 hover:bg-rose-50 border border-rose-200 text-xs font-bold transition-colors flex items-center gap-1"
-                title="Chiqish"
+                className="px-2.5 py-1.5 rounded-xl text-rose-600 hover:bg-rose-50 border border-rose-200 text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
+                title={t('nav.logout')}
               >
                 <LogOut className="w-3.5 h-3.5" />
-                <span>Chiqish</span>
+                <span>{t('nav.logout')}</span>
               </button>
             </div>
           ) : (
@@ -424,17 +486,44 @@ export function Header() {
                 setIsAuthModalOpen(true);
                 setMobileMenuOpen(false);
               }}
-              className="w-full py-3 px-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-colors"
+              className="w-full py-3 px-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-colors cursor-pointer"
             >
               <User className="w-4 h-4" />
-              <span>Tizimga kirish / Ro&apos;yxatdan o&apos;tish (SMS orqali)</span>
+              <span>{t('nav.login')} / Ro&apos;yxatdan o&apos;tish</span>
             </button>
           )}
+
+          {/* Language Selector in Drawer */}
+          <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+              <Globe className="w-4 h-4 text-blue-600" />
+              <span>Tilni tanlang / Выберите язык / Select language:</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {LANGUAGES.map((l) => (
+                <button
+                  key={l.code}
+                  type="button"
+                  onClick={() => {
+                    setLang(l.code);
+                  }}
+                  className={`py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                    lang === l.code
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
+                  }`}
+                >
+                  <span>{l.flag}</span>
+                  <span>{l.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* District selector in drawer */}
           <div className="flex items-center gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
             <MapPin className="w-4 h-4 text-blue-600 shrink-0" />
-            <span className="text-slate-500 font-medium">Hudud:</span>
+            <span className="text-slate-500 font-medium">{t('nav.region')}:</span>
             <select
               aria-label="Hududni tanlang"
               value={filters.district}
@@ -446,7 +535,7 @@ export function Header() {
             >
               {DISTRICTS.map((d) => (
                 <option key={d.id} value={d.id === 'all' ? 'all' : d.name}>
-                  {d.name}
+                  {d.id === 'all' ? t('nav.all_districts') : d.name}
                 </option>
               ))}
             </select>
@@ -457,12 +546,12 @@ export function Header() {
                 setMobileMenuOpen(false);
               }}
               className="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center gap-1 shrink-0 shadow-xs cursor-pointer"
-              title="Yangilash"
+              title={t('nav.refresh')}
             >
               <RefreshCw
                 className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`}
               />
-              <span className="text-xs">Yangilash</span>
+              <span className="text-xs">{t('nav.refresh')}</span>
             </button>
           </div>
 
@@ -470,33 +559,33 @@ export function Header() {
           <div className="grid grid-cols-2 gap-2.5 pt-1">
             <button
               onClick={() => scrollToSection('services-catalog')}
-              className="p-3 text-left rounded-2xl bg-slate-50 hover:bg-blue-50 border border-slate-200/80 text-slate-800 hover:text-blue-600 font-semibold text-xs flex items-center justify-between transition-colors"
+              className="p-3 text-left rounded-2xl bg-slate-50 hover:bg-blue-50 border border-slate-200/80 text-slate-800 hover:text-blue-600 font-semibold text-xs flex items-center justify-between transition-colors cursor-pointer"
             >
               <span className="flex items-center gap-2">
                 <Wrench className="w-4 h-4 text-blue-600" />
-                Xizmatlar (38 ta)
+                {t('nav.services')}
               </span>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             </button>
 
             <button
               onClick={() => scrollToSection('categories-section')}
-              className="p-3 text-left rounded-2xl bg-slate-50 hover:bg-blue-50 border border-slate-200/80 text-slate-800 hover:text-blue-600 font-semibold text-xs flex items-center justify-between transition-colors"
+              className="p-3 text-left rounded-2xl bg-slate-50 hover:bg-blue-50 border border-slate-200/80 text-slate-800 hover:text-blue-600 font-semibold text-xs flex items-center justify-between transition-colors cursor-pointer"
             >
               <span className="flex items-center gap-2">
                 <Layers className="w-4 h-4 text-indigo-600" />
-                Kategoriyalar
+                {t('nav.categories')}
               </span>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             </button>
 
             <button
               onClick={() => scrollToSection('specialists-section')}
-              className="p-3 text-left rounded-2xl bg-slate-50 hover:bg-blue-50 border border-slate-200/80 text-slate-800 hover:text-blue-600 font-semibold text-xs flex items-center justify-between transition-colors"
+              className="p-3 text-left rounded-2xl bg-slate-50 hover:bg-blue-50 border border-slate-200/80 text-slate-800 hover:text-blue-600 font-semibold text-xs flex items-center justify-between transition-colors cursor-pointer"
             >
               <span className="flex items-center gap-2">
                 <User className="w-4 h-4 text-emerald-600" />
-                Barcha ustalar
+                {t('nav.specialists')}
               </span>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             </button>
@@ -506,11 +595,11 @@ export function Header() {
                 handleEmergencyClick();
                 setMobileMenuOpen(false);
               }}
-              className="p-3 text-left rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 font-bold text-xs flex items-center justify-between"
+              className="p-3 text-left rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 font-bold text-xs flex items-center justify-between cursor-pointer"
             >
               <span className="flex items-center gap-2">
                 <Flame className="w-4 h-4 text-rose-600 fill-rose-600 animate-pulse" />
-                24/7 Shoshilinch
+                {t('nav.emergency_24_7')}
               </span>
               <ChevronRight className="w-3.5 h-3.5 text-rose-400" />
             </button>
@@ -520,11 +609,11 @@ export function Header() {
                 setIsFavoritesOpen(true);
                 setMobileMenuOpen(false);
               }}
-              className="p-3 text-left rounded-2xl bg-slate-50 hover:bg-rose-50 border border-slate-200/80 text-slate-800 font-semibold text-xs flex items-center justify-between transition-colors"
+              className="p-3 text-left rounded-2xl bg-slate-50 hover:bg-rose-50 border border-slate-200/80 text-slate-800 font-semibold text-xs flex items-center justify-between transition-colors cursor-pointer"
             >
               <span className="flex items-center gap-2">
                 <Heart className="w-4 h-4 text-rose-500" />
-                Saqlanganlar ({favorites.length})
+                {t('nav.favorites')} ({favorites.length})
               </span>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             </button>
@@ -534,11 +623,11 @@ export function Header() {
                 setIsMyBookingsOpen(true);
                 setMobileMenuOpen(false);
               }}
-              className="p-3 text-left rounded-2xl bg-slate-50 hover:bg-blue-50 border border-slate-200/80 text-slate-800 font-semibold text-xs flex items-center justify-between transition-colors"
+              className="p-3 text-left rounded-2xl bg-slate-50 hover:bg-blue-50 border border-slate-200/80 text-slate-800 font-semibold text-xs flex items-center justify-between transition-colors cursor-pointer"
             >
               <span className="flex items-center gap-2">
                 <ClipboardList className="w-4 h-4 text-blue-600" />
-                Buyurtmalarim ({pendingBookingsCount})
+                {t('nav.my_bookings')} ({pendingBookingsCount})
               </span>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             </button>
@@ -549,11 +638,11 @@ export function Header() {
                 setIsAddSpecialistModalOpen(true);
                 setMobileMenuOpen(false);
               }}
-              className="col-span-2 p-3.5 flex items-center justify-between rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs shadow-md"
+              className="col-span-2 p-3.5 flex items-center justify-between rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs shadow-md cursor-pointer"
             >
               <span className="flex items-center gap-2">
                 <PlusCircle className="w-4 h-4" />
-                Usta bo&apos;lish (SMS orqali tasdiqlash)
+                {t('nav.become_specialist')} (SMS)
               </span>
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -564,17 +653,17 @@ export function Header() {
                 setIsThemeModalOpen(true);
                 setMobileMenuOpen(false);
               }}
-              className="col-span-2 p-3 flex items-center justify-center gap-2 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold text-xs transition-colors"
+              className="col-span-2 p-3 flex items-center justify-center gap-2 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold text-xs transition-colors cursor-pointer"
             >
               <Palette className="w-4 h-4 text-amber-600" />
-              <span>Dizayn va ranglarni almashtirish (Ko&apos;z himoyasi, Tungi rejim)</span>
+              <span>{t('nav.theme')}</span>
             </button>
 
             <button
               onClick={() => scrollToSection('how-it-works')}
-              className="col-span-2 p-2.5 text-center rounded-xl text-slate-600 hover:text-slate-900 text-xs font-medium"
+              className="col-span-2 p-2.5 text-center rounded-xl text-slate-600 hover:text-slate-900 text-xs font-medium cursor-pointer"
             >
-              Qanday ishlaydi? • Xizmatchi platformasi
+              {t('nav.how_it_works')} • {t('brand.name')}
             </button>
           </div>
 

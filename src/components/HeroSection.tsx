@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import { CATEGORIES, DISTRICTS } from '../data/mockData';
 import {
   Search,
@@ -19,6 +20,7 @@ import {
 
 export function HeroSection() {
   const { filters, setFilters, openBookingModal, refreshData } = useApp();
+  const { t, getCategoryName } = useLanguage();
   const [localSearch, setLocalSearch] = useState(filters.searchQuery);
   const [selectedCat, setSelectedCat] = useState(filters.categoryId);
   const [selectedDist, setSelectedDist] = useState(filters.district);
@@ -72,22 +74,21 @@ export function HeroSection() {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-blue-200 text-xs sm:text-sm font-medium shadow-inner animate-fade-in">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
             <Sparkles className="w-4 h-4 text-emerald-400" />
-            <span>O&apos;zbekistonda usta topishning eng zamonaviy platformasi</span>
+            <span>{t('brand.badge')}</span>
           </div>
 
           {/* Main Headline */}
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight text-white drop-shadow-sm">
-            Xonadoningiz uchun ishonchli ustalarni{" "}
+            {t('hero.title_part1')}{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-emerald-300">
-              tez va kafolatli
-            </span>{" "}
-            toping
+              {t('hero.title_part2')}
+            </span>{' '}
+            {t('hero.title_part3')}
           </h1>
 
           {/* Subtitle */}
           <p className="text-base sm:text-xl text-slate-300 font-normal leading-relaxed max-w-2xl mx-auto">
-            Santexnika, elektr, maishiy texnika ta&apos;mirlash, klining va boshqa xizmatlar.
-            Vositachilarsiz to&apos;g&apos;ridan-to&apos;g&apos;ri narxlar va haqiqiy mijozlar bahosi.
+            {t('hero.description')}
           </p>
 
           {/* Search Box Card */}
@@ -98,7 +99,7 @@ export function HeroSection() {
                 <Search className="w-5 h-5 text-slate-400 shrink-0" />
                 <input
                   type="text"
-                  placeholder="Xizmat yoki usta ismi (masalan: kran, muzlatgich)..."
+                  placeholder={t('hero.search_placeholder')}
                   value={localSearch}
                   onChange={(e) => setLocalSearch(e.target.value)}
                   className="w-full bg-transparent text-sm sm:text-base font-medium placeholder:text-slate-400 focus:outline-hidden text-slate-900"
@@ -114,10 +115,10 @@ export function HeroSection() {
                   onChange={(e) => setSelectedCat(e.target.value)}
                   className="w-full bg-transparent text-sm font-medium text-slate-800 focus:outline-hidden cursor-pointer"
                 >
-                  <option value="all">Barcha xizmatlar</option>
+                  <option value="all">{t('categories.all_button')}</option>
                   {CATEGORIES.map((cat) => (
                     <option key={cat.id} value={cat.id}>
-                      {cat.name}
+                      {getCategoryName(cat.id, cat.name)}
                     </option>
                   ))}
                 </select>
@@ -135,7 +136,7 @@ export function HeroSection() {
                   >
                     {DISTRICTS.map((d) => (
                       <option key={d.id} value={d.id === 'all' ? 'all' : d.name}>
-                        {d.name}
+                        {d.id === 'all' ? t('nav.all_districts') : d.name}
                       </option>
                     ))}
                   </select>
@@ -146,11 +147,11 @@ export function HeroSection() {
                   type="button"
                   onClick={handleDistrictRefresh}
                   disabled={isRefreshing}
-                  title="Saytni yangilash: ushbu tuman bo'yicha saralash va xizmatchilarni yangilash"
+                  title={t('nav.refresh')}
                   className="px-3.5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/25 transition-all shrink-0 cursor-pointer"
                 >
                   <RefreshCw className={`w-4 h-4 stroke-[2.2] ${isRefreshing ? 'animate-spin' : ''}`} />
-                  <span className="hidden sm:inline">Yangilash</span>
+                  <span className="hidden sm:inline">{t('nav.refresh')}</span>
                 </button>
               </div>
 
@@ -160,34 +161,28 @@ export function HeroSection() {
                 className="sm:col-span-2 lg:col-span-1 px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm sm:text-base shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 transition-all flex items-center justify-center gap-2 active:scale-95 shrink-0 cursor-pointer"
               >
                 <Search className="w-4 h-4 stroke-[2.5]" />
-                <span>Qidirish</span>
+                <span>{t('hero.find_button')}</span>
               </button>
             </form>
 
             {/* Quick search pills */}
             <div className="mt-3 pt-3 border-t border-slate-200/80 flex flex-wrap items-center gap-2 text-xs">
               <span className="text-slate-500 font-semibold flex items-center gap-1">
-                <Flame className="w-3.5 h-3.5 text-amber-500" /> Mashhur so&apos;rovlar:
+                <Flame className="w-3.5 h-3.5 text-amber-500" /> {t('hero.quick_tags_label')}
               </span>
               {[
-                { label: 'Smesitel almashtirish', cat: 'santexnika' },
-                { label: 'Elektroshchit', cat: 'elektr' },
-                { label: 'Kir yuvish mashinasi', cat: 'maishiy-texnika' },
-                { label: 'Freon quyish', cat: 'konditsioner' },
-                { label: 'Qulf ochish 24/7', cat: 'qulflar' },
-                { label: 'Kamera montaji', cat: 'xavfsizlik' },
-                { label: 'Akfa rom sozlash', cat: 'romlar' },
-                { label: 'Svarka naves', cat: 'payvandlash' },
-                { label: 'Yuk tashish Labo', cat: 'yuk-tashish' },
+                { label: 'Santexnik', cat: 'santexnika' },
+                { label: 'Elektrik', cat: 'elektr' },
+                { label: 'Konditsioner', cat: 'konditsioner' },
                 { label: 'Dezinfeksiya', cat: 'dezinfeksiya' },
-                { label: 'Avto yordam / Prikurit', cat: 'avto-yordam' },
-                { label: 'Katyol ta\'miri', cat: 'isitish' },
+                { label: 'Mebel ustasi', cat: 'mebel' },
+                { label: 'Klining', cat: 'klining' },
               ].map((item) => (
                 <button
                   key={item.label}
                   type="button"
                   onClick={() => handleQuickTagClick(item.label, item.cat)}
-                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-700 font-medium transition-colors"
+                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-700 font-medium transition-colors cursor-pointer"
                 >
                   {item.label}
                 </button>
@@ -199,13 +194,13 @@ export function HeroSection() {
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => openBookingModal()}
-              className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm sm:text-base shadow-lg shadow-emerald-500/25 hover:shadow-xl transition-all flex items-center justify-center gap-2 group"
+              className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm sm:text-base shadow-lg shadow-emerald-500/25 hover:shadow-xl transition-all flex items-center justify-center gap-2 group cursor-pointer"
             >
-              <span>Ustani tezkor chaqirish</span>
+              <span>{t('hero.quick_order')}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
             <span className="text-xs text-slate-300 flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-emerald-400" /> O&apos;rtacha javob vaqti: 10-15 daqiqa
+              <Clock className="w-3.5 h-3.5 text-emerald-400" /> {t('hero.stat_service_24_7')}
             </span>
           </div>
 
@@ -216,8 +211,8 @@ export function HeroSection() {
                 <CheckCircle2 className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-lg font-bold text-white leading-tight">5,000+</div>
-                <div className="text-xs text-slate-400">Bajarilgan ishlar</div>
+                <div className="text-lg font-bold text-white leading-tight">32+</div>
+                <div className="text-xs text-slate-400">{t('hero.stat_specialists')}</div>
               </div>
             </div>
 
@@ -227,7 +222,7 @@ export function HeroSection() {
               </div>
               <div>
                 <div className="text-lg font-bold text-white leading-tight">4.9 / 5.0</div>
-                <div className="text-xs text-slate-400">Mijozlar bahosi</div>
+                <div className="text-xs text-slate-400">{t('hero.stat_reviews')}</div>
               </div>
             </div>
 
@@ -237,7 +232,7 @@ export function HeroSection() {
               </div>
               <div>
                 <div className="text-lg font-bold text-white leading-tight">100%</div>
-                <div className="text-xs text-slate-400">Tekshirilgan ustalar</div>
+                <div className="text-xs text-slate-400">{t('hero.stat_guarantee')}</div>
               </div>
             </div>
 
@@ -247,7 +242,7 @@ export function HeroSection() {
               </div>
               <div>
                 <div className="text-lg font-bold text-white leading-tight">24/7</div>
-                <div className="text-xs text-slate-400">Shoshilinch xizmat</div>
+                <div className="text-xs text-slate-400">{t('hero.stat_service_24_7')}</div>
               </div>
             </div>
           </div>

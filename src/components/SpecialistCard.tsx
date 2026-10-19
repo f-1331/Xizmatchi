@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Specialist } from '../types';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import { formatPrice } from '../lib/storage';
 import {
   Star,
@@ -32,6 +33,8 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
     isFavorite,
   } = useApp();
 
+  const { t } = useLanguage();
+
   const [imgError, setImgError] = useState(false);
   const favorited = isFavorite(specialist.id);
 
@@ -60,7 +63,7 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
             {/* Verification check */}
             {specialist.isVerified && (
               <div
-                title="Tasdiqlangan mutaxassis"
+                title={t('card.verified_tooltip')}
                 className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center ring-2 ring-white shadow-xs"
               >
                 <ShieldCheck className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -73,7 +76,7 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
             <div className="flex items-start justify-between gap-2">
               <div>
                 <h3
-                  onClick={() => setSelectedSpecialist(specialist)}
+                  onClick={() => openSpecialistDetail(specialist, 'services')}
                   className="font-bold text-slate-900 text-lg leading-snug hover:text-blue-600 transition-colors cursor-pointer truncate"
                   title={specialist.name}
                 >
@@ -87,7 +90,7 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
               {/* Favorite Button */}
               <button
                 onClick={() => toggleFavorite(specialist.id)}
-                className={`p-2 rounded-xl transition-all shrink-0 ${
+                className={`p-2 rounded-xl transition-all shrink-0 cursor-pointer ${
                   favorited
                     ? 'text-rose-600 bg-rose-50'
                     : 'text-slate-400 hover:text-rose-600 hover:bg-slate-50'
@@ -98,45 +101,44 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
               </button>
             </div>
 
-            {/* Rating and Reviews */}
-            <div className="flex items-center gap-2 mt-2">
-              <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200/80 text-xs font-bold">
+            {/* Ratings & District */}
+            <div className="flex items-center gap-3 mt-2 text-xs text-slate-500">
+              <div className="flex items-center gap-1 font-bold text-slate-900 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/60">
                 <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                 <span>{specialist.rating.toFixed(1)}</span>
+                <span className="font-normal text-slate-400">({specialist.reviewsCount})</span>
               </div>
-              <span className="text-xs text-slate-500">
-                ({specialist.reviewsCount} ta sharh)
-              </span>
 
-              {/* 24/7 pill */}
-              {specialist.isAvailable24_7 && (
-                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-bold">
-                  <Clock className="w-3 h-3 text-rose-600" /> 24/7
-                </span>
-              )}
+              <div className="flex items-center gap-1 truncate text-slate-600">
+                <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <span className="truncate">{specialist.district}</span>
+              </div>
             </div>
 
-            {/* Location & Experience */}
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-xs text-slate-500">
-              <span className="flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                <span className="truncate">{specialist.district}</span>
-              </span>
-              <span className="flex items-center gap-1">
+            {/* Experience & 24/7 Service */}
+            <div className="flex flex-wrap items-center gap-2 mt-2 text-xs">
+              <span className="text-slate-500 flex items-center gap-1">
                 <Briefcase className="w-3.5 h-3.5 text-slate-400" />
-                <span>{specialist.experienceYears} yil tajriba</span>
+                {specialist.experienceYears} {t('card.experience')}
               </span>
+
+              {specialist.isAvailable24_7 && (
+                <span className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 font-bold text-[10px] border border-rose-200/80 flex items-center gap-1 animate-pulse">
+                  <Clock className="w-2.5 h-2.5" />
+                  {t('card.urgent_badge')}
+                </span>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Short Bio */}
+        {/* Bio summary */}
         <p className="mt-3 text-xs text-slate-600 line-clamp-2 leading-relaxed">
           {specialist.bio}
         </p>
 
-        {/* Badges strip */}
-        <div className="mt-3 flex flex-wrap gap-1.5">
+        {/* Badges / Highlights */}
+        <div className="flex flex-wrap gap-1.5 mt-3">
           {specialist.badges.slice(0, 3).map((badge, idx) => (
             <span
               key={idx}
@@ -158,14 +160,14 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[11px] font-bold text-slate-600 flex items-center gap-1">
                 <ImageIcon className="w-3.5 h-3.5 text-blue-600" />
-                Ish natijalari ({specialist.portfolio.length})
+                {t('card.results_title')} ({specialist.portfolio.length})
               </span>
               <button
                 type="button"
                 onClick={() => openSpecialistDetail(specialist, 'portfolio')}
                 className="text-[11px] font-bold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
               >
-                Barchasini ko&apos;rish →
+                {t('card.view_all_portfolio')}
               </button>
             </div>
             <div className="grid grid-cols-3 gap-1.5">
@@ -195,7 +197,7 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
       <div className="p-5 pt-3 bg-slate-50/70 border-t border-slate-100 flex flex-col gap-3">
         {/* Price display */}
         <div className="flex items-baseline justify-between">
-          <span className="text-xs text-slate-500">Boshlang&apos;ich narx:</span>
+          <span className="text-xs text-slate-500">{t('card.from_price')}</span>
           <div className="text-right">
             <span className="text-base font-extrabold text-slate-900">
               {formatPrice(specialist.startingPrice)}
@@ -209,10 +211,10 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
           {/* Quick Contact (Direct Call) */}
           <a
             href={`tel:${specialist.phone.replace(/\s+/g, '')}`}
-            className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors shadow-xs"
+            className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors shadow-xs cursor-pointer"
           >
             <Phone className="w-3.5 h-3.5" />
-            <span>Qo&apos;ng&apos;iroq</span>
+            <span>{t('card.call_btn')}</span>
           </a>
 
           {/* Quick Telegram */}
@@ -221,10 +223,10 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
               href={`https://t.me/${specialist.telegram.replace('@', '')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold transition-colors shadow-xs"
+              className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold transition-colors shadow-xs cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" />
-              <span>Telegram</span>
+              <span>{t('card.telegram_btn')}</span>
             </a>
           ) : (
             <button
@@ -232,7 +234,7 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
               className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
             >
               <Eye className="w-3.5 h-3.5" />
-              <span>Profil</span>
+              <span>{t('card.profile_btn')}</span>
             </button>
           )}
         </div>
@@ -244,7 +246,7 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
             className="flex-1 py-2 px-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <Eye className="w-3.5 h-3.5 text-slate-400" />
-            <span>Portfolio & Sharhlar</span>
+            <span>{t('card.portfolio_reviews_btn')}</span>
           </button>
 
           <button
@@ -252,7 +254,7 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
             className="flex-1 py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
           >
             <Calendar className="w-3.5 h-3.5" />
-            <span>Chaqirish</span>
+            <span>{t('card.book_btn')}</span>
           </button>
         </div>
       </div>

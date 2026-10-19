@@ -22,10 +22,12 @@ import { ToastContainer } from '../components/ToastContainer';
 import { ThemeModal } from '../components/ThemeModal';
 import { ThemeFloatingButton } from '../components/ThemeFloatingButton';
 import { MobileBottomNav } from '../components/MobileBottomNav';
-import { Users, RotateCcw, PlusCircle, Sparkles } from 'lucide-react';
+import { Users, RotateCcw, PlusCircle } from 'lucide-react';
+import { LanguageProvider, useLanguage } from '../context/LanguageContext';
 
 function MainContent() {
   const { filteredSpecialists, resetFilters, setIsAddSpecialistModalOpen } = useApp();
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 transition-colors duration-300">
@@ -55,22 +57,22 @@ function MainContent() {
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-3">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider mb-1.5">
-                  <Users className="w-3.5 h-3.5" /> Malakali mutaxassislar (32 ta)
+                  <Users className="w-3.5 h-3.5" /> {t('specialists.section_badge')}
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  Toshkent va viloyatlar bo&apos;yicha sara ustalar
+                  {t('specialists.section_title')}
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                  Har bir mutaxassis sinovdan o&apos;tgan va mijozlar tomonidan baholangan
+                  {t('specialists.section_subtitle')}
                 </p>
               </div>
 
               <button
                 onClick={() => setIsAddSpecialistModalOpen(true)}
-                className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-blue-600/30 text-blue-600 hover:bg-blue-50 text-xs font-bold transition-colors"
+                className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-blue-600/30 text-blue-600 hover:bg-blue-50 text-xs font-bold transition-colors cursor-pointer"
               >
                 <PlusCircle className="w-4 h-4" />
-                <span>Usta anketasini qo&apos;shish</span>
+                <span>{t('specialists.add_profile_btn')}</span>
               </button>
             </div>
 
@@ -84,19 +86,18 @@ function MainContent() {
                   <Users className="w-8 h-8 stroke-1" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900">
-                  Mos keladigan usta topilmadi
+                  {t('specialists.not_found_title')}
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-                  Qidiruv so&apos;rovingiz yoki filtrlarni o&apos;zgartirib ko&apos;ring.
-                  Yoki filtrlarni qayta tiklang.
+                  {t('specialists.not_found_desc')}
                 </p>
                 <div className="pt-2">
                   <button
                     onClick={resetFilters}
-                    className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 mx-auto"
+                    className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 mx-auto cursor-pointer"
                   >
                     <RotateCcw className="w-4 h-4" />
-                    <span>Filtrlarni tozalash</span>
+                    <span>{t('specialists.reset_filters')}</span>
                   </button>
                 </div>
               </div>
@@ -140,8 +141,10 @@ function MainContent() {
 
 export default function Home() {
   return (
-    <AppProvider>
-      <MainContent />
-    </AppProvider>
+    <LanguageProvider>
+      <AppProvider>
+        <MainContent />
+      </AppProvider>
+    </LanguageProvider>
   );
 }

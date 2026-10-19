@@ -169,6 +169,35 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setIsLoaded(true);
   }, []);
 
+  // Universal body scroll lock whenever any modal or drawer is open
+  const isAnyModalOpen = Boolean(
+    selectedSpecialist ||
+    isBookingModalOpen ||
+    isAddSpecialistModalOpen ||
+    isMyBookingsOpen ||
+    isFavoritesOpen ||
+    isAuthModalOpen ||
+    isThemeModalOpen
+  );
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (isAnyModalOpen) {
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = 'hidden';
+      if (scrollBarWidth > 0) {
+        document.body.style.paddingRight = `${scrollBarWidth}px`;
+      }
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    };
+  }, [isAnyModalOpen]);
+
   const login = (user: UserProfile) => {
     setCurrentUser(user);
     try {

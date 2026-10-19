@@ -2,10 +2,12 @@
 
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { Flame, PhoneCall, AlertTriangle, ShieldAlert, ArrowRight } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { Flame, PhoneCall, ArrowRight } from 'lucide-react';
 
 export function EmergencyBanner() {
   const { setFilters } = useApp();
+  const { t } = useLanguage();
 
   const handleShowEmergency = () => {
     setFilters((prev) => ({
@@ -33,14 +35,13 @@ export function EmergencyBanner() {
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-500/30 text-rose-200 border border-rose-400/30 text-xs font-bold uppercase tracking-wider">
               <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping" />
-              24/7 Avariyaviy navbatchi ustalar
+              {t('emergency.title')}
             </div>
             <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
               Favqulodda holatmi? Suv toshishi, qisqa tutashuv yoki qulf buzildimi?
             </h3>
             <p className="text-xs sm:text-sm text-rose-100 max-w-2xl leading-relaxed">
-              Tungi yoki dam olish kunlaridagi shoshilinch chaqiruvlarga tayyor 24/7 ustalarimiz
-              Toshkent bo&apos;yicha 20-30 daqiqa ichida zudlik bilan yetib kelishadi.
+              {t('emergency.desc')}
             </p>
           </div>
         </div>
@@ -50,7 +51,7 @@ export function EmergencyBanner() {
             onClick={handleShowEmergency}
             className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-white text-rose-900 font-extrabold text-sm sm:text-base hover:bg-rose-50 transition-all shadow-lg shadow-black/20 flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
           >
-            <span>24/7 ustalarni ko&apos;rish</span>
+            <span>{t('emergency.call_now')}</span>
             <ArrowRight className="w-4 h-4 stroke-[2.5]" />
           </button>
 
@@ -59,7 +60,7 @@ export function EmergencyBanner() {
             className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-rose-950/60 hover:bg-rose-950/80 border border-white/20 text-white font-bold text-sm transition-all flex items-center justify-center gap-2"
           >
             <PhoneCall className="w-4 h-4 text-amber-300" />
-            <span>Tezkor aloqa: (71) 200-00-00</span>
+            <span>(71) 200-00-00</span>
           </a>
         </div>
       </div>

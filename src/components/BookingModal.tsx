@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import { CATEGORIES, DISTRICTS } from '../data/mockData';
 import { UrgencyType, BookingRequest } from '../types';
 import {
@@ -33,6 +34,8 @@ export function BookingModal() {
     setIsMyBookingsOpen,
   } = useApp();
 
+  const { t, getCategoryName } = useLanguage();
+
   const [category, setCategory] = useState(bookingCategory || 'santexnika');
   const [district, setDistrict] = useState('Chilonzor tumani');
   const [address, setAddress] = useState('');
@@ -48,6 +51,20 @@ export function BookingModal() {
 
   // Success state
   const [createdBooking, setCreatedBooking] = useState<BookingRequest | null>(null);
+
+  // Lock body scroll when this modal is open
+  useEffect(() => {
+    if (!isBookingModalOpen) return;
+    const origOverflow = document.body.style.overflow;
+    const origTouchAction = document.body.style.touchAction;
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
+    return () => {
+      document.body.style.overflow = origOverflow;
+      document.body.style.touchAction = origTouchAction;
+    };
+  }, [isBookingModalOpen]);
 
   if (!isBookingModalOpen) return null;
 
@@ -102,27 +119,30 @@ export function BookingModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-fade-in">
+    <div
+      className="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 md:p-6 animate-fade-in overscroll-none"
+      onClick={closeBookingModal}
+    >
       <div
-        className="relative bg-white rounded-3xl max-w-xl w-full shadow-2xl overflow-hidden animate-scale-up"
+        className="relative bg-white rounded-3xl max-w-xl w-full h-[90dvh] max-h-[90dvh] sm:h-auto sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-scale-up overscroll-contain"
         onClick={(e) => e.stopPropagation()}
       >
         {/* SUCCESS CONFIRMATION MODAL */}
         {createdBooking ? (
-          <div className="p-4 sm:p-8 text-center space-y-4 sm:space-y-6 w-full max-w-full overflow-hidden">
+          <div className="p-4 sm:p-8 text-center space-y-4 sm:space-y-6 w-full max-w-full overflow-y-auto">
             <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-md">
               <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10 stroke-[2.5]" />
             </div>
 
             <div className="space-y-1 sm:space-y-2">
               <span className="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] sm:text-xs font-bold border border-emerald-200">
-                Buyurtma muvaffaqiyatli qabul qilindi!
+                {t('booking.success_badge')}
               </span>
               <h3 className="text-xl sm:text-2xl font-black text-slate-900">
-                Tez orada siz bilan bog&apos;lanishadi
+                {t('booking.success_title')}
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
-                Buyurtmangiz tizimda ro&apos;yxatdan o&apos;tkazildi va Telegram orqali mutaxassisga yo&apos;llandi.
+                {t('booking.success_desc')}
               </p>
             </div>
 
@@ -166,7 +186,9 @@ export function BookingModal() {
                   <Send className="w-4 h-4" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-xs font-bold text-sky-950 truncate">Telegram botga yuborildi</div>
+                  <div className="text-xs font-bold text-sky-950 truncate">
+                    {t('booking.tg_notif_title')}
+                  </div>
                   <div className="text-[11px] text-sky-700 font-medium truncate" title={`@${TELEGRAM_BOT_USERNAME}`}>
                     @{TELEGRAM_BOT_USERNAME}
                   </div>
@@ -178,7 +200,7 @@ export function BookingModal() {
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto px-4 py-2 sm:py-2 rounded-xl bg-sky-600 hover:bg-sky-700 active:scale-95 text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
               >
-                <span>Botni ochish</span>
+                <span>{t('booking.open_bot')}</span>
                 <Send className="w-3.5 h-3.5 rotate-45 shrink-0" />
               </a>
             </div>
@@ -189,14 +211,14 @@ export function BookingModal() {
                 onClick={handleViewBookings}
                 className="flex-1 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-md transition-colors cursor-pointer"
               >
-                Buyurtmalarim bo&apos;limiga o&apos;tish
+                {t('booking.go_to_bookings')}
               </button>
               <button
                 type="button"
                 onClick={handleSuccessClose}
                 className="py-3 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold text-xs sm:text-sm transition-colors cursor-pointer"
               >
-                Yopish
+                {t('detail.close')}
               </button>
             </div>
           </div>
@@ -204,43 +226,43 @@ export function BookingModal() {
           /* BOOKING FORM */
           <>
             {/* Header */}
-            <div className="p-5 sm:p-6 bg-gradient-to-r from-blue-900 to-indigo-900 text-white flex items-center justify-between">
+            <div className="p-4 sm:p-6 bg-gradient-to-r from-blue-900 to-indigo-900 text-white flex items-center justify-between shrink-0">
               <div>
                 <span className="text-xs text-blue-200 font-semibold uppercase tracking-wider">
-                  Tezkor buyurtma
+                  {t('booking.quick_order')}
                 </span>
-                <h3 className="text-xl sm:text-2xl font-black text-white">
+                <h3 className="text-lg sm:text-2xl font-black text-white">
                   {bookingSpecialist
-                    ? `${bookingSpecialist.name}ni chaqirish`
-                    : "Ustani chaqirish (Ariza qoldirish)"}
+                    ? `${bookingSpecialist.name} ${t('booking.title_specialist')}`
+                    : t('booking.title_general')}
                 </h3>
               </div>
 
               <button
                 onClick={closeBookingModal}
-                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
-                aria-label="Yopish"
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                aria-label={t('detail.close')}
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 flex-1 min-h-0 overflow-y-auto overscroll-contain touch-pan-y">
               {/* If general booking, choose category */}
               {!bookingSpecialist && (
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Xizmat sohasini tanlang: *
+                    {t('booking.category_label')}
                   </label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm font-semibold text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm font-semibold text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden cursor-pointer"
                   >
                     {CATEGORIES.map((c) => (
                       <option key={c.id} value={c.id}>
-                        {c.name}
+                        {getCategoryName(c.id, c.name)}
                       </option>
                     ))}
                   </select>
@@ -250,49 +272,46 @@ export function BookingModal() {
               {/* Urgency Selector */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                  Qanchalik shoshilinch? *
+                  {t('booking.urgency_label')}
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
                     onClick={() => setUrgency('urgent')}
-                    className={`p-2.5 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-all ${
+                    className={`p-2.5 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer ${
                       urgency === 'urgent'
                         ? 'bg-rose-50 border-rose-500 text-rose-700 ring-2 ring-rose-500/20'
                         : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
                     }`}
                   >
                     <Flame className="w-4 h-4 text-rose-600 fill-rose-600 animate-pulse" />
-                    <span>Shoshilinch</span>
-                    <span className="text-[10px] font-normal text-slate-500">~1 soatda</span>
+                    <span>{t('booking.urgency_urgent')}</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setUrgency('today')}
-                    className={`p-2.5 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-all ${
+                    className={`p-2.5 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer ${
                       urgency === 'today'
                         ? 'bg-blue-50 border-blue-500 text-blue-700 ring-2 ring-blue-500/20'
                         : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
                     }`}
                   >
                     <Clock className="w-4 h-4 text-blue-600" />
-                    <span>Bugun</span>
-                    <span className="text-[10px] font-normal text-slate-500">kun davomida</span>
+                    <span>{t('booking.urgency_today')}</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setUrgency('scheduled')}
-                    className={`p-2.5 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-all ${
+                    className={`p-2.5 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer ${
                       urgency === 'scheduled'
                         ? 'bg-emerald-50 border-emerald-500 text-emerald-700 ring-2 ring-emerald-500/20'
                         : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
                     }`}
                   >
                     <Calendar className="w-4 h-4 text-emerald-600" />
-                    <span>Rejali</span>
-                    <span className="text-[10px] font-normal text-slate-500">aniq kunda</span>
+                    <span>{t('booking.urgency_scheduled')}</span>
                   </button>
                 </div>
               </div>
@@ -300,52 +319,27 @@ export function BookingModal() {
               {/* Problem Description */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Muammo tavsifi: *
+                  {t('booking.description_label')}
                 </label>
                 <textarea
                   required
                   rows={3}
-                  placeholder="Nimani tuzatish yoki o'rnatish kerakligini qisqacha tushuntiring..."
+                  placeholder={t('booking.description_placeholder')}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
                 />
-
-                {/* Quick description templates */}
-                <div className="flex flex-wrap gap-1.5 mt-1.5">
-                  {[
-                    "Smesitel tagidan suv oqyapti",
-                    "Elektr quvvat uzildi / avtomat o'chdi",
-                    "Konditsioner yaxshi sovutmayapti",
-                    "Qulf buzildi, ochilmayapti",
-                    "Kameralar va domofon o'rnatish",
-                    "Akfa derazadan shamol kiryapti",
-                    "Yuk tashish uchun mashina va ishchilar",
-                    "Klop va tarakanga qarshi dezinfeksiya",
-                    "Akkumulyator 'prikurit' qilish kerak",
-                    "Katyol bosimi tushib ketyapti",
-                  ].map((temp) => (
-                    <button
-                      key={temp}
-                      type="button"
-                      onClick={() => setDescription(temp)}
-                      className="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 hover:bg-blue-100 text-slate-600 hover:text-blue-700 transition-colors"
-                    >
-                      + {temp}
-                    </button>
-                  ))}
-                </div>
               </div>
 
               {/* Photo Upload / Samples */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Muammo fotosurati (ixtiyoriy):
+                  {t('booking.photo_label')}
                 </label>
                 <div className="flex items-center gap-3">
                   <label className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border border-dashed border-slate-300 hover:border-blue-500 bg-slate-50 hover:bg-blue-50/50 cursor-pointer text-xs font-medium text-slate-600 transition-colors">
                     <UploadCloud className="w-4 h-4 text-blue-600" />
-                    <span>Rasm yuklash</span>
+                    <span>{t('booking.photo_hint')}</span>
                     <input
                       type="file"
                       accept="image/*"
@@ -365,36 +359,12 @@ export function BookingModal() {
                       <button
                         type="button"
                         onClick={() => setPhotoPreview(null)}
-                        className="absolute top-0 right-0 bg-red-600 text-white p-0.5 rounded-bl"
+                        className="absolute top-0 right-0 bg-red-600 text-white p-0.5 rounded-bl cursor-pointer"
                       >
                         <X className="w-3 h-3" />
                       </button>
                     </div>
                   )}
-                </div>
-
-                {/* Quick sample damage preview */}
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="text-[11px] text-slate-400">Namuna rasmlar:</span>
-                  {[
-                    {
-                      label: 'Kran',
-                      url: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=300',
-                    },
-                    {
-                      label: 'Shchit',
-                      url: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=300',
-                    },
-                  ].map((s) => (
-                    <button
-                      key={s.label}
-                      type="button"
-                      onClick={() => handleSamplePhoto(s.url)}
-                      className="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600"
-                    >
-                      {s.label}
-                    </button>
-                  ))}
                 </div>
               </div>
 
@@ -402,12 +372,12 @@ export function BookingModal() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Tuman: *
+                    {t('booking.district_label')}
                   </label>
                   <select
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden cursor-pointer"
                   >
                     {DISTRICTS.filter((d) => d.id !== 'all').map((d) => (
                       <option key={d.id} value={d.name}>
@@ -419,12 +389,12 @@ export function BookingModal() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Aniq manzil (ko&apos;cha, uy, xonadon): *
+                    {t('booking.address_label')}
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="Masalan: Chilonzor 9, 12-uy, 34-xonadon"
+                    placeholder={t('booking.address_placeholder')}
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs sm:text-sm focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
@@ -454,12 +424,12 @@ export function BookingModal() {
                   <select
                     value={preferredTime}
                     onChange={(e) => setPreferredTime(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden cursor-pointer"
                   >
-                    <option value="09:00 - 12:00">09:00 - 12:00 (Ertalab)</option>
-                    <option value="12:00 - 15:00">12:00 - 15:00 (Tushdan keyin)</option>
-                    <option value="15:00 - 18:00">15:00 - 18:00 (Kechki payt)</option>
-                    <option value="18:00 - 21:00">18:00 - 21:00 (Kechqurun)</option>
+                    <option value="09:00 - 12:00">09:00 - 12:00</option>
+                    <option value="12:00 - 15:00">12:00 - 15:00</option>
+                    <option value="15:00 - 18:00">15:00 - 18:00</option>
+                    <option value="18:00 - 21:00">18:00 - 21:00</option>
                     <option value="Ixtiyoriy vaqt">Ixtiyoriy vaqt (Zudlik bilan)</option>
                   </select>
                 </div>
@@ -469,7 +439,7 @@ export function BookingModal() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Ism-familiyangiz: *
+                    {t('booking.client_name_label')}
                   </label>
                   <input
                     type="text"
@@ -483,7 +453,7 @@ export function BookingModal() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Telefon raqamingiz: *
+                    {t('booking.client_phone_label')}
                   </label>
                   <input
                     type="tel"
@@ -501,15 +471,15 @@ export function BookingModal() {
                 <button
                   type="button"
                   onClick={closeBookingModal}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs sm:text-sm font-semibold transition-colors"
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
                 >
                   Bekor qilish
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95"
+                  className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
                 >
-                  Buyurtmani tasdiqlash
+                  {t('booking.submit_btn')}
                 </button>
               </div>
             </form>

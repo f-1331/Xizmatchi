@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import { CATEGORIES } from '../data/mockData';
 import { Logo } from './Logo';
 import {
@@ -17,6 +18,7 @@ import {
 
 export function Footer() {
   const { setFilters, setIsAddSpecialistModalOpen } = useApp();
+  const { t, getCategoryName } = useLanguage();
 
   const handleCategoryClick = (catId: string) => {
     setFilters((prev) => ({ ...prev, categoryId: catId }));
@@ -33,32 +35,31 @@ export function Footer() {
             <Logo theme="dark" />
 
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm">
-              Xonadonlar, kottejlar va ofislar uchun ishonchli va malakali ustalarni
-              tez va oson topish platformasi. Halol narxlar, shaffof sharhlar va kafolatli xizmat.
+              {t('footer.about')}
             </p>
 
             <div className="pt-2 flex items-center gap-3">
               <button
                 onClick={() => setIsAddSpecialistModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md active:scale-95"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
               >
                 <PlusCircle className="w-4 h-4" />
-                <span>Usta sifatida qo&apos;shilish</span>
+                <span>{t('nav.become_specialist')}</span>
               </button>
             </div>
           </div>
 
           {/* Categories */}
           <div>
-            <h4 className="font-bold text-white text-sm mb-4">Xizmat toifalari</h4>
+            <h4 className="font-bold text-white text-sm mb-4">{t('footer.popular_cats')}</h4>
             <ul className="space-y-2 text-xs">
               {CATEGORIES.slice(0, 8).map((c) => (
                 <li key={c.id}>
                   <button
                     onClick={() => handleCategoryClick(c.id)}
-                    className="hover:text-blue-400 transition-colors text-left"
+                    className="hover:text-blue-400 transition-colors text-left cursor-pointer"
                   >
-                    {c.name} xizmati
+                    {getCategoryName(c.id, c.name)}
                   </button>
                 </li>
               ))}
@@ -67,42 +68,32 @@ export function Footer() {
 
           {/* Information Links */}
           <div>
-            <h4 className="font-bold text-white text-sm mb-4">Foydalanuvchilarga</h4>
+            <h4 className="font-bold text-white text-sm mb-4">{t('footer.quick_links')}</h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <a href="#how-it-works" className="hover:text-blue-400 transition-colors">
-                  Qanday ishlaydi?
+                  {t('nav.how_it_works')}
                 </a>
               </li>
               <li>
                 <a href="#specialists-section" className="hover:text-blue-400 transition-colors">
-                  Barcha ustalar reytingi
+                  {t('nav.specialists')}
                 </a>
               </li>
               <li>
                 <button
                   onClick={() => setIsAddSpecialistModalOpen(true)}
-                  className="hover:text-blue-400 transition-colors text-left"
+                  className="hover:text-blue-400 transition-colors text-left cursor-pointer"
                 >
-                  Usta bo&apos;lib ishlash
+                  {t('nav.become_specialist')}
                 </button>
-              </li>
-              <li>
-                <span className="hover:text-blue-400 transition-colors cursor-pointer">
-                  Xavfsizlik qoidalari
-                </span>
-              </li>
-              <li>
-                <span className="hover:text-blue-400 transition-colors cursor-pointer">
-                  Ko&apos;p beriladigan savollar (FAQ)
-                </span>
               </li>
             </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="font-bold text-white text-sm mb-4">Aloqa & Qo&apos;llab-quvvatlash</h4>
+            <h4 className="font-bold text-white text-sm mb-4">{t('footer.contacts')}</h4>
             <ul className="space-y-3 text-xs">
               <li className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-blue-400 shrink-0" />
@@ -121,17 +112,6 @@ export function Footer() {
                   @xizmatchiuz_Uzbekistan_bot
                 </a>
               </li>
-              <li className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
-                <a
-                  href="https://xizmatchiuz.netlify.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-slate-300 hover:text-white"
-                >
-                  xizmatchiuz.netlify.app
-                </a>
-              </li>
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
                 <span className="text-slate-300 leading-snug">
@@ -144,7 +124,7 @@ export function Footer() {
 
         {/* Bottom copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} Xizmatchi Platformasi. Barcha huquqlar himoyalangan.</p>
+          <p>© {new Date().getFullYear()} Xizmatchi Platformasi. {t('footer.copyright')}</p>
           <p className="flex items-center gap-1">
             O&apos;zbekistonda mehr bilan yaratilgan <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 inline" />
           </p>

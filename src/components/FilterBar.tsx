@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import { CATEGORIES, DISTRICTS } from '../data/mockData';
 import { FilterState } from '../types';
 import {
@@ -20,6 +21,7 @@ import {
 
 export function FilterBar() {
   const { filters, setFilters, resetFilters, refreshData, filteredSpecialists } = useApp();
+  const { t, getCategoryName } = useLanguage();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = () => {
@@ -48,7 +50,7 @@ export function FilterBar() {
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
-            placeholder="Mutaxassis ismi, kasbi yoki xizmat nomi..."
+            placeholder={t('hero.search_placeholder')}
             value={filters.searchQuery}
             onChange={(e) => setFilters((prev) => ({ ...prev, searchQuery: e.target.value }))}
             className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all font-medium"
@@ -72,10 +74,10 @@ export function FilterBar() {
             onChange={(e) => setFilters((prev) => ({ ...prev, categoryId: e.target.value }))}
             className="w-full bg-transparent font-medium text-slate-800 focus:outline-hidden cursor-pointer"
           >
-            <option value="all">Barcha sohalar</option>
+            <option value="all">{t('categories.all_button')}</option>
             {CATEGORIES.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.name}
+                {getCategoryName(c.id, c.name)}
               </option>
             ))}
           </select>
@@ -93,7 +95,7 @@ export function FilterBar() {
             >
               {DISTRICTS.map((d) => (
                 <option key={d.id} value={d.id === 'all' ? 'all' : d.name}>
-                  {d.name}
+                  {d.id === 'all' ? t('nav.all_districts') : d.name}
                 </option>
               ))}
             </select>
@@ -103,7 +105,7 @@ export function FilterBar() {
             type="button"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            title="Tumandagi xizmatchilarni yangilash"
+            title={t('nav.refresh')}
             className="p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 hover:border-emerald-300 transition-all cursor-pointer shrink-0"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -124,11 +126,11 @@ export function FilterBar() {
             }
             className="w-full bg-transparent font-medium text-slate-800 focus:outline-hidden cursor-pointer"
           >
-            <option value="recommended">Tavsiya etilgan</option>
-            <option value="price_asc">Narx: Arzondan qimmatga</option>
-            <option value="price_desc">Narx: Qimmatdan arzonga</option>
-            <option value="rating">Reyting bo&apos;yicha (eng yuqori)</option>
-            <option value="experience">Tajriba bo&apos;yicha</option>
+            <option value="recommended">{t('filter.sort_recommended')}</option>
+            <option value="price_asc">{t('filter.sort_price_asc')}</option>
+            <option value="price_desc">{t('filter.sort_price_desc')}</option>
+            <option value="rating">{t('filter.sort_rating')}</option>
+            <option value="experience">{t('filter.sort_experience')}</option>
           </select>
         </div>
       </div>
@@ -148,7 +150,7 @@ export function FilterBar() {
             <button
               key={r.label}
               onClick={() => setFilters((prev) => ({ ...prev, minRating: r.value }))}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 filters.minRating === r.value
                   ? 'bg-amber-100 text-amber-900 border border-amber-300 shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -163,34 +165,34 @@ export function FilterBar() {
           {/* 24/7 Service Toggle */}
           <button
             onClick={() => setFilters((prev) => ({ ...prev, only24_7: !prev.only24_7 }))}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               filters.only24_7
                 ? 'bg-rose-100 text-rose-800 border border-rose-300 shadow-xs'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             <Clock className="w-3.5 h-3.5 text-rose-600" />
-            <span>24/7 Shoshilinch</span>
+            <span>{t('filter.only_24_7')}</span>
           </button>
 
           {/* Verified Toggle */}
           <button
             onClick={() => setFilters((prev) => ({ ...prev, onlyVerified: !prev.onlyVerified }))}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               filters.onlyVerified
                 ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-xs'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Tekshirilgan ustalar</span>
+            <span>{t('filter.only_verified')}</span>
           </button>
         </div>
 
         {/* Counter & Reset */}
         <div className="flex items-center gap-3 ml-auto text-xs font-medium">
           <span className="text-slate-600">
-            Topildi: <strong className="text-slate-900 text-sm">{filteredSpecialists.length}</strong> ta usta
+            <strong className="text-slate-900 text-sm">{filteredSpecialists.length}</strong> {t('filter.found_count')}
           </span>
 
           {isFiltered && (
@@ -199,7 +201,7 @@ export function FilterBar() {
               className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Tozalash</span>
+              <span>{t('specialists.reset_filters')}</span>
             </button>
           )}
         </div>
