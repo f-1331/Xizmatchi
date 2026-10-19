@@ -109,89 +109,92 @@ export function BookingModal() {
       >
         {/* SUCCESS CONFIRMATION MODAL */}
         {createdBooking ? (
-          <div className="p-6 sm:p-8 text-center space-y-6">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-md">
-              <CheckCircle2 className="w-10 h-10 stroke-[2.5]" />
+          <div className="p-4 sm:p-8 text-center space-y-4 sm:space-y-6 w-full max-w-full overflow-hidden">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-md">
+              <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10 stroke-[2.5]" />
             </div>
 
-            <div className="space-y-2">
-              <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
+            <div className="space-y-1 sm:space-y-2">
+              <span className="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] sm:text-xs font-bold border border-emerald-200">
                 Buyurtma muvaffaqiyatli qabul qilindi!
               </span>
-              <h3 className="text-2xl font-black text-slate-900">
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900">
                 Tez orada siz bilan bog&apos;lanishadi
               </h3>
-              <p className="text-sm text-slate-600 max-w-md mx-auto">
+              <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
                 Buyurtmangiz tizimda ro&apos;yxatdan o&apos;tkazildi va Telegram orqali mutaxassisga yo&apos;llandi.
               </p>
             </div>
 
             {/* Order Details Card */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-3 text-xs sm:text-sm">
-              <div className="flex justify-between items-center pb-2 border-b border-slate-200">
-                <span className="text-slate-500">Buyurtma raqami:</span>
-                <span className="font-extrabold text-blue-600 text-base">
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-2.5 sm:space-y-3 text-xs sm:text-sm">
+              <div className="flex justify-between items-center pb-2 border-b border-slate-200 gap-2">
+                <span className="text-slate-500 shrink-0">Buyurtma raqami:</span>
+                <span className="font-extrabold text-blue-600 text-sm sm:text-base">
                   #{createdBooking.id}
                 </span>
               </div>
 
               {createdBooking.specialistName && (
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500">Tanlangan usta:</span>
-                  <span className="font-bold text-slate-900">
+                <div className="flex justify-between items-center gap-2">
+                  <span className="text-slate-500 shrink-0">Tanlangan usta:</span>
+                  <span className="font-bold text-slate-900 truncate text-right">
                     {createdBooking.specialistName}
                   </span>
                 </div>
               )}
 
-              <div className="flex justify-between items-center">
-                <span className="text-slate-500">Kutilayotgan javob vaqti:</span>
-                <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+              <div className="flex justify-between items-center gap-2">
+                <span className="text-slate-500 shrink-0">Kutilayotgan javob vaqti:</span>
+                <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 text-xs shrink-0">
                   {createdBooking.estimatedResponseTime}
                 </span>
               </div>
 
-              <div className="flex justify-between items-center">
-                <span className="text-slate-500">Manzil:</span>
-                <span className="font-semibold text-slate-800 truncate max-w-[220px]">
+              <div className="flex justify-between items-center gap-2">
+                <span className="text-slate-500 shrink-0">Manzil:</span>
+                <span className="font-semibold text-slate-800 truncate text-right">
                   {createdBooking.district}, {createdBooking.address}
                 </span>
               </div>
             </div>
 
-            {/* Telegram Notification Banner */}
-            <div className="p-3.5 rounded-2xl bg-sky-50 border border-sky-200 flex items-center justify-between gap-3 text-left">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-sky-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+            {/* Telegram Notification Banner — Fully Responsive and Never Overflows */}
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-sky-50 border border-sky-200 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-left w-full">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-9 h-9 rounded-xl bg-sky-500 text-white flex items-center justify-center shrink-0 shadow-xs">
                   <Send className="w-4 h-4" />
                 </div>
-                <div>
-                  <div className="text-xs font-bold text-sky-950">Telegram botga yuborildi</div>
-                  <div className="text-[11px] text-sky-700 font-medium">@{TELEGRAM_BOT_USERNAME}</div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs font-bold text-sky-950 truncate">Telegram botga yuborildi</div>
+                  <div className="text-[11px] text-sky-700 font-medium truncate" title={`@${TELEGRAM_BOT_USERNAME}`}>
+                    @{TELEGRAM_BOT_USERNAME}
+                  </div>
                 </div>
               </div>
               <a
                 href={`https://t.me/${TELEGRAM_BOT_USERNAME}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-xs transition-colors shrink-0 flex items-center gap-1"
+                className="w-full sm:w-auto px-4 py-2 sm:py-2 rounded-xl bg-sky-600 hover:bg-sky-700 active:scale-95 text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
               >
                 <span>Botni ochish</span>
+                <Send className="w-3.5 h-3.5 rotate-45 shrink-0" />
               </a>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
               <button
                 type="button"
                 onClick={handleViewBookings}
-                className="flex-1 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md transition-colors"
+                className="flex-1 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-md transition-colors cursor-pointer"
               >
                 Buyurtmalarim bo&apos;limiga o&apos;tish
               </button>
               <button
                 type="button"
                 onClick={handleSuccessClose}
-                className="py-3 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold text-sm transition-colors"
+                className="py-3 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold text-xs sm:text-sm transition-colors cursor-pointer"
               >
                 Yopish
               </button>
