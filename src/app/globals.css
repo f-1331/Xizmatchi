@@ -40,6 +40,12 @@ body {
 /* ========================================================
    REMOVE NETLIFY BADGE & DRAWER OVERLAYS
    ======================================================== */
+#nl-hud-frame,
+#nl-badge-frame,
+iframe#nl-hud-frame,
+iframe#nl-badge-frame,
+[id*="nl-hud"],
+[id*="nl-badge"],
 iframe,
 iframe[src*="netlify"],
 iframe[title*="Netlify"],

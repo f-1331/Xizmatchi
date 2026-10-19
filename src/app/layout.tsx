@@ -47,8 +47,33 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                function removeNetlifyBadge() {
+                try {
+                  localStorage.setItem("nl-hud:public:v1", "hidden");
+                  localStorage.setItem("nl-hud:owner-private:v1", "hidden");
+                } catch(e) {}
+
+                function killNetlify() {
+                  try {
+                    localStorage.setItem("nl-hud:public:v1", "hidden");
+                    localStorage.setItem("nl-hud:owner-private:v1", "hidden");
+                  } catch(e) {}
+
+                  var nfScripts = document.querySelectorAll('script[data-nf-variant], script[src*="hud"]');
+                  nfScripts.forEach(function(s) {
+                    try {
+                      delete s.dataset.nfVariant;
+                      s.removeAttribute('data-nf-variant');
+                      s.remove();
+                    } catch(e) {}
+                  });
+
                   var selectors = [
+                    '#nl-hud-frame',
+                    '#nl-badge-frame',
+                    'iframe#nl-hud-frame',
+                    'iframe#nl-badge-frame',
+                    'iframe[src*="netlify"]',
+                    'iframe[title*="Netlify"]',
                     'iframe',
                     '#netlify-badge',
                     '.netlify-badge',
@@ -61,23 +86,32 @@ export default function RootLayout({
                     'netlify-badge',
                     'a[href*="netlify.com"]:not(footer a)',
                     'img[src*="netlify"]',
-                    'img[alt*="Netlify"]',
-                    'script[data-nf-variant]',
-                    'script[src*="/.netlify/scripts/hud"]'
+                    'img[alt*="Netlify"]'
                   ];
+
                   selectors.forEach(function(sel) {
                     var els = document.querySelectorAll(sel);
                     els.forEach(function(el) {
-                      try { el.remove(); } catch(e) {}
+                      // Keep our dummy blockers if they prevent hud rendering, else hide/remove
+                      if (el.id === 'nl-hud-blocker' || el.id === 'nl-badge-blocker') return;
+                      try {
+                        el.style.setProperty('display', 'none', 'important');
+                        el.style.setProperty('visibility', 'hidden', 'important');
+                        el.style.setProperty('opacity', '0', 'important');
+                        el.style.setProperty('pointer-events', 'none', 'important');
+                        el.remove();
+                      } catch(e) {}
                     });
                   });
                 }
+
+                killNetlify();
                 if (typeof window !== 'undefined') {
-                  window.addEventListener('DOMContentLoaded', removeNetlifyBadge);
-                  window.addEventListener('load', removeNetlifyBadge);
-                  setInterval(removeNetlifyBadge, 200);
+                  window.addEventListener('DOMContentLoaded', killNetlify);
+                  window.addEventListener('load', killNetlify);
+                  setInterval(killNetlify, 150);
                   try {
-                    var observer = new MutationObserver(removeNetlifyBadge);
+                    var observer = new MutationObserver(killNetlify);
                     observer.observe(document.documentElement, { childList: true, subtree: true });
                   } catch(e) {}
                 }
