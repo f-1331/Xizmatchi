@@ -61,7 +61,9 @@ export default function RootLayout({
                     'netlify-badge',
                     'a[href*="netlify.com"]:not(footer a)',
                     'img[src*="netlify"]',
-                    'img[alt*="Netlify"]'
+                    'img[alt*="Netlify"]',
+                    'script[data-nf-variant]',
+                    'script[src*="/.netlify/scripts/hud"]'
                   ];
                   selectors.forEach(function(sel) {
                     var els = document.querySelectorAll(sel);
