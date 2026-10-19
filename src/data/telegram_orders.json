@@ -1,6 +1,47 @@
 [
   {
     "booking": {
+      "id": "TEST-6488",
+      "clientName": "Sinov Foydalanuvchi",
+      "clientPhone": "+998901234567",
+      "district": "Chilonzor tumani",
+      "address": "Muqimiy ko'chasi, 15-uy",
+      "categoryId": "dezinfeksiya",
+      "specialistName": "Mansur Saidvaliyev",
+      "urgency": "urgent",
+      "preferredDate": "2026-10-20",
+      "preferredTime": "10:00 - 12:00",
+      "estimatedResponseTime": "~15 daqiqa",
+      "description": "Uydagi zararkunandalarni yo'qotish uchun sinov buyurtmasi."
+    },
+    "deliveredCount": 1,
+    "subscribersCount": 1,
+    "errors": [],
+    "sentAt": "2026-10-19T19:14:00.446Z"
+  },
+  {
+    "booking": {
+      "id": "TEST-ORD-101",
+      "clientName": "Fayzbek Test",
+      "clientPhone": "+998901234567",
+      "district": "Chilonzor tumani",
+      "address": "Qatortol 14, 25-uy",
+      "categoryId": "santexnika",
+      "urgency": "urgent",
+      "description": "Kran sinib suv toshmoqda",
+      "estimatedResponseTime": "15 daqiqa",
+      "preferredDate": "2026-10-20",
+      "preferredTime": "14:00 - 16:00"
+    },
+    "deliveredCount": 0,
+    "subscribersCount": 1,
+    "errors": [
+      "OwnerBot Chat 6707839718: Bad Request: inline keyboard button URL 'tel:+998901234567' is invalid: Wrong port number specified in the URL"
+    ],
+    "sentAt": "2026-10-19T19:11:50.735Z"
+  },
+  {
+    "booking": {
       "id": "REQ-TEST",
       "clientName": "Alisher Navoiy",
       "clientPhone": "+998 90 123 45 67",

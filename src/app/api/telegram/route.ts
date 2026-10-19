@@ -13,17 +13,23 @@ const CLIENT_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_bot';
 const SUBSCRIBERS_FILE = path.join(process.cwd(), 'src', 'data', 'telegram_subscribers.json');
 const ORDERS_LOG_FILE = path.join(process.cwd(), 'src', 'data', 'telegram_orders.json');
 
+// Primary Owner & Admin Chat IDs (always notified even on fresh/cold start)
+const DEFAULT_ADMIN_CHAT_IDS = [6707839718];
+
 // Helper to read subscribers
 function getSubscribers(): number[] {
+  const set = new Set<number>(DEFAULT_ADMIN_CHAT_IDS);
   try {
     if (fs.existsSync(SUBSCRIBERS_FILE)) {
       const data = JSON.parse(fs.readFileSync(SUBSCRIBERS_FILE, 'utf-8'));
-      if (Array.isArray(data)) return data;
+      if (Array.isArray(data)) {
+        data.forEach((id) => set.add(Number(id)));
+      }
     }
   } catch (err) {
     console.error('Error reading telegram subscribers:', err);
   }
-  return [];
+  return Array.from(set);
 }
 
 // Helper to save subscribers
@@ -145,12 +151,6 @@ export async function POST(req: NextRequest) {
       inline_keyboard: [
         [
           {
-            text: `📞 Mijozga qo'ng'iroq qilish (${booking.clientPhone})`,
-            url: `tel:${cleanPhone}`,
-          },
-        ],
-        [
-          {
             text: `✅ Qabul qilish`,
             callback_data: `accept_${booking.id}`,
           },
@@ -161,7 +161,7 @@ export async function POST(req: NextRequest) {
         ],
         [
           {
-            text: `🌐 Xizmatchi saytini ochish`,
+            text: `🌐 Xizmatchi platformasini ochish`,
             url: `https://xizmatchiuz.netlify.app`,
           },
         ],
