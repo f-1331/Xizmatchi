@@ -293,92 +293,99 @@ export function Header() {
         </div>
       </div>
 
-      {/* TIER 2: Mobile & Tablet Quick Navigation Scrollable Strip (Visible on screens < 1024px) */}
-      <div className="lg:hidden border-t border-slate-200/80 bg-slate-50/90 backdrop-blur-xs px-2.5 py-1.5 overflow-x-auto scrollbar-none flex items-center gap-1.5 text-xs">
-        {/* District Selector & Refresh button right at the top */}
-        <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs shrink-0">
-          <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-          <select
-            aria-label="Hududni tanlang"
-            value={filters.district}
-            onChange={(e) => handleDistrictChange(e.target.value)}
-            className="bg-transparent font-bold text-slate-800 text-xs focus:outline-hidden cursor-pointer"
-          >
-            {DISTRICTS.map((d) => (
-              <option key={d.id} value={d.id === 'all' ? 'all' : d.name}>
-                {d.name.replace(' tumani', '')}
-              </option>
-            ))}
-          </select>
+      {/* TIER 2: Mobile & Tablet Quick Navigation (Visible on screens < 1024px) */}
+      <div className="lg:hidden border-t border-slate-200/80 bg-slate-50/95 backdrop-blur-md px-2.5 py-2 space-y-1.5 shadow-xs">
+        {/* Row 1: District Selector & Fast Actions */}
+        <div className="flex items-center justify-between gap-1.5 text-xs">
+          {/* District Selector & Refresh button */}
+          <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 shadow-2xs flex-1 min-w-0">
+            <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+            <select
+              aria-label="Hududni tanlang"
+              value={filters.district}
+              onChange={(e) => handleDistrictChange(e.target.value)}
+              className="bg-transparent font-bold text-slate-800 text-xs focus:outline-hidden cursor-pointer flex-1 truncate"
+            >
+              {DISTRICTS.map((d) => (
+                <option key={d.id} value={d.id === 'all' ? 'all' : d.name}>
+                  {d.name.replace(' tumani', '')}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={handleHeaderRefresh}
+              disabled={isRefreshing}
+              title="Saytni yangilash"
+              className="p-1 rounded text-slate-500 hover:text-blue-600 hover:bg-slate-100 transition-colors shrink-0"
+            >
+              <RefreshCw
+                className={`w-3.5 h-3.5 text-emerald-600 ${isRefreshing ? 'animate-spin' : ''}`}
+              />
+            </button>
+          </div>
+
+          {/* Theme Switcher Button */}
           <button
-            type="button"
-            onClick={handleHeaderRefresh}
-            disabled={isRefreshing}
-            title="Saytni yangilash"
-            className="p-1 rounded text-slate-500 hover:text-blue-600 hover:bg-slate-100 transition-colors shrink-0"
+            onClick={() => setIsThemeModalOpen(true)}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 border border-amber-200 text-amber-900 font-bold shrink-0 shadow-2xs transition-colors"
           >
-            <RefreshCw
-              className={`w-3.5 h-3.5 text-emerald-600 ${isRefreshing ? 'animate-spin' : ''}`}
-            />
+            <Palette className="w-3.5 h-3.5 text-amber-600" />
+            <span>Dizayn</span>
+          </button>
+
+          {/* Favorites Button */}
+          <button
+            onClick={() => setIsFavoritesOpen(true)}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100/80 border border-rose-200 text-rose-800 font-bold shrink-0 shadow-2xs transition-colors"
+          >
+            <Heart className="w-3.5 h-3.5 text-rose-500" />
+            <span>{favorites.length > 0 ? `(${favorites.length})` : 'Sevimlilar'}</span>
           </button>
         </div>
 
-        {/* Quick Nav Pills */}
-        <a
-          href="#services-catalog"
-          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-semibold shrink-0 hover:text-blue-600"
-        >
-          <Wrench className="w-3.5 h-3.5 text-blue-500" />
-          <span>Xizmatlar (38)</span>
-        </a>
+        {/* Row 2: All 5 Primary Sections - Wrapped cleanly so ALL items and their continuation are 100% visible on mobile */}
+        <div className="flex flex-wrap items-center gap-1.5 text-xs pt-0.5">
+          <a
+            href="#services-catalog"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 text-slate-800 hover:text-blue-600 font-bold shadow-2xs transition-colors"
+          >
+            <Wrench className="w-3.5 h-3.5 text-blue-600" />
+            <span>Xizmatlar (38)</span>
+          </a>
 
-        <a
-          href="#categories-section"
-          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-semibold shrink-0 hover:text-blue-600"
-        >
-          <Layers className="w-3.5 h-3.5 text-indigo-500" />
-          <span>Kategoriyalar</span>
-        </a>
+          <a
+            href="#categories-section"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 text-slate-800 hover:text-blue-600 font-bold shadow-2xs transition-colors"
+          >
+            <Layers className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Kategoriyalar</span>
+          </a>
 
-        <a
-          href="#specialists-section"
-          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-semibold shrink-0 hover:text-blue-600"
-        >
-          <User className="w-3.5 h-3.5 text-emerald-500" />
-          <span>Ustalar</span>
-        </a>
+          <a
+            href="#specialists-section"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 text-slate-800 hover:text-blue-600 font-bold shadow-2xs transition-colors"
+          >
+            <User className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Ustalar</span>
+          </a>
 
-        <button
-          onClick={handleEmergencyClick}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 font-bold shrink-0"
-        >
-          <Flame className="w-3.5 h-3.5 text-rose-600 fill-rose-600 animate-pulse" />
-          <span>24/7 Shoshilinch</span>
-        </button>
+          <button
+            onClick={handleEmergencyClick}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold shadow-xs transition-colors"
+          >
+            <Flame className="w-3.5 h-3.5 fill-white text-white animate-pulse" />
+            <span>24/7 Shoshilinch</span>
+          </button>
 
-        <a
-          href="#how-it-works"
-          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-semibold shrink-0 hover:text-blue-600"
-        >
-          <HelpCircle className="w-3.5 h-3.5 text-amber-500" />
-          <span>Qanday ishlaydi?</span>
-        </a>
-
-        <button
-          onClick={() => setIsFavoritesOpen(true)}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-semibold shrink-0"
-        >
-          <Heart className="w-3.5 h-3.5 text-rose-500" />
-          <span>Saqlanganlar {favorites.length > 0 && `(${favorites.length})`}</span>
-        </button>
-
-        <button
-          onClick={() => setIsThemeModalOpen(true)}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 font-bold shrink-0"
-        >
-          <Palette className="w-3.5 h-3.5 text-amber-600" />
-          <span>Dizayn</span>
-        </button>
+          <a
+            href="#how-it-works"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-semibold shadow-2xs transition-colors"
+          >
+            <HelpCircle className="w-3.5 h-3.5 text-amber-500" />
+            <span>Qanday ishlaydi?</span>
+          </a>
+        </div>
       </div>
 
       {/* FULL RESPONSIVE DRAWER MENU (When Hamburger is clicked on screens < 1024px) */}

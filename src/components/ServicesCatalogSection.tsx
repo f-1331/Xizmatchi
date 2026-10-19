@@ -99,7 +99,7 @@ export function ServicesCatalogSection() {
         </div>
 
         {/* Quick category filter pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 scrollbar-none">
+        <div className="flex flex-wrap items-center gap-2 mb-6">
           {categories.map((c) => (
             <button
               key={c.id}
