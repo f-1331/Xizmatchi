@@ -2,8 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-const TELEGRAM_BOT_TOKEN = '8977412958:AAH_xkRQQe6k49_JVxRvmuv6-vtl0Du5ao4';
-const TELEGRAM_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_bot';
+// Primary Owner Bot (Order management & alerts)
+const OWNER_BOT_TOKEN = '8668786258:AAGrl0W3txp5b-F_0o6Pj7snrS-f8xCd9CA';
+const OWNER_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_ownerbot';
+
+// Client / Public Bot
+const CLIENT_BOT_TOKEN = '8977412958:AAH_xkRQQe6k49_JVxRvmuv6-vtl0Du5ao4';
+const CLIENT_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_bot';
 
 const SUBSCRIBERS_FILE = path.join(process.cwd(), 'src', 'data', 'telegram_subscribers.json');
 const ORDERS_LOG_FILE = path.join(process.cwd(), 'src', 'data', 'telegram_orders.json');
@@ -48,32 +53,34 @@ function logOrder(orderData: any): void {
   }
 }
 
-// Fetch updates from Telegram to discover users who clicked /start (if polling mode)
+// Fetch updates from Telegram bots to discover users who clicked /start
 async function syncRecentSubscribers(): Promise<number[]> {
   const current = new Set<number>(getSubscribers());
-  try {
-    const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates?limit=50`, {
-      cache: 'no-store',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.ok && Array.isArray(data.result)) {
-        for (const update of data.result) {
-          const chatId =
-            update.message?.chat?.id ||
-            update.callback_query?.message?.chat?.id ||
-            update.my_chat_member?.chat?.id;
-          if (chatId) {
-            current.add(chatId);
+
+  const tokens = [OWNER_BOT_TOKEN, CLIENT_BOT_TOKEN];
+
+  for (const token of tokens) {
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${token}/getUpdates?limit=50`, {
+        cache: 'no-store',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.ok && Array.isArray(data.result)) {
+          for (const update of data.result) {
+            const chatId =
+              update.message?.chat?.id ||
+              update.callback_query?.message?.chat?.id ||
+              update.my_chat_member?.chat?.id;
+            if (chatId) {
+              current.add(chatId);
+            }
           }
         }
       }
-    } else if (res.status === 409) {
-      // 409 Conflict is expected when Telegram Serverless Webhook is active
-      // Webhook receives updates directly in tgcloud.ai
+    } catch (err) {
+      // Non-fatal if webhook is active (e.g., 409 conflict on tgcloud)
     }
-  } catch (err) {
-    // Non-fatal error
   }
 
   const list = Array.from(current);
@@ -93,17 +100,24 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    const meRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe`);
-    const meData = await meRes.json();
+    // Check Owner Bot info
+    let ownerBotInfo = null;
+    try {
+      const ownerRes = await fetch(`https://api.telegram.org/bot${OWNER_BOT_TOKEN}/getMe`);
+      const ownerData = await ownerRes.json();
+      ownerBotInfo = ownerData.result;
+    } catch (e) {}
+
     const subscribers = await syncRecentSubscribers();
 
     return NextResponse.json({
       status: 'ok',
-      bot: meData.result,
-      botUsername: TELEGRAM_BOT_USERNAME,
+      ownerBot: ownerBotInfo,
+      ownerBotUsername: OWNER_BOT_USERNAME,
+      clientBotUsername: CLIENT_BOT_USERNAME,
       subscribersCount: subscribers.length,
       subscribers,
-      instructions: `Buyurtmalarni Telegramda olish uchun @${TELEGRAM_BOT_USERNAME} ga kiring va /start tugmasini bosing.`,
+      instructions: `Buyurtmalarni qabul qilish uchun @${OWNER_BOT_USERNAME} ga kiring va /start tugmasini bosing.`,
     });
   } catch (error: any) {
     return NextResponse.json(
@@ -131,8 +145,18 @@ export async function POST(req: NextRequest) {
       inline_keyboard: [
         [
           {
-            text: `📞 Qo'ng'iroq qilish (${booking.clientPhone})`,
+            text: `📞 Mijozga qo'ng'iroq qilish (${booking.clientPhone})`,
             url: `tel:${cleanPhone}`,
+          },
+        ],
+        [
+          {
+            text: `✅ Qabul qilish`,
+            callback_data: `accept_${booking.id}`,
+          },
+          {
+            text: `❌ Bekor qilish`,
+            callback_data: `reject_${booking.id}`,
           },
         ],
         [
@@ -147,10 +171,13 @@ export async function POST(req: NextRequest) {
     let deliveredCount = 0;
     const errors: string[] = [];
 
-    // Send to all subscribers who started the bot
+    // Send order to subscribers via the OWNER bot primarily
     for (const chatId of subscribers) {
+      let sentSuccessfully = false;
+
+      // 1. Send via Owner Bot
       try {
-        const sendRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        const sendRes = await fetch(`https://api.telegram.org/bot${OWNER_BOT_TOKEN}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -163,12 +190,33 @@ export async function POST(req: NextRequest) {
 
         const sendData = await sendRes.json();
         if (sendData.ok) {
+          sentSuccessfully = true;
           deliveredCount++;
         } else {
-          errors.push(`Chat ${chatId}: ${sendData.description}`);
+          errors.push(`OwnerBot Chat ${chatId}: ${sendData.description}`);
         }
       } catch (err: any) {
-        errors.push(`Chat ${chatId}: ${err?.message}`);
+        errors.push(`OwnerBot Chat ${chatId}: ${err?.message}`);
+      }
+
+      // 2. If Owner Bot failed (e.g., user started client bot instead), try Client Bot
+      if (!sentSuccessfully) {
+        try {
+          const clientSendRes = await fetch(`https://api.telegram.org/bot${CLIENT_BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: chatId,
+              text: text,
+              parse_mode: 'HTML',
+              reply_markup: replyMarkup,
+            }),
+          });
+          const clientData = await clientSendRes.json();
+          if (clientData.ok) {
+            deliveredCount++;
+          }
+        } catch (e) {}
       }
     }
 
@@ -178,11 +226,11 @@ export async function POST(req: NextRequest) {
       success: true,
       deliveredCount,
       subscribersCount: subscribers.length,
-      botUsername: TELEGRAM_BOT_USERNAME,
+      ownerBotUsername: OWNER_BOT_USERNAME,
       message:
         subscribers.length > 0
-          ? `Buyurtma ${deliveredCount} ta Telegram qabul qiluvchiga yetkazildi.`
-          : `Buyurtma qabul qilindi. Telegramda xabarlar olish uchun @${TELEGRAM_BOT_USERNAME} ga /start bosing.`,
+          ? `Buyurtma ${deliveredCount} ta administratorga Telegram (@${OWNER_BOT_USERNAME}) orqali yetkazildi.`
+          : `Buyurtma qabul qilindi. Buyurtmalarni Telegramda olish uchun @${OWNER_BOT_USERNAME} ga /start bosing.`,
       errors: errors.length > 0 ? errors : undefined,
     });
   } catch (error: any) {

@@ -13,7 +13,9 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     "xizmatchiuz_Uzbekistan_bot/**",
+    "xizmatchiuz_Uzbekistan_ownerbot/**",
     "bot.mjs",
+    "bot_owner.mjs",
   ]),
 ]);
 

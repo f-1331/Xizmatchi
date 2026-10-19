@@ -1,7 +1,13 @@
 import { BookingRequest } from '../types';
 
-export const TELEGRAM_BOT_TOKEN = '8977412958:AAH_xkRQQe6k49_JVxRvmuv6-vtl0Du5ao4';
-export const TELEGRAM_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_bot';
+export const TELEGRAM_OWNER_BOT_TOKEN = '8668786258:AAGrl0W3txp5b-F_0o6Pj7snrS-f8xCd9CA';
+export const TELEGRAM_OWNER_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_ownerbot';
+
+export const TELEGRAM_CLIENT_BOT_TOKEN = '8977412958:AAH_xkRQQe6k49_JVxRvmuv6-vtl0Du5ao4';
+export const TELEGRAM_CLIENT_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_bot';
+
+export const TELEGRAM_BOT_TOKEN = TELEGRAM_OWNER_BOT_TOKEN;
+export const TELEGRAM_BOT_USERNAME = TELEGRAM_OWNER_BOT_USERNAME;
 
 export interface TelegramSendResult {
   success: boolean;
