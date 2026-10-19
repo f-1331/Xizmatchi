@@ -42,6 +42,46 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uz" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                function removeNetlifyBadge() {
+                  var selectors = [
+                    'iframe[src*="netlify"]',
+                    'iframe[title*="Netlify"]',
+                    'iframe#netlify-drawer',
+                    '#netlify-badge',
+                    '.netlify-badge',
+                    '[data-netlify-badge]',
+                    '[data-netlify-deploy-id]',
+                    'div[id*="netlify"]',
+                    'div[class*="netlify-drawer"]',
+                    'div[class*="netlify-badge"]'
+                  ];
+                  selectors.forEach(function(sel) {
+                    var els = document.querySelectorAll(sel);
+                    els.forEach(function(el) {
+                      try { el.remove(); } catch(e) {}
+                    });
+                  });
+                }
+                if (typeof window !== 'undefined') {
+                  window.addEventListener('DOMContentLoaded', removeNetlifyBadge);
+                  window.addEventListener('load', removeNetlifyBadge);
+                  try {
+                    var observer = new MutationObserver(function() {
+                      removeNetlifyBadge();
+                    });
+                    observer.observe(document.documentElement, { childList: true, subtree: true });
+                  } catch(e) {}
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased selection:bg-blue-600 selection:text-white">
         {children}
       </body>

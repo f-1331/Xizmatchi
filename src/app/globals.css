@@ -37,6 +37,31 @@ body {
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
 }
 
+/* ========================================================
+   REMOVE NETLIFY BADGE & DRAWER OVERLAYS
+   ======================================================== */
+iframe[src*="netlify"],
+iframe[title*="Netlify"],
+iframe#netlify-drawer,
+#netlify-badge,
+.netlify-badge,
+[data-netlify-deploy-id],
+[data-netlify-badge],
+div[id*="netlify"],
+div[class*="netlify-drawer"],
+div[class*="netlify-badge"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  left: -99999px !important;
+  top: -99999px !important;
+  z-index: -9999 !important;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
