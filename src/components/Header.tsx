@@ -95,8 +95,8 @@ export function Header() {
               <Logo />
             </a>
 
-            {/* Quick District Selector (Visible on wide desktops) */}
-            <div className="hidden 2xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100/90 border border-slate-200 text-xs text-slate-700 shrink-0">
+            {/* Quick District Selector (Visible on laptops & desktops: 1024px+) */}
+            <div className="hidden lg:flex items-center gap-1.5 px-2.5 xl:px-3 py-1.5 rounded-full bg-slate-100/90 border border-slate-200 text-xs text-slate-700 shrink-0">
               <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
               <select
                 aria-label="Hududni tanlang"
@@ -115,7 +115,7 @@ export function Header() {
                 onClick={handleHeaderRefresh}
                 disabled={isRefreshing}
                 title="Saytni yangilash"
-                className="p-1 rounded-full text-slate-500 hover:text-blue-600 hover:bg-slate-200/80 transition-colors ml-1 cursor-pointer"
+                className="p-1 rounded-full text-slate-500 hover:text-blue-600 hover:bg-slate-200/80 transition-colors ml-0.5 cursor-pointer"
               >
                 <RefreshCw
                   className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-blue-600' : ''}`}
@@ -124,8 +124,8 @@ export function Header() {
             </div>
           </div>
 
-          {/* Desktop Navigation Links (Visible on large screens: 1280px+) */}
-          <nav className="hidden xl:flex items-center gap-5 2xl:gap-6 text-sm font-medium text-slate-600 shrink-0">
+          {/* Desktop Navigation Links (Visible on 1024px+ laptops and desktops) */}
+          <nav className="hidden lg:flex items-center gap-3 xl:gap-5 2xl:gap-6 text-xs xl:text-sm font-semibold text-slate-600 shrink-0">
             <a
               href="#categories-section"
               className="hover:text-blue-600 transition-colors py-1"
@@ -146,10 +146,10 @@ export function Header() {
             </a>
             <button
               onClick={handleEmergencyClick}
-              className="flex items-center gap-1.5 text-rose-600 hover:text-rose-700 font-semibold transition-colors py-1 cursor-pointer"
+              className="flex items-center gap-1 text-rose-600 hover:text-rose-700 font-bold transition-colors py-1 cursor-pointer"
             >
               <Flame className="w-4 h-4 fill-rose-500 text-rose-500 animate-pulse" />
-              24/7 Shoshilinch
+              <span>24/7 Shoshilinch</span>
             </button>
             <a
               href="#how-it-works"
@@ -159,22 +159,22 @@ export function Header() {
             </a>
           </nav>
 
-          {/* Action Buttons: Responsive & Never Overflows */}
+          {/* Action Buttons: Responsive & Always Visible */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            {/* Theme button (Desktop only, mobile has it in strip & drawer) */}
+            {/* Theme / Dizayn button (Always accessible on ALL devices) */}
             <button
               onClick={() => setIsThemeModalOpen(true)}
-              className="hidden sm:flex items-center gap-1.5 p-2 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 hover:text-amber-600 hover:bg-amber-50/80 transition-colors border border-slate-200/80 cursor-pointer shrink-0"
+              className="flex items-center gap-1.5 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 hover:text-amber-600 hover:bg-amber-50/80 transition-colors border border-slate-200/80 cursor-pointer shrink-0"
               title="Dizayn rejimini almashtirish"
             >
               <Palette className="w-4 h-4 text-amber-500" />
               <span className="hidden xl:inline text-xs font-semibold">Dizayn</span>
             </button>
 
-            {/* Favorites button (Tablet and Desktop) */}
+            {/* Favorites button (Always accessible on ALL devices) */}
             <button
               onClick={() => setIsFavoritesOpen(true)}
-              className="hidden sm:flex relative p-2 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 hover:text-rose-600 hover:bg-rose-50/80 transition-colors border border-slate-200/80 shrink-0 cursor-pointer"
+              className="flex relative p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 hover:text-rose-600 hover:bg-rose-50/80 transition-colors border border-slate-200/80 shrink-0 cursor-pointer"
               title="Saqlangan ustalar"
             >
               <Heart className="w-4 h-4 text-rose-500" />
@@ -185,10 +185,10 @@ export function Header() {
               )}
             </button>
 
-            {/* Bookings button (Tablet and Desktop) */}
+            {/* Bookings button (Tablet & Desktop) */}
             <button
               onClick={() => setIsMyBookingsOpen(true)}
-              className="hidden sm:flex relative items-center gap-1.5 p-2 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 hover:text-blue-600 hover:bg-blue-50/80 transition-colors border border-slate-200/80 text-xs font-medium shrink-0 cursor-pointer"
+              className="hidden sm:flex relative items-center gap-1.5 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 hover:text-blue-600 hover:bg-blue-50/80 transition-colors border border-slate-200/80 text-xs font-medium shrink-0 cursor-pointer"
               title="Mening buyurtmalarim"
             >
               <ClipboardList className="w-4 h-4 text-blue-600" />
@@ -254,7 +254,7 @@ export function Header() {
             ) : (
               <button
                 onClick={() => setIsAuthModalOpen(true)}
-                className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-blue-600/30 text-blue-700 bg-blue-50/80 hover:bg-blue-100/80 transition-colors text-xs font-semibold shrink-0 cursor-pointer"
+                className="flex items-center gap-1 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-blue-600/30 text-blue-700 bg-blue-50/80 hover:bg-blue-100/80 transition-colors text-xs font-semibold shrink-0 cursor-pointer"
                 title="Tizimga kirish"
               >
                 <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 shrink-0" />
@@ -265,17 +265,17 @@ export function Header() {
             {/* Usta bo'lish CTA (Visible on ALL devices) */}
             <button
               onClick={() => setIsAddSpecialistModalOpen(true)}
-              className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-xs hover:shadow-md transition-all active:scale-95 shrink-0 cursor-pointer"
+              className="flex items-center gap-1 px-2 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-xs hover:shadow-md transition-all active:scale-95 shrink-0 cursor-pointer"
             >
               <PlusCircle className="w-3.5 h-3.5 stroke-[2.2] shrink-0" />
               <span className="hidden sm:inline">Usta bo&apos;lish</span>
               <span className="sm:hidden font-bold">Usta</span>
             </button>
 
-            {/* Hamburger Button (Screen width < 1280px) */}
+            {/* Hamburger Button (Screen width < 1024px) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex items-center gap-1 p-1.5 sm:p-2 rounded-xl text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 xl:hidden shrink-0 cursor-pointer transition-colors"
+              className="flex items-center gap-1 p-1.5 sm:p-2 rounded-xl text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 lg:hidden shrink-0 cursor-pointer transition-colors"
               aria-label="Menyu"
             >
               {mobileMenuOpen ? (
@@ -293,10 +293,10 @@ export function Header() {
         </div>
       </div>
 
-      {/* TIER 2: Mobile & Tablet Quick Navigation Scrollable Strip (Visible on screens < 1280px) */}
-      <div className="xl:hidden border-t border-slate-200/80 bg-slate-50/90 backdrop-blur-xs px-2.5 py-1.5 overflow-x-auto scrollbar-none flex items-center gap-2 text-xs">
+      {/* TIER 2: Mobile & Tablet Quick Navigation Scrollable Strip (Visible on screens < 1024px) */}
+      <div className="lg:hidden border-t border-slate-200/80 bg-slate-50/90 backdrop-blur-xs px-2.5 py-1.5 overflow-x-auto scrollbar-none flex items-center gap-1.5 text-xs">
         {/* District Selector & Refresh button right at the top */}
-        <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs shrink-0">
+        <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs shrink-0">
           <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
           <select
             aria-label="Hududni tanlang"
@@ -356,6 +356,14 @@ export function Header() {
           <span>24/7 Shoshilinch</span>
         </button>
 
+        <a
+          href="#how-it-works"
+          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-semibold shrink-0 hover:text-blue-600"
+        >
+          <HelpCircle className="w-3.5 h-3.5 text-amber-500" />
+          <span>Qanday ishlaydi?</span>
+        </a>
+
         <button
           onClick={() => setIsFavoritesOpen(true)}
           className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-semibold shrink-0"
@@ -373,9 +381,9 @@ export function Header() {
         </button>
       </div>
 
-      {/* FULL RESPONSIVE DRAWER MENU (When Hamburger is clicked) */}
+      {/* FULL RESPONSIVE DRAWER MENU (When Hamburger is clicked on screens < 1024px) */}
       {mobileMenuOpen && (
-        <div className="xl:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3.5 animate-fade-in shadow-2xl max-h-[85vh] overflow-y-auto">
+        <div className="lg:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3.5 animate-fade-in shadow-2xl max-h-[85vh] overflow-y-auto">
           {/* User profile card in drawer */}
           {currentUser ? (
             <div className="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-between">

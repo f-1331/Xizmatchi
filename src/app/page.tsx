@@ -28,7 +28,7 @@ function MainContent() {
   const { filteredSpecialists, resetFilters, setIsAddSpecialistModalOpen } = useApp();
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 transition-colors duration-300">
       {/* Toast notifications */}
       <ToastContainer />
 
