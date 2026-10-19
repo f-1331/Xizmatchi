@@ -40,6 +40,7 @@ body {
 /* ========================================================
    REMOVE NETLIFY BADGE & DRAWER OVERLAYS
    ======================================================== */
+iframe,
 iframe[src*="netlify"],
 iframe[title*="Netlify"],
 iframe#netlify-drawer,
@@ -49,17 +50,29 @@ iframe#netlify-drawer,
 [data-netlify-badge],
 div[id*="netlify"],
 div[class*="netlify-drawer"],
-div[class*="netlify-badge"] {
+div[class*="netlify-badge"],
+netlify-drawer,
+netlify-badge,
+a[href*="netlify.com"]:not(footer a),
+a[href*="netlify.app"][class*="badge"],
+img[src*="netlify.com/img/global/badges"],
+img[src*="netlify.com/v1/badge"],
+img[alt*="Netlify"],
+img[alt*="netlify"] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
   width: 0 !important;
   height: 0 !important;
+  max-width: 0 !important;
+  max-height: 0 !important;
   position: absolute !important;
   left: -99999px !important;
   top: -99999px !important;
-  z-index: -9999 !important;
+  bottom: -99999px !important;
+  z-index: -99999 !important;
+  clip-path: inset(100%) !important;
 }
 
 /* Custom scrollbar */

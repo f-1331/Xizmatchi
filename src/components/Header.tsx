@@ -161,20 +161,20 @@ export function Header() {
 
           {/* Action Buttons: Responsive & Always Visible */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            {/* Theme / Dizayn button (Always accessible on ALL devices) */}
+            {/* Theme / Dizayn button (Tablet & Desktop, mobile has it in Tier 2 & Bottom Nav) */}
             <button
               onClick={() => setIsThemeModalOpen(true)}
-              className="flex items-center gap-1.5 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 hover:text-amber-600 hover:bg-amber-50/80 transition-colors border border-slate-200/80 cursor-pointer shrink-0"
+              className="hidden sm:flex items-center gap-1.5 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 hover:text-amber-600 hover:bg-amber-50/80 transition-colors border border-slate-200/80 cursor-pointer shrink-0"
               title="Dizayn rejimini almashtirish"
             >
               <Palette className="w-4 h-4 text-amber-500" />
               <span className="hidden xl:inline text-xs font-semibold">Dizayn</span>
             </button>
 
-            {/* Favorites button (Always accessible on ALL devices) */}
+            {/* Favorites button (Tablet & Desktop, mobile has it in Tier 2) */}
             <button
               onClick={() => setIsFavoritesOpen(true)}
-              className="flex relative p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 hover:text-rose-600 hover:bg-rose-50/80 transition-colors border border-slate-200/80 shrink-0 cursor-pointer"
+              className="hidden sm:flex relative p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 hover:text-rose-600 hover:bg-rose-50/80 transition-colors border border-slate-200/80 shrink-0 cursor-pointer"
               title="Saqlangan ustalar"
             >
               <Heart className="w-4 h-4 text-rose-500" />
@@ -275,7 +275,7 @@ export function Header() {
             {/* Hamburger Button (Screen width < 1024px) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex items-center gap-1 p-1.5 sm:p-2 rounded-xl text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 lg:hidden shrink-0 cursor-pointer transition-colors"
+              className="flex items-center gap-1 p-2 rounded-xl text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 lg:hidden shrink-0 cursor-pointer transition-colors"
               aria-label="Menyu"
             >
               {mobileMenuOpen ? (
@@ -283,7 +283,7 @@ export function Header() {
               ) : (
                 <>
                   <Menu className="w-5 h-5 text-slate-800" />
-                  <span className="text-[11px] font-bold text-slate-700 hidden xs:inline">
+                  <span className="text-[11px] font-bold text-slate-700 hidden sm:inline">
                     Menyu
                   </span>
                 </>

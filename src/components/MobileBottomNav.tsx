@@ -51,7 +51,7 @@ export function MobileBottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-2xl md:hidden pb-safe">
+    <nav className="fixed bottom-0 left-0 right-0 z-[9999] bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-2xl md:hidden pb-safe">
       <div className="grid grid-cols-5 h-16 items-center px-1">
         {/* Home */}
         <button

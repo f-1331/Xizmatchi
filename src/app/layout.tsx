@@ -49,16 +49,19 @@ export default function RootLayout({
               (function() {
                 function removeNetlifyBadge() {
                   var selectors = [
-                    'iframe[src*="netlify"]',
-                    'iframe[title*="Netlify"]',
-                    'iframe#netlify-drawer',
+                    'iframe',
                     '#netlify-badge',
                     '.netlify-badge',
                     '[data-netlify-badge]',
                     '[data-netlify-deploy-id]',
                     'div[id*="netlify"]',
                     'div[class*="netlify-drawer"]',
-                    'div[class*="netlify-badge"]'
+                    'div[class*="netlify-badge"]',
+                    'netlify-drawer',
+                    'netlify-badge',
+                    'a[href*="netlify.com"]:not(footer a)',
+                    'img[src*="netlify"]',
+                    'img[alt*="Netlify"]'
                   ];
                   selectors.forEach(function(sel) {
                     var els = document.querySelectorAll(sel);
@@ -70,10 +73,9 @@ export default function RootLayout({
                 if (typeof window !== 'undefined') {
                   window.addEventListener('DOMContentLoaded', removeNetlifyBadge);
                   window.addEventListener('load', removeNetlifyBadge);
+                  setInterval(removeNetlifyBadge, 200);
                   try {
-                    var observer = new MutationObserver(function() {
-                      removeNetlifyBadge();
-                    });
+                    var observer = new MutationObserver(removeNetlifyBadge);
                     observer.observe(document.documentElement, { childList: true, subtree: true });
                   } catch(e) {}
                 }
