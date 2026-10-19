@@ -52,7 +52,7 @@ export function ThemeFloatingButton() {
   const details = getThemeDetails();
 
   return (
-    <div className="hidden md:flex fixed bottom-6 right-6 z-40 animate-fade-in">
+    <div className="hidden md:flex fixed bottom-6 left-6 z-30 animate-fade-in">
       <button
         type="button"
         onClick={() => setIsThemeModalOpen(true)}

@@ -39,7 +39,7 @@ function MainContent() {
       <HeroSection />
 
       {/* Main Body with mobile bottom nav padding */}
-      <main className="flex-1 pb-20 md:pb-0">
+      <main className="flex-1 pb-28 md:pb-0">
         {/* Category Grid Section */}
         <CategoryGrid />
 

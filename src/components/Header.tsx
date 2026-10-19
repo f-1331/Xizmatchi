@@ -148,11 +148,12 @@ export function Header() {
             {/* Theme Switcher Button */}
             <button
               onClick={() => setIsThemeModalOpen(true)}
-              className="p-2 sm:p-2.5 rounded-xl text-slate-600 hover:text-amber-600 hover:bg-amber-50 transition-colors border border-transparent hover:border-amber-100 cursor-pointer shrink-0"
+              className="flex items-center gap-1.5 p-2 sm:px-3 sm:py-2 rounded-xl text-slate-700 hover:text-amber-600 hover:bg-amber-50/80 transition-colors border border-slate-200/80 hover:border-amber-200 cursor-pointer shrink-0"
               title="Dizayn rejimini almashtirish (Ko'z himoyasi, Tungi rejim, va h.k.)"
               aria-label="Dizayn rejimini tanlash"
             >
-              <Palette className="w-4 h-4 sm:w-5 sm:h-5" />
+              <Palette className="w-4 h-4 text-amber-500 sm:w-4.5 sm:h-4.5" />
+              <span className="hidden xl:inline text-xs font-semibold text-slate-700">Dizayn</span>
             </button>
 
             {/* Favorites Button */}
