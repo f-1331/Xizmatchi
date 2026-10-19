@@ -64,13 +64,60 @@ export async function sendBookingToTelegram(booking: BookingRequest): Promise<Te
     }
 
     const data = await res.json();
+    let deliveredCount = data.deliveredCount || 0;
+
+    // Direct fallback if API route delivered 0 to owner
+    if (deliveredCount === 0) {
+      try {
+        const directRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_OWNER_BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: 6707839718,
+            text: text,
+            parse_mode: 'HTML',
+          }),
+        });
+        const directData = await directRes.json();
+        if (directData.ok) {
+          deliveredCount++;
+        }
+      } catch (directErr) {
+        console.error('Direct Telegram fallback error:', directErr);
+      }
+    }
+
     return {
       success: true,
-      deliveredCount: data.deliveredCount || 0,
+      deliveredCount,
       message: data.message || "Xabar yuborildi",
     };
   } catch (error: any) {
     console.error('Telegramga yuborishda xatolik:', error);
+    // Direct emergency delivery directly from browser
+    try {
+      const emergencyText = formatBookingTelegramMessage(booking);
+      const emergencyRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_OWNER_BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: 6707839718,
+          text: emergencyText,
+          parse_mode: 'HTML',
+        }),
+      });
+      const emergencyData = await emergencyRes.json();
+      if (emergencyData.ok) {
+        return {
+          success: true,
+          deliveredCount: 1,
+          message: "Buyurtma qabul qilindi va administratorga yuborildi.",
+        };
+      }
+    } catch (emergencyErr) {
+      console.error('Emergency direct delivery error:', emergencyErr);
+    }
+
     return {
       success: false,
       message: error?.message || "Xatolik yuz berdi",
