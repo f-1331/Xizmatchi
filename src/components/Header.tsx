@@ -85,12 +85,12 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs">
+    <header className="sticky top-0 z-40 w-full max-w-full overflow-x-clip bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs">
       {/* TIER 1: Main Logo & Action Bar */}
-      <div className="max-w-7xl mx-auto px-2.5 sm:px-4 lg:px-8">
-        <div className="flex items-center justify-between h-15 sm:h-18 gap-2">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 w-full">
+        <div className="flex items-center justify-between h-14 sm:h-18 gap-1.5 sm:gap-2 w-full">
           {/* Logo */}
-          <div className="flex items-center gap-2 sm:gap-4 shrink-0 min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-4 shrink-0 min-w-0">
             <a href="#" className="shrink-0 flex items-center">
               <Logo />
             </a>
@@ -160,7 +160,7 @@ export function Header() {
           </nav>
 
           {/* Action Buttons: Responsive & Always Visible */}
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0 ml-auto">
             {/* Theme / Dizayn button (Tablet & Desktop, mobile has it in Tier 2 & Bottom Nav) */}
             <button
               onClick={() => setIsThemeModalOpen(true)}
