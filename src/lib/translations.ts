@@ -112,6 +112,46 @@ export const TRANSLATIONS: TranslationDictionary = {
     ru: 'Тема',
     en: 'Theme',
   },
+  'nav.qrcode': {
+    uz: 'QR Kod',
+    ru: 'QR-код',
+    en: 'QR Code',
+  },
+  'qrcode.title': {
+    uz: 'Platformaga tezkor kirish',
+    ru: 'Быстрый доступ к платформе',
+    en: 'Quick Access to Platform',
+  },
+  'qrcode.subtitle': {
+    uz: 'Telefon kamerasi yoki Telegram orqali QR kodni skanerlang va platformaga bir zumda kiring!',
+    ru: 'Отсканируйте QR-код камерой телефона или через Telegram для быстрого перехода на платформу!',
+    en: 'Scan the QR code with your phone camera or Telegram to access the platform instantly!',
+  },
+  'qrcode.scan_hint': {
+    uz: 'Kamerani QR kodga qarating',
+    ru: 'Наведите камеру на QR-код',
+    en: 'Point camera at the QR code',
+  },
+  'qrcode.copy': {
+    uz: 'Havolani nusxalash',
+    ru: 'Скопировать ссылку',
+    en: 'Copy link',
+  },
+  'qrcode.copied': {
+    uz: 'Havola nusxalandi!',
+    ru: 'Ссылка скопирована!',
+    en: 'Link copied!',
+  },
+  'qrcode.open_site': {
+    uz: 'Saytni ochish',
+    ru: 'Открыть сайт',
+    en: 'Open website',
+  },
+  'qrcode.share': {
+    uz: 'Ulashish',
+    ru: 'Поделиться',
+    en: 'Share',
+  },
   'nav.menu': {
     uz: 'Menyu',
     ru: 'Меню',

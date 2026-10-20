@@ -20,6 +20,7 @@ import { SafetyGuaranteeBanner } from '../components/SafetyGuaranteeBanner';
 import { Footer } from '../components/Footer';
 import { ToastContainer } from '../components/ToastContainer';
 import { ThemeModal } from '../components/ThemeModal';
+import { QrCodeModal } from '../components/QrCodeModal';
 import { ThemeFloatingButton } from '../components/ThemeFloatingButton';
 import { MobileBottomNav } from '../components/MobileBottomNav';
 import { Users, RotateCcw, PlusCircle } from 'lucide-react';
@@ -129,6 +130,7 @@ function MainContent() {
       <MyBookingsModal />
       <FavoritesDrawer />
       <ThemeModal />
+      <QrCodeModal />
 
       {/* Floating Theme Switcher Button for Desktop */}
       <ThemeFloatingButton />

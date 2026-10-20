@@ -28,6 +28,7 @@ import {
   ChevronDown,
   Globe,
   Check,
+  QrCode,
 } from 'lucide-react';
 
 export function Header() {
@@ -38,6 +39,7 @@ export function Header() {
     setIsMyBookingsOpen,
     setIsAddSpecialistModalOpen,
     setIsThemeModalOpen,
+    setIsQrModalOpen,
     currentUser,
     setIsAuthModalOpen,
     logout,
@@ -209,6 +211,16 @@ export function Header() {
                 </div>
               )}
             </div>
+
+            {/* QR Code button (Visible on Desktop & Tablet, compact icon on mobile) */}
+            <button
+              onClick={() => setIsQrModalOpen(true)}
+              className="flex items-center gap-1 sm:gap-1.5 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-slate-200/90 hover:border-blue-400 bg-white hover:bg-blue-50/80 text-slate-700 hover:text-blue-700 transition-colors text-xs font-bold shrink-0 shadow-2xs cursor-pointer"
+              title="QR Kod orqali saytga o'tish"
+            >
+              <QrCode className="w-4 h-4 text-blue-600 shrink-0" />
+              <span className="hidden sm:inline">{t('nav.qrcode', 'QR Kod')}</span>
+            </button>
 
             {/* Theme / Dizayn button (Tablet & Desktop, mobile has it in Tier 2 & Bottom Nav) */}
             <button
@@ -385,6 +397,16 @@ export function Header() {
           >
             <span>{currentLangObj.flag}</span>
             <span>{currentLangObj.short}</span>
+          </button>
+
+          {/* QR Code Button (Mobile) */}
+          <button
+            onClick={() => setIsQrModalOpen(true)}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100/80 border border-indigo-200 text-indigo-900 font-bold shrink-0 shadow-2xs transition-colors cursor-pointer"
+            title="QR Kod"
+          >
+            <QrCode className="w-3.5 h-3.5 text-indigo-600" />
+            <span>QR</span>
           </button>
 
           {/* Theme Switcher Button */}
@@ -645,6 +667,18 @@ export function Header() {
                 {t('nav.become_specialist')} (SMS)
               </span>
               <ChevronRight className="w-4 h-4" />
+            </button>
+
+            {/* QR Code in drawer */}
+            <button
+              onClick={() => {
+                setIsQrModalOpen(true);
+                setMobileMenuOpen(false);
+              }}
+              className="col-span-2 p-3 flex items-center justify-center gap-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 font-bold text-xs transition-colors cursor-pointer"
+            >
+              <QrCode className="w-4 h-4 text-indigo-600" />
+              <span>{t('nav.qrcode', 'QR Kod')} • Sayt havolasi</span>
             </button>
 
             {/* Theme selector in drawer */}

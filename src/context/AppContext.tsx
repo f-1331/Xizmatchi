@@ -47,6 +47,10 @@ interface AppContextType {
   isThemeModalOpen: boolean;
   setIsThemeModalOpen: (open: boolean) => void;
 
+  // QR Code Modal
+  isQrModalOpen: boolean;
+  setIsQrModalOpen: (open: boolean) => void;
+
   // Modals & Drawers
   selectedSpecialist: Specialist | null;
   setSelectedSpecialist: (specialist: Specialist | null) => void;
@@ -134,6 +138,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeId>('eye-comfort');
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
 
+  // QR Modal state
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+
   // Toasts
   const [toasts, setToasts] = useState<ToastNotification[]>([]);
 
@@ -177,7 +184,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     isMyBookingsOpen ||
     isFavoritesOpen ||
     isAuthModalOpen ||
-    isThemeModalOpen
+    isThemeModalOpen ||
+    isQrModalOpen
   );
 
   useEffect(() => {
@@ -528,6 +536,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setTheme,
         isThemeModalOpen,
         setIsThemeModalOpen,
+
+        isQrModalOpen,
+        setIsQrModalOpen,
 
         selectedSpecialist,
         setSelectedSpecialist,
