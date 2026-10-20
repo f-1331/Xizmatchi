@@ -49,7 +49,7 @@ export default async function (message, ctx) {
         text: `✅ <b>Telefon raqamingiz muvaffaqiyatli bog'landi!</b>\n\n` +
               `📱 Sizning raqamingiz: <code>${normPhone}</code>\n\n` +
               `🌐 <b>Yagona hisob faollashtirildi:</b>\n` +
-              `Endi veb-sayt (https://xizmatchiuz.netlify.app) va botdagi profilingiz bitta hisob sifatida sinxronlandi. Saytda ham ayni shu telefon raqamini kiritganingizda buyurtmalaringiz va usta ma'lumotlaringiz birlashadi!`,
+              `Endi veb-sayt (https://xizmatchi.vercel.app) va botdagi profilingiz bitta hisob sifatida sinxronlandi. Saytda ham ayni shu telefon raqamini kiritganingizda buyurtmalaringiz va usta ma'lumotlaringiz birlashadi!`,
         parse_mode: 'HTML',
         reply_markup: mainKeyboard,
       });
@@ -166,7 +166,7 @@ export default async function (message, ctx) {
       `🛡 <b>Anti-Prank va Xavfsizlik nazorati:</b>\n` +
       `Platformamizda yosh bolalar, prank qiluvchilar yoki nojiddiy shaxslar soxta e'lon joylamasligi uchun har bir usta o'z telefon raqamini <b>SMS kod orqali tasdiqlashi shart</b>!\n\n` +
       `<b>Qanday ro'yxatdan o'tiladi?</b>\n` +
-      `1. Veb-saytimizga kiring: <b>https://xizmatchiuz.netlify.app</b>\n` +
+      `1. Veb-saytimizga kiring: <b>https://xizmatchi.vercel.app</b>\n` +
       `2. "Usta bo'lish" tugmasini bosing va ma'lumotlaringizni to'ldiring.\n` +
       `3. Telefoningizga 4 xonali SMS kod keladi (agar botga ulangan bo'lsangiz, ushbu botga ham keladi!).\n` +
       `4. Kodni kiritib tasdiqlaysiz va bir zumda rasmiy tasdiqlangan ustalar ro'yxatiga qo'shilasiz!`;
@@ -177,7 +177,7 @@ export default async function (message, ctx) {
       parse_mode: 'HTML',
       reply_markup: {
         inline_keyboard: [
-          [{ text: '🌐 Saytga o\'tish (Usta anketasi)', url: 'https://xizmatchiuz.netlify.app' }],
+          [{ text: '🌐 Saytga o\'tish (Usta anketasi)', url: 'https://xizmatchi.vercel.app' }],
         ],
       },
     });
@@ -335,7 +335,7 @@ export default async function (message, ctx) {
       `☎️ <b>Telefon:</b> +998 71 200 00 00\n` +
       `📱 <b>Telegram aloqa:</b> @xizmatchi_support\n` +
       `⏰ <b>Ish vaqti:</b> 24/7 uzluksiz\n` +
-      `🌐 <b>Rasmiy platforma:</b> https://xizmatchiuz.netlify.app\n\n` +
+      `🌐 <b>Rasmiy platforma:</b> https://xizmatchi.vercel.app\n\n` +
       `<i>Xizmatchi — sifatli xizmat, adolatli narx va kafolatlangan natija!</i>`;
 
     await api.sendMessage({
@@ -352,11 +352,11 @@ export default async function (message, ctx) {
       chat_id: chatId,
       text: `🌐 <b>Xizmatchi zamonaviy veb-platformasi</b>\n\n` +
             `Sayt orqali ustalarning portfoliolarini ko'rishingiz, filtrlar orqali saralashingiz, narxlarni solishtirishingiz va bir zumda usta chaqirishingiz mumkin:\n\n` +
-            `👉 https://xizmatchiuz.netlify.app`,
+            `👉 https://xizmatchi.vercel.app`,
       parse_mode: 'HTML',
       reply_markup: {
         inline_keyboard: [
-          [{ text: '🚀 Saytni ochish', url: 'https://xizmatchiuz.netlify.app' }],
+          [{ text: '🚀 Saytni ochish', url: 'https://xizmatchi.vercel.app' }],
         ],
       },
     });

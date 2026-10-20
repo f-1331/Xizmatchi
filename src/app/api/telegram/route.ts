@@ -162,7 +162,7 @@ export async function POST(req: NextRequest) {
         [
           {
             text: `🌐 Xizmatchi platformasini ochish`,
-            url: `https://xizmatchiuz.netlify.app`,
+            url: `https://xizmatchi.vercel.app`,
           },
         ],
       ],

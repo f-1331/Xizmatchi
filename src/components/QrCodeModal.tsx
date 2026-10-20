@@ -21,7 +21,7 @@ export function QrCodeModal() {
   const { t } = useLanguage();
 
   const [copied, setCopied] = useState(false);
-  const [siteUrl, setSiteUrl] = useState('https://xizmatchiuz.netlify.app');
+  const [siteUrl, setSiteUrl] = useState('https://xizmatchi.vercel.app');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -150,7 +150,7 @@ export function QrCodeModal() {
               {/* Brand center badge */}
               <div className="mt-2 flex items-center justify-center gap-1.5 text-[11px] font-bold text-slate-700">
                 <Smartphone className="w-3.5 h-3.5 text-blue-600" />
-                <span>xizmatchiuz.netlify.app</span>
+                <span>{siteUrl.replace(/^https?:\/\//, '')}</span>
               </div>
             </div>
           </div>

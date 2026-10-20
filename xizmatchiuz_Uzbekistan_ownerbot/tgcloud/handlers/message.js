@@ -24,9 +24,9 @@ export default async function (message, ctx) {
   // Helper to sync subscriber chat ID with the Next.js API
   async function syncWithPlatform() {
     try {
-      await fetch(`https://xizmatchiuz.netlify.app/api/telegram?subscribe=${chatId}&role=owner&name=${encodeURIComponent(fullName)}`);
+      await fetch(`https://xizmatchi.vercel.app/api/telegram?subscribe=${chatId}&role=owner&name=${encodeURIComponent(fullName)}`);
     } catch (e) {
-      // Netlify might be asleep or unreachable
+      // Vercel might be asleep or unreachable
     }
   }
 
@@ -168,7 +168,7 @@ export default async function (message, ctx) {
         `📦 <b>Jami tushgan buyurtmalar:</b> ${totalOrdersCount} ta\n` +
         `👑 <b>Ulangan boshqaruvchilar:</b> ${totalOwnersCount} nafar\n` +
         `🤖 <b>Bot:</b> @xizmatchiuz_Uzbekistan_ownerbot\n` +
-        `🌐 <b>Jonli platforma:</b> https://xizmatchiuz.netlify.app\n` +
+        `🌐 <b>Jonli platforma:</b> https://xizmatchi.vercel.app\n` +
         `⏱️ <b>Server holati:</b> 🟢 24/7 Faol (tgcloud serverless)`;
 
       await api.sendMessage({
@@ -192,7 +192,7 @@ export default async function (message, ctx) {
       parse_mode: 'HTML',
       reply_markup: {
         inline_keyboard: [
-          [{ text: '🚀 Saytni ochish (xizmatchiuz.netlify.app)', url: 'https://xizmatchiuz.netlify.app' }],
+          [{ text: '🚀 Saytni ochish (xizmatchi.vercel.app)', url: 'https://xizmatchi.vercel.app' }],
         ],
       },
     });

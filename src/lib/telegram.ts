@@ -39,7 +39,7 @@ export function formatBookingTelegramMessage(booking: BookingRequest): string {
 <i>"${booking.description}"</i>
 ${booking.photoUrl ? `\n📸 <b>Rasm ilova qilingan</b>` : ''}
 ━━━━━━━━━━━━━━━━━━
-🌐 <b>Platforma:</b> <a href="https://xizmatchiuz.netlify.app">Xizmatchi — O'zbekiston</a>
+🌐 <b>Platforma:</b> <a href="https://xizmatchi.vercel.app">Xizmatchi — O'zbekiston</a>
 🤖 <b>Bot:</b> @${TELEGRAM_BOT_USERNAME}`;
 }
 

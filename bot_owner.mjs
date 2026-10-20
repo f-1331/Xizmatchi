@@ -159,14 +159,14 @@ async function processUpdate(update) {
       const orders = getRecentOrders();
       await apiCall('sendMessage', {
         chat_id: chatId,
-        text: `📊 <b>Statistika:</b>\n\n📦 Jami buyurtmalar: <b>${orders.length} ta</b>\n🤖 Bot: @xizmatchiuz_Uzbekistan_ownerbot\n🌐 Sayt: https://xizmatchiuz.netlify.app`,
+        text: `📊 <b>Statistika:</b>\n\n📦 Jami buyurtmalar: <b>${orders.length} ta</b>\n🤖 Bot: @xizmatchiuz_Uzbekistan_ownerbot\n🌐 Sayt: https://xizmatchi.vercel.app`,
         parse_mode: 'HTML',
         reply_markup: MAIN_KEYBOARD,
       });
     } else if (text === '🌐 Saytni ochish' || text === '/sayt') {
       await apiCall('sendMessage', {
         chat_id: chatId,
-        text: `🌐 <b>Xizmatchi platformasi:</b>\n👉 https://xizmatchiuz.netlify.app`,
+        text: `🌐 <b>Xizmatchi platformasi:</b>\n👉 https://xizmatchi.vercel.app`,
         parse_mode: 'HTML',
       });
     } else {
