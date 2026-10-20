@@ -8,11 +8,8 @@ const OWNER_KEYBOARD = {
   keyboard: [
     [{ text: '📋 Buyurtmalar' }, { text: '📊 Statistika' }],
     [{ text: '👥 Mijozlar' }, { text: '🛠️ Ustalar' }],
-    [{ text: '🔔 Bildirishnoma' }, { text: '🔍 Qidiruv' }],
-    [
-      { text: '🚀 Saytni ochish (Web App)', web_app: { url: 'https://xizmatchi.vercel.app' } },
-      { text: 'ℹ️ Yordam' },
-    ],
+    [{ text: '🔍 Qidiruv' }, { text: '🔔 Bildirishnoma' }],
+    [{ text: '🌐 Saytni ochish', web_app: { url: 'https://xizmatchi.vercel.app' } }],
   ],
   resize_keyboard: true,
 };
