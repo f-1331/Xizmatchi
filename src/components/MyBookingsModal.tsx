@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   X,
@@ -23,6 +23,20 @@ export function MyBookingsModal() {
     updateBookingStatus,
     openBookingModal,
   } = useApp();
+
+  // Lock body scroll when MyBookings modal is open
+  useEffect(() => {
+    if (!isMyBookingsOpen) return;
+    const origOverflow = document.body.style.overflow;
+    const origTouchAction = document.body.style.touchAction;
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
+    return () => {
+      document.body.style.overflow = origOverflow;
+      document.body.style.touchAction = origTouchAction;
+    };
+  }, [isMyBookingsOpen]);
 
   if (!isMyBookingsOpen) return null;
 
@@ -56,19 +70,19 @@ export function MyBookingsModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-fade-in">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2.5 sm:p-4 md:p-6 animate-fade-in overscroll-none">
       <div
-        className="relative bg-white rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden animate-scale-up max-h-[90vh] flex flex-col"
+        className="relative bg-white rounded-3xl max-w-2xl w-full max-h-[92dvh] sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-scale-up my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="p-5 sm:p-6 bg-slate-900 text-white flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
+        {/* Header - shrink-0 */}
+        <div className="p-4 sm:p-6 bg-slate-900 text-white flex items-center justify-between shrink-0 shadow-xs">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
               <ClipboardList className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-xl font-black text-white">Mening buyurtmalarim</h3>
+              <h3 className="text-lg sm:text-xl font-black text-white leading-tight">Mening buyurtmalarim</h3>
               <p className="text-xs text-slate-400">
                 Siz topshirgan arizalar va ularning holati
               </p>
@@ -77,7 +91,7 @@ export function MyBookingsModal() {
 
           <button
             onClick={() => setIsMyBookingsOpen(false)}
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer shrink-0"
             aria-label="Yopish"
           >
             <X className="w-5 h-5" />
@@ -85,7 +99,7 @@ export function MyBookingsModal() {
         </div>
 
         {/* Content list */}
-        <div className="p-5 sm:p-6 overflow-y-auto space-y-4 flex-1">
+        <div className="p-4 sm:p-6 overflow-y-auto overscroll-contain space-y-4 flex-1 min-h-0">
           {bookings.length === 0 ? (
             <div className="text-center py-12 space-y-3">
               <ClipboardList className="w-12 h-12 text-slate-300 mx-auto" />

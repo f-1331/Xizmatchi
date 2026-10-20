@@ -43,6 +43,20 @@ export function AuthModal() {
     return () => clearInterval(interval);
   }, [isTimerActive, timer]);
 
+  // Lock body scroll when Auth modal is open
+  useEffect(() => {
+    if (!isAuthModalOpen) return;
+    const origOverflow = document.body.style.overflow;
+    const origTouchAction = document.body.style.touchAction;
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
+    return () => {
+      document.body.style.overflow = origOverflow;
+      document.body.style.touchAction = origTouchAction;
+    };
+  }, [isAuthModalOpen]);
+
   if (!isAuthModalOpen) return null;
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,22 +182,22 @@ export function AuthModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-fade-in">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2.5 sm:p-4 md:p-6 animate-fade-in overscroll-none">
       <div
-        className="relative bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden animate-scale-up"
+        className="relative bg-white rounded-3xl max-w-md w-full max-h-[92dvh] sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-scale-up my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-6 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white flex items-center justify-between">
+        <div className="p-4 sm:p-6 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white flex items-center justify-between shrink-0 shadow-xs">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20">
+            <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20 shrink-0">
               <ShieldCheck className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
               <span className="text-xs text-blue-200 font-semibold uppercase tracking-wider">
                 Yagona hisob
               </span>
-              <h3 className="text-lg sm:text-xl font-black text-white">
+              <h3 className="text-base sm:text-xl font-black text-white leading-tight">
                 {step === 'phone' ? "Tizimga kirish" : step === 'otp' ? "SMS Tasdiqlash" : "Muvaffaqiyatli!"}
               </h3>
             </div>
@@ -191,7 +205,7 @@ export function AuthModal() {
 
           <button
             onClick={closeModal}
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer shrink-0"
             aria-label="Yopish"
           >
             <X className="w-5 h-5" />
@@ -199,7 +213,7 @@ export function AuthModal() {
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6 flex-1 min-h-0 overflow-y-auto overscroll-contain">
           {error && (
             <div className="mb-4 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm flex items-start gap-2.5">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />

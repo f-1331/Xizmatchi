@@ -81,6 +81,20 @@ export function AddSpecialistModal() {
     return () => clearInterval(interval);
   }, [isTimerActive, timer]);
 
+  // Lock body scroll when Add Specialist modal is open
+  useEffect(() => {
+    if (!isAddSpecialistModalOpen) return;
+    const origOverflow = document.body.style.overflow;
+    const origTouchAction = document.body.style.touchAction;
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
+    return () => {
+      document.body.style.overflow = origOverflow;
+      document.body.style.touchAction = origTouchAction;
+    };
+  }, [isAddSpecialistModalOpen]);
+
   if (!isAddSpecialistModalOpen) return null;
 
   const handleAddService = () => {
@@ -268,19 +282,19 @@ export function AddSpecialistModal() {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-fade-in">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2.5 sm:p-4 md:p-6 animate-fade-in overscroll-none">
       <div
-        className="relative bg-white rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden animate-scale-up"
+        className="relative bg-white rounded-3xl max-w-2xl w-full max-h-[92dvh] sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-scale-up my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="p-6 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white flex items-center justify-between">
+        {/* Header - shrink-0 */}
+        <div className="p-4 sm:p-6 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white flex items-center justify-between shrink-0 shadow-xs">
           <div>
             <span className="text-xs text-blue-200 font-semibold uppercase tracking-wider flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
               Rasmiy Hamkorlik Dasturi
             </span>
-            <h3 className="text-xl sm:text-2xl font-black text-white">
+            <h3 className="text-lg sm:text-2xl font-black text-white leading-tight">
               {step === 4
                 ? "Telefon raqamni SMS orqali tasdiqlash"
                 : step === 5
@@ -291,16 +305,16 @@ export function AddSpecialistModal() {
 
           <button
             onClick={handleClose}
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer shrink-0"
             aria-label="Yopish"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Step Indicator */}
+        {/* Step Indicator - shrink-0 */}
         {step <= 4 && (
-          <div className="px-6 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between text-xs font-bold text-slate-500 overflow-x-auto">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between text-xs font-bold text-slate-500 overflow-x-auto shrink-0">
             <div className="flex items-center gap-1.5 shrink-0">
               <span
                 className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${

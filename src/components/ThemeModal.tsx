@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { THEMES } from '../data/themes';
 import { ThemeId } from '../types';
@@ -19,6 +19,20 @@ import {
 
 export function ThemeModal() {
   const { theme, setTheme, isThemeModalOpen, setIsThemeModalOpen } = useApp();
+
+  // Lock body scroll when theme modal is open
+  useEffect(() => {
+    if (!isThemeModalOpen) return;
+    const origOverflow = document.body.style.overflow;
+    const origTouchAction = document.body.style.touchAction;
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
+    return () => {
+      document.body.style.overflow = origOverflow;
+      document.body.style.touchAction = origTouchAction;
+    };
+  }, [isThemeModalOpen]);
 
   if (!isThemeModalOpen) return null;
 
@@ -43,22 +57,22 @@ export function ThemeModal() {
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-fade-in"
+      className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2.5 sm:p-4 md:p-6 animate-fade-in overscroll-none"
       onClick={() => setIsThemeModalOpen(false)}
     >
       <div
-        className="relative bg-white rounded-3xl max-w-xl w-full shadow-2xl overflow-hidden border border-slate-200/90 animate-scale-up"
+        className="relative bg-white rounded-3xl max-w-xl w-full max-h-[92dvh] sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200/90 animate-scale-up my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="p-5 sm:p-6 bg-gradient-to-r from-slate-900 to-indigo-950 text-white flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-xs border border-white/10 text-amber-300">
+        {/* Header - permanently docked at the top */}
+        <div className="p-4 sm:p-5 bg-gradient-to-r from-slate-900 to-indigo-950 text-white flex items-center justify-between shrink-0 shadow-xs">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-xs border border-white/10 text-amber-300 shrink-0">
               <Eye className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-lg sm:text-xl font-black tracking-tight text-white">
+                <h3 className="text-base sm:text-lg font-black tracking-tight text-white leading-tight">
                   Dizayn & Ranglar rejimini tanlang
                 </h3>
               </div>
@@ -70,15 +84,15 @@ export function ThemeModal() {
 
           <button
             onClick={() => setIsThemeModalOpen(false)}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
             aria-label="Yopish"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-5 sm:p-6 space-y-3.5 max-h-[78vh] overflow-y-auto">
+        {/* Content list - scrollable with flex-1 min-h-0 */}
+        <div className="p-4 sm:p-6 space-y-3 sm:space-y-3.5 flex-1 min-h-0 overflow-y-auto overscroll-contain">
           {THEMES.map((item) => {
             const isSelected = theme === item.id;
 
@@ -86,7 +100,7 @@ export function ThemeModal() {
               <div
                 key={item.id}
                 onClick={() => handleSelectTheme(item.id)}
-                className={`group relative p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                className={`group relative p-3.5 sm:p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                   isSelected
                     ? 'border-blue-600 bg-blue-50/50 shadow-md ring-2 ring-blue-500/20'
                     : 'border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50/80 shadow-2xs'
@@ -168,8 +182,8 @@ export function ThemeModal() {
           })}
         </div>
 
-        {/* Footer Info */}
-        <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+        {/* Footer Info - shrink-0 */}
+        <div className="p-3.5 sm:p-5 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 shrink-0">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>Tanlangan rejim xotirada saqlanadi va doimiy amal qiladi</span>
