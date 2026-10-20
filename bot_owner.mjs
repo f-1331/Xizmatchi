@@ -187,10 +187,13 @@ async function handleUnauthorized(chatId) {
 async function handleStart(chatId, firstName, username = '') {
   const isOwner = isSuperadmin(chatId, username);
   const title = isOwner ? '👑 Bosh Egasi (Superadmin)' : '👤 Rasmiy Administrator';
-  const displayName = isOwner ? 'Fayzbek (@fayzbek1331)' : (firstName || 'Administrator');
+
+  const greeting = isOwner
+    ? `👑 <b>Assalomu alaykum, hurmatli Bosh Administrator Fayzbek (@${SUPERADMIN_USERNAME})!</b>`
+    : `👋 <b>Salom, Xizmatchi platformasi Administratori!</b>`;
 
   const welcomeText =
-    `👑 Assalomu alaykum, hurmatli <b>${displayName}</b>!\n\n` +
+    `${greeting}\n\n` +
     `Siz <b>Xizmatchi Boshqaruv Markazi</b>ga muvaffaqiyatli ulandingiz.\n\n` +
     `🆔 <b>Sizning Telegram ID:</b> <code>${chatId}</code>\n` +
     `🏷️ <b>Maqomingiz:</b> 🟢 <b>${title}</b>\n` +
@@ -434,7 +437,7 @@ async function executeAddAdmin(ownerChatId, input, targetName = '', forwardUsern
     return;
   }
 
-  const finalName = targetName.trim() || (cleanUser ? `@${cleanUser}` : `Admin #${targetId}`);
+  const finalName = targetName.trim() || (cleanUser ? `@${cleanUser}` : `Xizmatchi platformasi Administratori`);
   const newAdmin = {
     id: targetId || null,
     name: finalName,
@@ -472,7 +475,7 @@ async function executeAddAdmin(ownerChatId, input, targetName = '', forwardUsern
       await apiCall('sendMessage', {
         chat_id: targetId,
         text:
-          `🎉 <b>Assalomu alaykum, ${finalName}!</b>\n\n` +
+          `👋 <b>Salom, Xizmatchi platformasi Administratori!</b>\n\n` +
           `Siz <b>Xizmatchi</b> platformasi rahbari Fayzbek (@${SUPERADMIN_USERNAME}) tomonidan rasmiy administrator sifatida tayinlandingiz!\n\n` +
           `⚡ Endi saytdan keladigan barcha yangi buyurtmalar sizga ham avtomatik yetkaziladi.\n\n` +
           `Boshqaruv menyusini ochish uchun /start bosing.`,
@@ -604,9 +607,21 @@ async function processUpdate(update) {
 
     if (pendingMatch) {
       pendingMatch.id = chatId;
-      pendingMatch.name = `${firstName} ${msg.from?.last_name || ''}`.trim() || `@${userHandle}`;
+      pendingMatch.name = `${firstName} ${msg.from?.last_name || ''}`.trim() || `Xizmatchi platformasi Administratori`;
       saveAdminsData(data);
       console.log(`[Owner Bot] 🎉 Kutilayotgan admin faollashdi: @${userHandle} (ID: ${chatId})`);
+
+      // Greet the newly activated admin
+      await apiCall('sendMessage', {
+        chat_id: chatId,
+        text:
+          `👋 <b>Salom, Xizmatchi platformasi Administratori!</b>\n\n` +
+          `Sizning administratorlik maqomingiz muvaffaqiyatli faollashtirildi!\n` +
+          `⚡ Endi saytdan keladigan barcha arizalar sizga yetkaziladi.\n\n` +
+          `Boshqaruv menyusini ochish uchun /start bosing.`,
+        parse_mode: 'HTML',
+        reply_markup: KEYBOARD_ADMIN,
+      });
 
       // Notify Superadmin
       await apiCall('sendMessage', {
@@ -670,6 +685,16 @@ async function processUpdate(update) {
     // Standard Menu Commands
     if (text === '/start' || text.startsWith('/start') || text === '🔔 Bildirishnomalarni faollashtirish' || text === '🔔 Bildirishnoma') {
       await handleStart(chatId, firstName, userHandle);
+    } else if (text.toLowerCase() === 'salom' || text.toLowerCase() === 'assalomu alaykum' || text.toLowerCase() === 'salom alaykum' || text.toLowerCase() === 'salom!') {
+      const greetingReply = isSuperadmin(chatId, userHandle)
+        ? `👑 <b>Assalomu alaykum, hurmatli Bosh Administrator Fayzbek!</b>\n\nBarcha tizimlar faol ishlamoqda.`
+        : `👋 <b>Salom, Xizmatchi platformasi Administratori!</b>\n\nBarcha tizimlar faol. Yangi buyurtmalar tushishi bilan sizga yetkaziladi.`;
+      await apiCall('sendMessage', {
+        chat_id: chatId,
+        text: greetingReply,
+        parse_mode: 'HTML',
+        reply_markup: getKeyboardForUser(chatId, userHandle),
+      });
     } else if (text === '📋 Buyurtmalar' || text === '/buyurtmalar' || text === '📋 Oxirgi buyurtmalar') {
       await handleOrders(chatId, userHandle);
     } else if (text === "👑 Adminlar bo'limi" || text === "👑 Adminlar" || text === '/adminlar') {

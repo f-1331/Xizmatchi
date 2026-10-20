@@ -130,7 +130,7 @@ export function addAdmin(newAdmin: {
 
   const created: TelegramAdmin = {
     id: numId || null,
-    name: newAdmin.name || (cleanUser ? `@${cleanUser}` : `Admin #${numId}`),
+    name: newAdmin.name || (cleanUser ? `@${cleanUser}` : `Xizmatchi platformasi Administratori`),
     username: cleanUser || '',
     addedAt: new Date().toISOString(),
     role: 'admin',
