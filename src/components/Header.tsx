@@ -106,14 +106,14 @@ export function Header() {
               <Logo />
             </a>
 
-            {/* Quick District Selector (Visible on laptops & desktops: 1024px+) */}
-            <div className="hidden lg:flex items-center gap-1.5 px-2.5 xl:px-3 py-1.5 rounded-full bg-slate-100/90 border border-slate-200 text-xs text-slate-700 shrink-0">
+            {/* Quick District Selector (Visible on desktops: 1280px+) */}
+            <div className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100/90 border border-slate-200 text-xs text-slate-700 shrink-0 max-w-[210px]">
               <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
               <select
                 aria-label="Hududni tanlang"
                 value={filters.district}
                 onChange={(e) => handleDistrictChange(e.target.value)}
-                className="bg-transparent font-medium focus:outline-hidden cursor-pointer text-slate-800"
+                className="bg-transparent font-medium focus:outline-hidden cursor-pointer text-slate-800 truncate"
               >
                 {DISTRICTS.map((d) => (
                   <option key={d.id} value={d.id === 'all' ? 'all' : d.name}>
@@ -126,7 +126,7 @@ export function Header() {
                 onClick={handleHeaderRefresh}
                 disabled={isRefreshing}
                 title={t('nav.refresh')}
-                className="p-1 rounded-full text-slate-500 hover:text-blue-600 hover:bg-slate-200/80 transition-colors ml-0.5 cursor-pointer"
+                className="p-1 rounded-full text-slate-500 hover:text-blue-600 hover:bg-slate-200/80 transition-colors ml-0.5 cursor-pointer shrink-0"
               >
                 <RefreshCw
                   className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-blue-600' : ''}`}
@@ -135,8 +135,8 @@ export function Header() {
             </div>
           </div>
 
-          {/* Desktop Navigation Links (Visible on 1024px+ laptops and desktops) */}
-          <nav className="hidden lg:flex items-center gap-3 xl:gap-5 2xl:gap-6 text-xs xl:text-sm font-semibold text-slate-600 shrink-0">
+          {/* Desktop Navigation Links (Visible on 1280px+ large screens) */}
+          <nav className="hidden xl:flex items-center gap-4 2xl:gap-6 text-xs xl:text-sm font-semibold text-slate-600 shrink-0">
             <a
               href="#categories-section"
               className="hover:text-blue-600 transition-colors py-1"
@@ -333,10 +333,10 @@ export function Header() {
               <span className="sm:hidden font-bold">{t('nav.become_specialist_short')}</span>
             </button>
 
-            {/* Hamburger Button (Screen width < 1024px) */}
+            {/* Hamburger Button (Screen width < 1280px) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex items-center gap-1 p-2 rounded-xl text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 lg:hidden shrink-0 cursor-pointer transition-colors"
+              className="flex items-center gap-1 p-2 rounded-xl text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 xl:hidden shrink-0 cursor-pointer transition-colors"
               aria-label={t('nav.menu')}
             >
               {mobileMenuOpen ? (
@@ -354,127 +354,88 @@ export function Header() {
         </div>
       </div>
 
-      {/* TIER 2: Mobile & Tablet Quick Navigation (Visible on screens < 1024px) */}
-      <div className="lg:hidden border-t border-slate-200/80 bg-slate-50/95 backdrop-blur-md px-2.5 py-2 space-y-1.5 shadow-xs">
-        {/* Row 1: District Selector & Fast Actions */}
-        <div className="flex items-center justify-between gap-1.5 text-xs">
-          {/* District Selector & Refresh button */}
-          <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 shadow-2xs flex-1 min-w-0">
-            <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+      {/* TIER 2: Mobile & Tablet Quick Navigation (Visible on screens < 1280px) */}
+      <div className="xl:hidden border-t border-slate-200/80 bg-slate-50/95 backdrop-blur-md px-2.5 py-2 space-y-2 shadow-xs">
+        {/* Row 1: Dedicated, Spacious District Selector (Full width, zero collision) */}
+        <div className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <MapPin className="w-4 h-4 text-blue-600 shrink-0" />
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0 hidden sm:inline">
+              {t('nav.region', 'Hudud')}:
+            </span>
             <select
               aria-label="Hududni tanlang"
               value={filters.district}
               onChange={(e) => handleDistrictChange(e.target.value)}
-              className="bg-transparent font-bold text-slate-800 text-xs focus:outline-hidden cursor-pointer flex-1 truncate"
+              className="bg-transparent font-bold text-slate-800 text-xs sm:text-sm focus:outline-hidden cursor-pointer flex-1 w-full min-w-0 truncate"
             >
               {DISTRICTS.map((d) => (
                 <option key={d.id} value={d.id === 'all' ? 'all' : d.name}>
-                  {d.id === 'all' ? t('nav.all_districts') : d.name.replace(' tumani', '')}
+                  {d.id === 'all' ? t('nav.all_districts') : d.name}
                 </option>
               ))}
             </select>
-            <button
-              type="button"
-              onClick={handleHeaderRefresh}
-              disabled={isRefreshing}
-              title={t('nav.refresh')}
-              className="p-1 rounded text-slate-500 hover:text-blue-600 hover:bg-slate-100 transition-colors shrink-0 cursor-pointer"
-            >
-              <RefreshCw
-                className={`w-3.5 h-3.5 text-emerald-600 ${isRefreshing ? 'animate-spin' : ''}`}
-              />
-            </button>
           </div>
-
-          {/* Language Switcher Button (Mobile) */}
           <button
-            onClick={() => {
-              const next = lang === 'uz' ? 'ru' : lang === 'ru' ? 'en' : 'uz';
-              setLang(next);
-            }}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100/80 border border-blue-200 text-blue-900 font-bold shrink-0 shadow-2xs transition-colors cursor-pointer"
-            title="Tilni almashtirish"
+            type="button"
+            onClick={handleHeaderRefresh}
+            disabled={isRefreshing}
+            title={t('nav.refresh')}
+            className="p-1.5 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-slate-100 transition-colors shrink-0 cursor-pointer"
           >
-            <span>{currentLangObj.flag}</span>
-            <span>{currentLangObj.short}</span>
-          </button>
-
-          {/* QR Code Button (Mobile) */}
-          <button
-            onClick={() => setIsQrModalOpen(true)}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100/80 border border-indigo-200 text-indigo-900 font-bold shrink-0 shadow-2xs transition-colors cursor-pointer"
-            title="QR Kod"
-          >
-            <QrCode className="w-3.5 h-3.5 text-indigo-600" />
-            <span>QR</span>
-          </button>
-
-          {/* Theme Switcher Button */}
-          <button
-            onClick={() => setIsThemeModalOpen(true)}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 border border-amber-200 text-amber-900 font-bold shrink-0 shadow-2xs transition-colors cursor-pointer"
-          >
-            <Palette className="w-3.5 h-3.5 text-amber-600" />
-            <span>{t('nav.theme')}</span>
-          </button>
-
-          {/* Favorites Button */}
-          <button
-            onClick={() => setIsFavoritesOpen(true)}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100/80 border border-rose-200 text-rose-800 font-bold shrink-0 shadow-2xs transition-colors cursor-pointer"
-          >
-            <Heart className="w-3.5 h-3.5 text-rose-500" />
-            <span>{favorites.length > 0 ? `(${favorites.length})` : t('nav.favorites')}</span>
+            <RefreshCw
+              className={`w-4 h-4 text-emerald-600 ${isRefreshing ? 'animate-spin' : ''}`}
+            />
           </button>
         </div>
 
-        {/* Row 2: All 5 Primary Sections - Wrapped cleanly so ALL items and their continuation are 100% visible on mobile */}
-        <div className="flex flex-wrap items-center gap-1.5 text-xs pt-0.5">
+        {/* Row 2: Smooth Horizontal Scrollable Chips for Fast Section Navigation */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth py-0.5 -mx-2.5 px-2.5">
           <a
             href="#services-catalog"
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 text-slate-800 hover:text-blue-600 font-bold shadow-2xs transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 text-slate-800 hover:text-blue-600 font-bold text-xs shadow-2xs transition-colors shrink-0 whitespace-nowrap"
           >
-            <Wrench className="w-3.5 h-3.5 text-blue-600" />
+            <Wrench className="w-3.5 h-3.5 text-blue-600 shrink-0" />
             <span>{t('nav.services')}</span>
           </a>
 
           <a
             href="#categories-section"
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 text-slate-800 hover:text-blue-600 font-bold shadow-2xs transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 text-slate-800 hover:text-blue-600 font-bold text-xs shadow-2xs transition-colors shrink-0 whitespace-nowrap"
           >
-            <Layers className="w-3.5 h-3.5 text-indigo-600" />
+            <Layers className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
             <span>{t('nav.categories')}</span>
           </a>
 
           <a
             href="#specialists-section"
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 text-slate-800 hover:text-blue-600 font-bold shadow-2xs transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 text-slate-800 hover:text-blue-600 font-bold text-xs shadow-2xs transition-colors shrink-0 whitespace-nowrap"
           >
-            <User className="w-3.5 h-3.5 text-emerald-600" />
-            <span>{t('nav.specialists_short')}</span>
+            <User className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <span>{t('nav.specialists')}</span>
           </a>
 
           <button
             onClick={handleEmergencyClick}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold shadow-xs transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-xs transition-colors shrink-0 whitespace-nowrap cursor-pointer"
           >
-            <Flame className="w-3.5 h-3.5 fill-white text-white animate-pulse" />
+            <Flame className="w-3.5 h-3.5 fill-white text-white animate-pulse shrink-0" />
             <span>{t('nav.emergency_24_7')}</span>
           </button>
 
           <a
             href="#how-it-works"
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-semibold shadow-2xs transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-semibold text-xs shadow-2xs transition-colors shrink-0 whitespace-nowrap"
           >
-            <HelpCircle className="w-3.5 h-3.5 text-amber-500" />
+            <HelpCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
             <span>{t('nav.how_it_works')}</span>
           </a>
         </div>
       </div>
 
-      {/* FULL RESPONSIVE DRAWER MENU (When Hamburger is clicked on screens < 1024px) */}
+      {/* FULL RESPONSIVE DRAWER MENU (When Hamburger is clicked on screens < 1280px) */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3.5 animate-fade-in shadow-2xl max-h-[85vh] overflow-y-auto">
+        <div className="xl:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3.5 animate-fade-in shadow-2xl max-h-[85vh] overflow-y-auto">
           {/* User profile card in drawer */}
           {currentUser ? (
             <div className="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-between">
