@@ -1,0 +1,12 @@
+{
+  "superadmin": 6707839718,
+  "admins": [
+    {
+      "id": 6707839718,
+      "name": "Bosh Administrator (Egasi)",
+      "username": "",
+      "addedAt": "2026-10-20T21:00:00.000Z",
+      "role": "superadmin"
+    }
+  ]
+}

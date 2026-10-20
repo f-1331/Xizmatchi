@@ -3,11 +3,14 @@ import { BookingRequest } from '../types';
 export const TELEGRAM_OWNER_BOT_TOKEN = '8668786258:AAGrl0W3txp5b-F_0o6Pj7snrS-f8xCd9CA';
 export const TELEGRAM_OWNER_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_ownerbot';
 
+// Client-facing / Public Bot for customers & specialists
 export const TELEGRAM_CLIENT_BOT_TOKEN = '8977412958:AAH_xkRQQe6k49_JVxRvmuv6-vtl0Du5ao4';
 export const TELEGRAM_CLIENT_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_bot';
+export const TELEGRAM_PUBLIC_BOT_USERNAME = TELEGRAM_CLIENT_BOT_USERNAME;
 
+// Default public-facing bot username (NEVER points to private ownerbot)
+export const TELEGRAM_BOT_USERNAME = TELEGRAM_CLIENT_BOT_USERNAME;
 export const TELEGRAM_BOT_TOKEN = TELEGRAM_OWNER_BOT_TOKEN;
-export const TELEGRAM_BOT_USERNAME = TELEGRAM_OWNER_BOT_USERNAME;
 
 export interface TelegramSendResult {
   success: boolean;
@@ -39,8 +42,7 @@ export function formatBookingTelegramMessage(booking: BookingRequest): string {
 <i>"${booking.description}"</i>
 ${booking.photoUrl ? `\n📸 <b>Rasm ilova qilingan</b>` : ''}
 ━━━━━━━━━━━━━━━━━━
-🌐 <b>Platforma:</b> <a href="https://xizmatchi.vercel.app">Xizmatchi — O'zbekiston</a>
-🤖 <b>Bot:</b> @${TELEGRAM_BOT_USERNAME}`;
+🌐 <b>Platforma:</b> <a href="https://xizmatchi.vercel.app">Xizmatchi — O'zbekiston</a>`;
 }
 
 export async function sendBookingToTelegram(booking: BookingRequest): Promise<TelegramSendResult> {

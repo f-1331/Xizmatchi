@@ -22,7 +22,7 @@ import {
   ShieldCheck,
   Send,
 } from 'lucide-react';
-import { sendBookingToTelegram, TELEGRAM_BOT_USERNAME } from '../lib/telegram';
+import { sendBookingToTelegram, TELEGRAM_CLIENT_BOT_USERNAME } from '../lib/telegram';
 
 export function BookingModal() {
   const {
@@ -179,7 +179,7 @@ export function BookingModal() {
               </div>
             </div>
 
-            {/* Telegram Notification Banner — Fully Responsive and Never Overflows */}
+            {/* Notification Banner — Client Notification (Zero exposure of OwnerBot) */}
             <div className="p-3.5 sm:p-4 rounded-2xl bg-sky-50 border border-sky-200 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-left w-full">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="w-9 h-9 rounded-xl bg-sky-500 text-white flex items-center justify-center shrink-0 shadow-xs">
@@ -187,20 +187,20 @@ export function BookingModal() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-xs font-bold text-sky-950 truncate">
-                    {t('booking.tg_notif_title')}
+                    {t('booking.tg_notif_title', 'Arizangiz dispetcherga yo‘llandi')}
                   </div>
-                  <div className="text-[11px] text-sky-700 font-medium truncate" title={`@${TELEGRAM_BOT_USERNAME}`}>
-                    @{TELEGRAM_BOT_USERNAME}
+                  <div className="text-[11px] text-sky-700 font-medium truncate">
+                    @{TELEGRAM_CLIENT_BOT_USERNAME}
                   </div>
                 </div>
               </div>
               <a
-                href={`https://t.me/${TELEGRAM_BOT_USERNAME}`}
+                href={`https://t.me/${TELEGRAM_CLIENT_BOT_USERNAME}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto px-4 py-2 sm:py-2 rounded-xl bg-sky-600 hover:bg-sky-700 active:scale-95 text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
               >
-                <span>{t('booking.open_bot')}</span>
+                <span>{t('booking.open_bot', 'Botda kuzatish')}</span>
                 <Send className="w-3.5 h-3.5 rotate-45 shrink-0" />
               </a>
             </div>

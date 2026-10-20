@@ -84,27 +84,25 @@ const MAIN_KEYBOARD = {
 };
 
 async function handleStart(chatId, firstName) {
-  addSubscriber(chatId);
-
   const welcomeText = `Assalomu alaykum, <b>${firstName || 'Foydalanuvchi'}</b>! 🇺🇿
 
-Siz <b>"Xizmatchi"</b> platformasining rasmiy botiga xush kelibsiz!
+Siz <b>"Xizmatchi"</b> platformasining rasmiy mijoz botiga xush kelibsiz!
 
 Bu bot orqali:
-🔔 <b>Saytdan tushgan barcha yangi buyurtmalar</b> to'g'ridan-to'g'ri sizga xabar qilib yuboriladi.
 👨‍🔧 Toshkent va viloyatlardagi eng sara ustalarni topishingiz mumkin.
 📍 Tumanlar bo'yicha xizmatlar va bozor narxlarini ko'rishingiz mumkin.
+⚡ Tezkor buyurtma berishingiz va mutaxassislarni chaqirishingiz mumkin.
 
 Pastdagi tugmalar orqali kerakli bo'limni tanlang:`;
 
   const inlineKeyboard = {
     inline_keyboard: [
       [
-        { text: "🌐 Saytga o'tish (Xizmatchi.uz)", url: "http://localhost:3000" },
+        { text: "🌐 Saytni ochish (Web App)", web_app: { url: "https://xizmatchi.vercel.app" } },
       ],
       [
-        { text: "📋 Buyurtmalar", callback_data: "cmd_orders" },
-        { text: "👨‍🔧 Ustalar", callback_data: "cmd_specialists" },
+        { text: "👨‍🔧 Sara ustalar", callback_data: "cmd_specialists" },
+        { text: "📍 Tumanlar", callback_data: "cmd_districts" },
       ],
     ],
   };

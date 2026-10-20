@@ -1,49 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { getAuthorizedAdminIds, getAdminsData } from '@/lib/adminStore';
 
-// Primary Owner Bot (Order management & alerts)
+// Primary Owner Bot (Strictly for Owner & Verified Admins)
 const OWNER_BOT_TOKEN = '8668786258:AAGrl0W3txp5b-F_0o6Pj7snrS-f8xCd9CA';
 const OWNER_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_ownerbot';
 
-// Client / Public Bot
+// Public Client Bot (For normal users)
 const CLIENT_BOT_TOKEN = '8977412958:AAH_xkRQQe6k49_JVxRvmuv6-vtl0Du5ao4';
 const CLIENT_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_bot';
 
-const SUBSCRIBERS_FILE = path.join(process.cwd(), 'src', 'data', 'telegram_subscribers.json');
 const ORDERS_LOG_FILE = path.join(process.cwd(), 'src', 'data', 'telegram_orders.json');
-
-// Primary Owner & Admin Chat IDs (always notified even on fresh/cold start)
-const DEFAULT_ADMIN_CHAT_IDS = [6707839718];
-
-// Helper to read subscribers
-function getSubscribers(): number[] {
-  const set = new Set<number>(DEFAULT_ADMIN_CHAT_IDS);
-  try {
-    if (fs.existsSync(SUBSCRIBERS_FILE)) {
-      const data = JSON.parse(fs.readFileSync(SUBSCRIBERS_FILE, 'utf-8'));
-      if (Array.isArray(data)) {
-        data.forEach((id) => set.add(Number(id)));
-      }
-    }
-  } catch (err) {
-    console.error('Error reading telegram subscribers:', err);
-  }
-  return Array.from(set);
-}
-
-// Helper to save subscribers
-function saveSubscribers(subscribers: number[]): void {
-  try {
-    const dir = path.dirname(SUBSCRIBERS_FILE);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(SUBSCRIBERS_FILE, JSON.stringify(Array.from(new Set(subscribers)), null, 2), 'utf-8');
-  } catch (err) {
-    console.error('Error saving telegram subscribers:', err);
-  }
-}
 
 // Helper to log orders sent
 function logOrder(orderData: any): void {
@@ -59,75 +27,25 @@ function logOrder(orderData: any): void {
   }
 }
 
-// Fetch updates from Telegram bots to discover users who clicked /start
-async function syncRecentSubscribers(): Promise<number[]> {
-  const current = new Set<number>(getSubscribers());
-
-  const tokens = [OWNER_BOT_TOKEN, CLIENT_BOT_TOKEN];
-
-  for (const token of tokens) {
-    try {
-      const res = await fetch(`https://api.telegram.org/bot${token}/getUpdates?limit=50`, {
-        cache: 'no-store',
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.ok && Array.isArray(data.result)) {
-          for (const update of data.result) {
-            const chatId =
-              update.message?.chat?.id ||
-              update.callback_query?.message?.chat?.id ||
-              update.my_chat_member?.chat?.id;
-            if (chatId) {
-              current.add(chatId);
-            }
-          }
-        }
-      }
-    } catch (err) {
-      // Non-fatal if webhook is active (e.g., 409 conflict on tgcloud)
-    }
-  }
-
-  const list = Array.from(current);
-  saveSubscribers(list);
-  return list;
-}
-
 export async function GET(req: NextRequest) {
   try {
-    const subscribeId = req.nextUrl.searchParams.get('subscribe');
-    if (subscribeId && !isNaN(Number(subscribeId))) {
-      const current = getSubscribers();
-      const numId = Number(subscribeId);
-      if (!current.includes(numId)) {
-        current.push(numId);
-        saveSubscribers(current);
-      }
-    }
-
-    // Check Owner Bot info
-    let ownerBotInfo = null;
-    try {
-      const ownerRes = await fetch(`https://api.telegram.org/bot${OWNER_BOT_TOKEN}/getMe`);
-      const ownerData = await ownerRes.json();
-      ownerBotInfo = ownerData.result;
-    } catch (e) {}
-
-    const subscribers = await syncRecentSubscribers();
+    const adminIds = getAuthorizedAdminIds();
+    const adminData = getAdminsData();
 
     return NextResponse.json({
       status: 'ok',
-      ownerBot: ownerBotInfo,
-      ownerBotUsername: OWNER_BOT_USERNAME,
-      clientBotUsername: CLIENT_BOT_USERNAME,
-      subscribersCount: subscribers.length,
-      subscribers,
-      instructions: `Buyurtmalarni qabul qilish uchun @${OWNER_BOT_USERNAME} ga kiring va /start tugmasini bosing.`,
+      publicClientBot: CLIENT_BOT_USERNAME,
+      authorizedAdminsCount: adminIds.length,
+      admins: adminData.admins.map((a) => ({
+        id: a.id,
+        name: a.name,
+        role: a.role,
+      })),
+      timestamp: new Date().toISOString(),
     });
   } catch (error: any) {
     return NextResponse.json(
-      { status: 'error', message: error?.message || 'Bot bilan bog\'lanishda xatolik' },
+      { status: 'error', message: error?.message || "Tizim ma'lumotlarini olishda xatolik" },
       { status: 500 }
     );
   }
@@ -139,13 +57,14 @@ export async function POST(req: NextRequest) {
     const { booking, text } = body;
 
     if (!booking) {
-      return NextResponse.json({ success: false, message: 'Buyurtma ma\'lumotlari topilmadi' }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: 'Buyurtma ma\'lumotlari topilmadi' },
+        { status: 400 }
+      );
     }
 
-    // Discover any newly connected subscribers
-    const subscribers = await syncRecentSubscribers();
-
-    const cleanPhone = (booking.clientPhone || '').replace(/[^\d+]/g, '');
+    // Only broadcast to verified, authorized admins from telegram_admins.json
+    const adminIds = getAuthorizedAdminIds();
 
     const replyMarkup = {
       inline_keyboard: [
@@ -161,7 +80,7 @@ export async function POST(req: NextRequest) {
         ],
         [
           {
-            text: `🌐 Xizmatchi platformasini ochish`,
+            text: `🌐 Xizmatchi saytini ochish`,
             url: `https://xizmatchi.vercel.app`,
           },
         ],
@@ -171,11 +90,8 @@ export async function POST(req: NextRequest) {
     let deliveredCount = 0;
     const errors: string[] = [];
 
-    // Send order to subscribers via the OWNER bot primarily
-    for (const chatId of subscribers) {
-      let sentSuccessfully = false;
-
-      // 1. Send via Owner Bot
+    // Send order ONLY to authorized admin IDs via Owner Bot
+    for (const chatId of adminIds) {
       try {
         const sendRes = await fetch(`https://api.telegram.org/bot${OWNER_BOT_TOKEN}/sendMessage`, {
           method: 'POST',
@@ -190,47 +106,22 @@ export async function POST(req: NextRequest) {
 
         const sendData = await sendRes.json();
         if (sendData.ok) {
-          sentSuccessfully = true;
           deliveredCount++;
         } else {
-          errors.push(`OwnerBot Chat ${chatId}: ${sendData.description}`);
+          errors.push(`Admin ${chatId}: ${sendData.description}`);
         }
       } catch (err: any) {
-        errors.push(`OwnerBot Chat ${chatId}: ${err?.message}`);
-      }
-
-      // 2. If Owner Bot failed (e.g., user started client bot instead), try Client Bot
-      if (!sentSuccessfully) {
-        try {
-          const clientSendRes = await fetch(`https://api.telegram.org/bot${CLIENT_BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              chat_id: chatId,
-              text: text,
-              parse_mode: 'HTML',
-              reply_markup: replyMarkup,
-            }),
-          });
-          const clientData = await clientSendRes.json();
-          if (clientData.ok) {
-            deliveredCount++;
-          }
-        } catch (e) {}
+        errors.push(`Admin ${chatId}: ${err?.message}`);
       }
     }
 
-    logOrder({ booking, deliveredCount, subscribersCount: subscribers.length, errors });
+    logOrder({ booking, deliveredCount, adminCount: adminIds.length, errors });
 
     return NextResponse.json({
       success: true,
       deliveredCount,
-      subscribersCount: subscribers.length,
-      ownerBotUsername: OWNER_BOT_USERNAME,
-      message:
-        subscribers.length > 0
-          ? `Buyurtma ${deliveredCount} ta administratorga Telegram (@${OWNER_BOT_USERNAME}) orqali yetkazildi.`
-          : `Buyurtma qabul qilindi. Buyurtmalarni Telegramda olish uchun @${OWNER_BOT_USERNAME} ga /start bosing.`,
+      adminCount: adminIds.length,
+      message: `Buyurtma ${deliveredCount} ta rasmiy administratorga yetkazildi.`,
       errors: errors.length > 0 ? errors : undefined,
     });
   } catch (error: any) {
