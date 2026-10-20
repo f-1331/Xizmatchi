@@ -200,15 +200,13 @@ img[alt*="netlify"] {
 }
 
 [data-theme="eye-comfort"] .bg-white,
-[data-theme="eye-comfort"] div[class*="bg-white"] {
+[data-theme="eye-comfort"] [class*="bg-white/95"] {
   background-color: #fffefb !important;
   border-color: #ebdccb !important;
 }
 
 [data-theme="eye-comfort"] .bg-slate-50,
-[data-theme="eye-comfort"] .bg-slate-100,
-[data-theme="eye-comfort"] [class*="bg-slate-50"],
-[data-theme="eye-comfort"] [class*="bg-slate-100"] {
+[data-theme="eye-comfort"] .bg-slate-100 {
   background-color: #f5eedf !important;
 }
 
@@ -218,8 +216,7 @@ img[alt*="netlify"] {
 }
 
 [data-theme="eye-comfort"] .border-slate-200,
-[data-theme="eye-comfort"] .border-slate-100,
-[data-theme="eye-comfort"] [class*="border-slate-200"] {
+[data-theme="eye-comfort"] .border-slate-100 {
   border-color: #ebdccb !important;
 }
 
@@ -269,10 +266,16 @@ img[alt*="netlify"] {
 
 [data-theme="eye-comfort"] input,
 [data-theme="eye-comfort"] select,
+[data-theme="eye-comfort"] select option,
 [data-theme="eye-comfort"] textarea {
   background-color: #fffefb !important;
   color: #292524 !important;
   border-color: #ebdccb !important;
+}
+
+[data-theme="eye-comfort"] input::placeholder,
+[data-theme="eye-comfort"] textarea::placeholder {
+  color: #78716c !important;
 }
 
 /* ========================================================
@@ -336,16 +339,15 @@ img[alt*="netlify"] {
 }
 
 [data-theme="dark-night"] .bg-white,
-[data-theme="dark-night"] div[class*="bg-white"] {
+[data-theme="dark-night"] [class*="bg-white/95"],
+[data-theme="dark-night"] [class*="bg-white/90"] {
   background-color: #131d31 !important;
   border-color: #1e2f4f !important;
   color: #e2e8f0 !important;
 }
 
 [data-theme="dark-night"] .bg-slate-50,
-[data-theme="dark-night"] .bg-slate-100,
-[data-theme="dark-night"] [class*="bg-slate-50"],
-[data-theme="dark-night"] [class*="bg-slate-100"] {
+[data-theme="dark-night"] .bg-slate-100 {
   background-color: #0d1527 !important;
   border-color: #1e2d4a !important;
 }
@@ -357,8 +359,7 @@ img[alt*="netlify"] {
 }
 
 [data-theme="dark-night"] .border-slate-200,
-[data-theme="dark-night"] .border-slate-100,
-[data-theme="dark-night"] [class*="border-slate-200"] {
+[data-theme="dark-night"] .border-slate-100 {
   border-color: #1e2d4a !important;
 }
 
@@ -388,6 +389,7 @@ img[alt*="netlify"] {
 
 [data-theme="dark-night"] input,
 [data-theme="dark-night"] select,
+[data-theme="dark-night"] select option,
 [data-theme="dark-night"] textarea {
   background-color: #0d1526 !important;
   color: #f8fafc !important;
@@ -488,15 +490,13 @@ img[alt*="netlify"] {
 }
 
 [data-theme="nature-emerald"] .bg-white,
-[data-theme="nature-emerald"] div[class*="bg-white"] {
+[data-theme="nature-emerald"] [class*="bg-white/95"] {
   background-color: #ffffff !important;
   border-color: #c4e5d4 !important;
 }
 
 [data-theme="nature-emerald"] .bg-slate-50,
-[data-theme="nature-emerald"] .bg-slate-100,
-[data-theme="nature-emerald"] [class*="bg-slate-50"],
-[data-theme="nature-emerald"] [class*="bg-slate-100"] {
+[data-theme="nature-emerald"] .bg-slate-100 {
   background-color: #e5f2eb !important;
 }
 
@@ -506,8 +506,7 @@ img[alt*="netlify"] {
 }
 
 [data-theme="nature-emerald"] .border-slate-200,
-[data-theme="nature-emerald"] .border-slate-100,
-[data-theme="nature-emerald"] [class*="border-slate-200"] {
+[data-theme="nature-emerald"] .border-slate-100 {
   border-color: #c4e5d4 !important;
 }
 
@@ -557,10 +556,16 @@ img[alt*="netlify"] {
 
 [data-theme="nature-emerald"] input,
 [data-theme="nature-emerald"] select,
+[data-theme="nature-emerald"] select option,
 [data-theme="nature-emerald"] textarea {
   background-color: #ffffff !important;
   color: #06281e !important;
   border-color: #c4e5d4 !important;
+}
+
+[data-theme="nature-emerald"] input::placeholder,
+[data-theme="nature-emerald"] textarea::placeholder {
+  color: #4a7c68 !important;
 }
 
 /* ========================================================
@@ -624,15 +629,13 @@ img[alt*="netlify"] {
 }
 
 [data-theme="minimal-slate"] .bg-white,
-[data-theme="minimal-slate"] div[class*="bg-white"] {
+[data-theme="minimal-slate"] [class*="bg-white/95"] {
   background-color: #ffffff !important;
   border-color: #cbd5e1 !important;
 }
 
 [data-theme="minimal-slate"] .bg-slate-50,
-[data-theme="minimal-slate"] .bg-slate-100,
-[data-theme="minimal-slate"] [class*="bg-slate-50"],
-[data-theme="minimal-slate"] [class*="bg-slate-100"] {
+[data-theme="minimal-slate"] .bg-slate-100 {
   background-color: #e2e8f0 !important;
 }
 
@@ -642,8 +645,7 @@ img[alt*="netlify"] {
 }
 
 [data-theme="minimal-slate"] .border-slate-200,
-[data-theme="minimal-slate"] .border-slate-100,
-[data-theme="minimal-slate"] [class*="border-slate-200"] {
+[data-theme="minimal-slate"] .border-slate-100 {
   border-color: #cbd5e1 !important;
 }
 
@@ -693,10 +695,16 @@ img[alt*="netlify"] {
 
 [data-theme="minimal-slate"] input,
 [data-theme="minimal-slate"] select,
+[data-theme="minimal-slate"] select option,
 [data-theme="minimal-slate"] textarea {
   background-color: #ffffff !important;
   color: #0f172a !important;
   border-color: #cbd5e1 !important;
+}
+
+[data-theme="minimal-slate"] input::placeholder,
+[data-theme="minimal-slate"] textarea::placeholder {
+  color: #64748b !important;
 }
 
 /* ========================================================
@@ -710,3 +718,153 @@ img[alt*="netlify"] {
   background-color: #f8fafc;
   color: #1e293b;
 }
+
+/* ========================================================
+   HIGH-CONTRAST MASTER OVERRIDES ACROSS ALL THEMES
+   Ensures that text on dark backgrounds, hero banners, modal headers,
+   emergency sections, and primary buttons is 100% visible and crisp.
+   ======================================================== */
+
+/* 1. Hero Section - Crisp Light Text on Dark Gradient */
+[data-theme] .hero-gradient h1,
+[data-theme] section.bg-gradient-to-b h1,
+[data-theme] .hero-gradient h2,
+[data-theme] section.bg-gradient-to-b h2,
+[data-theme] .hero-gradient h3,
+[data-theme] section.bg-gradient-to-b h3 {
+  color: #ffffff !important;
+}
+
+[data-theme] section.bg-gradient-to-b .bg-clip-text {
+  -webkit-text-fill-color: transparent !important;
+}
+
+[data-theme] section.bg-gradient-to-b p.text-slate-300,
+[data-theme] .hero-gradient p.text-slate-300 {
+  color: #e2e8f0 !important;
+}
+
+[data-theme] section.bg-gradient-to-b .text-slate-400,
+[data-theme] .hero-gradient .text-slate-400 {
+  color: #cbd5e1 !important;
+}
+
+[data-theme] section.bg-gradient-to-b .text-blue-200 {
+  color: #bfdbfe !important;
+}
+
+/* 2. Emergency Banner - Dark Red Gradient Contrast */
+[data-theme] div[class*="from-rose-900"] h2,
+[data-theme] div[class*="from-rose-900"] h3,
+[data-theme] div[class*="from-rose-900"] h4,
+[data-theme] div[class*="from-rose-900"] .text-white {
+  color: #ffffff !important;
+}
+
+[data-theme] div[class*="from-rose-900"] p {
+  color: #ffe4e6 !important;
+}
+
+/* Emergency Banner Call Button: high-contrast white button */
+[data-theme] div[class*="from-rose-900"] button.bg-white,
+[data-theme="dark-night"] div[class*="from-rose-900"] button.bg-white {
+  background-color: #ffffff !important;
+  color: #881337 !important;
+}
+[data-theme] div[class*="from-rose-900"] button.bg-white * {
+  color: #881337 !important;
+}
+
+[data-theme] div[class*="from-rose-900"] a.bg-rose-950\/60 {
+  color: #ffffff !important;
+}
+
+/* 3. Safety Guarantee & Dark Slate Cards */
+[data-theme] .bg-slate-900 h2,
+[data-theme] .bg-slate-900 h3,
+[data-theme] .bg-slate-900 h4,
+[data-theme] .bg-slate-900 .text-white {
+  color: #ffffff !important;
+}
+
+[data-theme] .bg-slate-900 p.text-slate-300 {
+  color: #e2e8f0 !important;
+}
+
+[data-theme] .bg-slate-900 p.text-slate-400 {
+  color: #cbd5e1 !important;
+}
+
+/* 4. Modal and Drawer Dark Headers */
+[data-theme] [class*="bg-gradient-to-r"] h1,
+[data-theme] [class*="bg-gradient-to-r"] h2,
+[data-theme] [class*="bg-gradient-to-r"] h3,
+[data-theme] [class*="bg-gradient-to-r"] h4,
+[data-theme] [class*="bg-gradient-to-r"] .text-white,
+[data-theme] [class*="from-blue-900"] h1,
+[data-theme] [class*="from-blue-900"] h2,
+[data-theme] [class*="from-blue-900"] h3,
+[data-theme] [class*="from-blue-900"] h4,
+[data-theme] [class*="from-blue-900"] .text-white,
+[data-theme] [class*="from-slate-900"] h1,
+[data-theme] [class*="from-slate-900"] h2,
+[data-theme] [class*="from-slate-900"] h3,
+[data-theme] [class*="from-slate-900"] h4,
+[data-theme] [class*="from-slate-900"] .text-white,
+[data-theme] [class*="from-blue-600"] h1,
+[data-theme] [class*="from-blue-600"] h2,
+[data-theme] [class*="from-blue-600"] h3,
+[data-theme] [class*="from-blue-600"] h4,
+[data-theme] [class*="from-blue-600"] .text-white {
+  color: #ffffff !important;
+}
+
+[data-theme] [class*="from-blue-900"] .text-blue-200,
+[data-theme] [class*="from-blue-600"] .text-blue-100 {
+  color: #dbeafe !important;
+}
+
+[data-theme] [class*="from-slate-900"] .text-slate-300,
+[data-theme] [class*="from-slate-900"] .text-slate-400 {
+  color: #cbd5e1 !important;
+}
+
+/* 5. Buttons with Solid Accent / Dark Backgrounds */
+[data-theme] button.bg-blue-600,
+[data-theme] button.bg-blue-600 span,
+[data-theme] button.bg-emerald-600,
+[data-theme] button.bg-emerald-600 span,
+[data-theme] button.bg-emerald-500,
+[data-theme] button.bg-emerald-500 span,
+[data-theme] button.bg-rose-600,
+[data-theme] button.bg-rose-600 span,
+[data-theme] button.bg-slate-900,
+[data-theme] button.bg-slate-900 span,
+[data-theme] a.bg-blue-600,
+[data-theme] a.bg-blue-600 span,
+[data-theme] a.bg-emerald-600,
+[data-theme] a.bg-emerald-600 span,
+[data-theme] a.bg-rose-600,
+[data-theme] a.bg-rose-600 span,
+[data-theme] a.bg-slate-900,
+[data-theme] a.bg-slate-900 span,
+[data-theme] a.bg-sky-500,
+[data-theme] a.bg-sky-500 span,
+[data-theme] a.bg-sky-600,
+[data-theme] a.bg-sky-600 span {
+  color: #ffffff !important;
+}
+
+/* 6. Explicit .text-white Retention */
+[data-theme] .text-white {
+  color: #ffffff !important;
+}
+
+/* 7. Solid Accent Badges */
+[data-theme] span.bg-blue-600,
+[data-theme] span.bg-emerald-600,
+[data-theme] span.bg-rose-600,
+[data-theme] span.bg-slate-900 {
+  color: #ffffff !important;
+}
+
