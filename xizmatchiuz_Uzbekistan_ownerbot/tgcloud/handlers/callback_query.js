@@ -1,13 +1,23 @@
 // handlers/callback_query.js — handles inline button clicks in the Owner bot
 import { api, db } from 'sdk';
 import { eq, desc } from 'sdk/db';
-import { orders } from '../schema.js';
+import { owners, admins, orders } from '../schema.js';
+
+const SUPERADMIN_ID = 6707839718;
+const SUPERADMIN_USERNAME = 'fayzbek1331';
+
+function isSuperadmin(chatId, username = '') {
+  const clean = (username || '').replace(/^@/, '').toLowerCase();
+  return clean === SUPERADMIN_USERNAME || Number(chatId) === SUPERADMIN_ID;
+}
 
 export default async function (cb, ctx) {
   const data = cb.data || '';
   const message = cb.message;
   const chatId = message?.chat?.id;
   const messageId = message?.message_id;
+  const fromUser = cb.from;
+  const userHandle = (fromUser?.username || '').replace(/^@/, '').toLowerCase();
 
   // 1. Order Status: Accept
   if (data.startsWith('accept_')) {
@@ -154,8 +164,7 @@ export default async function (cb, ctx) {
     });
 
     try {
-      let query = db.select().from(orders).orderBy(desc(orders.id)).limit(15);
-      const allOrders = await query.all();
+      const allOrders = await db.select().from(orders).orderBy(desc(orders.id)).limit(15).all();
 
       let filtered = allOrders;
       let filterTitle = 'Barcha buyurtmalar';
@@ -227,6 +236,139 @@ export default async function (cb, ctx) {
       });
     } catch (e) {
       console.error('Filter error:', e);
+    }
+    return;
+  }
+
+  // 6. Admin Panel Callbacks (Superadmin only)
+  if (data === 'admin_list' || data === 'admin_refresh') {
+    if (!isSuperadmin(chatId, userHandle)) {
+      await api.answerCallbackQuery({ callback_query_id: cb.id, text: "Faqat Bosh Egasi uchun!", show_alert: true });
+      return;
+    }
+    await api.answerCallbackQuery({ callback_query_id: cb.id, text: "Adminlar ro'yxati yangilandi" });
+
+    try {
+      const allAdmins = await db.select().from(admins).all();
+      let text = `📋 <b>Xizmatchi — Rasmiy Adminlar Ro'yxati:</b>\n`;
+      text += `━━━━━━━━━━━━━━━━━━\n`;
+      text += `👑 <b>Bosh Egasi:</b> Fayzbek (@${SUPERADMIN_USERNAME}) — <code>${SUPERADMIN_ID}</code>\n\n`;
+
+      const buttons = [];
+
+      if (allAdmins.length === 0) {
+        text += `<i>Hozircha qo'shimcha adminlar yo'q. Faqat sizga xabarlar keladi.</i>\n\n`;
+      } else {
+        allAdmins.forEach((a, idx) => {
+          const userStr = a.username ? `@${a.username}` : (a.name || `Admin #${a.id}`);
+          const idStr = a.tgId ? `<code>${a.tgId}</code>` : '<i>(hali /start bosmagan)</i>';
+          text += `<b>${idx + 1}. ${userStr}</b>\n🆔 ID: ${idStr}\n\n`;
+
+          const targetDel = a.tgId || a.username || String(a.id);
+          buttons.push([{ text: `❌ ${userStr} ni o'chirish`, callback_data: `del_admin:${targetDel}` }]);
+        });
+      }
+
+      buttons.push([
+        { text: "➕ Admin qo'shish", callback_data: "admin_add_prompt" },
+        { text: "🔄 Yangilash", callback_data: "admin_refresh" },
+      ]);
+
+      await api.editMessageText({
+        chat_id: chatId,
+        message_id: messageId,
+        text,
+        parse_mode: 'HTML',
+        reply_markup: { inline_keyboard: buttons },
+      });
+    } catch (e) {
+      console.error('Error listing admins:', e);
+    }
+    return;
+  }
+
+  if (data === 'admin_add_prompt') {
+    if (!isSuperadmin(chatId, userHandle)) {
+      await api.answerCallbackQuery({ callback_query_id: cb.id, text: "Faqat Bosh Egasi uchun!", show_alert: true });
+      return;
+    }
+    await api.answerCallbackQuery({ callback_query_id: cb.id });
+
+    const promptText = 
+      `➕ <b>Yangi admin qo'shish yo'riqnomasi:</b>\n\n` +
+      `Admin qo'shish uchun botga quyidagi formatda buyruq yuboring:\n\n` +
+      `1️⃣ <b>Username orqali:</b>\n<code>/addadmin @sherik_admin</code>\n\n` +
+      `2️⃣ <b>Telegram ID orqali:</b>\n<code>/addadmin 123456789</code>\n\n` +
+      `<i>Admin qo'shilgach, saytdan keladigan barcha yangi buyurtmalar unga ham yetib boradi!</i>`;
+
+    await api.sendMessage({
+      chat_id: chatId,
+      text: promptText,
+      parse_mode: 'HTML',
+    });
+    return;
+  }
+
+  if (data.startsWith('del_admin:')) {
+    if (!isSuperadmin(chatId, userHandle)) {
+      await api.answerCallbackQuery({ callback_query_id: cb.id, text: "Faqat Bosh Egasi uchun!", show_alert: true });
+      return;
+    }
+
+    const target = data.replace('del_admin:', '').trim();
+    if (target === String(SUPERADMIN_ID) || target.toLowerCase() === SUPERADMIN_USERNAME) {
+      await api.answerCallbackQuery({ callback_query_id: cb.id, text: "Bosh Egasini o'chirish mumkin emas!", show_alert: true });
+      return;
+    }
+
+    try {
+      const num = Number(target);
+      if (!isNaN(num) && num > 0) {
+        await db.delete(admins).where(eq(admins.tgId, num)).run();
+      } else {
+        await db.delete(admins).where(eq(admins.username, target.replace(/^@/, ''))).run();
+      }
+
+      await api.answerCallbackQuery({
+        callback_query_id: cb.id,
+        text: `Admin (${target}) muvaffaqiyatli chiqarildi!`,
+        show_alert: true,
+      });
+
+      // Refresh list
+      const allAdmins = await db.select().from(admins).all();
+      let text = `📋 <b>Xizmatchi — Rasmiy Adminlar Ro'yxati:</b>\n`;
+      text += `━━━━━━━━━━━━━━━━━━\n`;
+      text += `👑 <b>Bosh Egasi:</b> Fayzbek (@${SUPERADMIN_USERNAME}) — <code>${SUPERADMIN_ID}</code>\n\n`;
+
+      const buttons = [];
+      if (allAdmins.length === 0) {
+        text += `<i>Hozircha qo'shimcha adminlar yo'q. Faqat sizga xabarlar keladi.</i>\n\n`;
+      } else {
+        allAdmins.forEach((a, idx) => {
+          const userStr = a.username ? `@${a.username}` : (a.name || `Admin #${a.id}`);
+          const idStr = a.tgId ? `<code>${a.tgId}</code>` : '<i>(hali /start bosmagan)</i>';
+          text += `<b>${idx + 1}. ${userStr}</b>\n🆔 ID: ${idStr}\n\n`;
+
+          const targetDel = a.tgId || a.username || String(a.id);
+          buttons.push([{ text: `❌ ${userStr} ni o'chirish`, callback_data: `del_admin:${targetDel}` }]);
+        });
+      }
+
+      buttons.push([
+        { text: "➕ Admin qo'shish", callback_data: "admin_add_prompt" },
+        { text: "🔄 Yangilash", callback_data: "admin_refresh" },
+      ]);
+
+      await api.editMessageText({
+        chat_id: chatId,
+        message_id: messageId,
+        text,
+        parse_mode: 'HTML',
+        reply_markup: { inline_keyboard: buttons },
+      });
+    } catch (e) {
+      console.error('Error deleting admin:', e);
     }
     return;
   }

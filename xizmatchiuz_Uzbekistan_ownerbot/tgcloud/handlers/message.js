@@ -1,20 +1,63 @@
-// handlers/message.js — Xizmatchi Owner & Admin Bot (Pro Management)
-import { api, db, fetch } from 'sdk';
-import { eq, desc, like, or } from 'sdk/db';
-import { owners, orders } from '../schema.js';
+// handlers/message.js — Xizmatchi Owner & Admin Bot (Pro Management on Telegram Serverless)
+import { api, db } from 'sdk';
+import { eq, desc } from 'sdk/db';
+import { owners, admins, orders } from '../schema.js';
 
-// Clean, compact, mobile-perfect keyboard (never squishes on small screens)
-const OWNER_KEYBOARD = {
+const SUPERADMIN_ID = 6707839718;
+const SUPERADMIN_USERNAME = 'fayzbek1331';
+const CLIENT_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_bot';
+
+function isSuperadmin(chatId, username = '') {
+  const clean = (username || '').replace(/^@/, '').toLowerCase();
+  return clean === SUPERADMIN_USERNAME || Number(chatId) === SUPERADMIN_ID;
+}
+
+async function isAuthorizedAdmin(chatId, username = '') {
+  if (isSuperadmin(chatId, username)) return true;
+  const clean = (username || '').replace(/^@/, '').toLowerCase();
+  const numId = Number(chatId);
+
+  try {
+    const allAdmins = await db.select().from(admins).all();
+    if (allAdmins.some((a) => (a.tgId && Number(a.tgId) === numId) || (a.username && a.username.toLowerCase() === clean))) {
+      return true;
+    }
+  } catch (e) {}
+
+  try {
+    const allOwners = await db.select().from(owners).all();
+    if (allOwners.some((o) => (o.tgId && Number(o.tgId) === numId) || (o.username && o.username.toLowerCase() === clean))) {
+      return true;
+    }
+  } catch (e) {}
+
+  return false;
+}
+
+const KEYBOARD_SUPERADMIN = {
   keyboard: [
     [{ text: '📋 Buyurtmalar' }, { text: '📊 Statistika' }],
-    [{ text: '👥 Mijozlar' }, { text: '🛠️ Ustalar' }],
-    [{ text: '🔍 Qidiruv' }, { text: '🔔 Bildirishnoma' }],
+    [{ text: "👑 Adminlar bo'limi" }, { text: '👥 Mijozlar' }],
+    [{ text: '🛠️ Ustalar' }, { text: '🔍 Qidiruv' }],
     [{ text: '🌐 Saytni ochish', web_app: { url: 'https://xizmatchi.vercel.app' } }],
   ],
   resize_keyboard: true,
 };
 
-// Specialist catalog for quick reference
+const KEYBOARD_ADMIN = {
+  keyboard: [
+    [{ text: '📋 Buyurtmalar' }, { text: '📊 Statistika' }],
+    [{ text: '👥 Mijozlar' }, { text: '🛠️ Ustalar' }],
+    [{ text: '🔍 Qidiruv' }],
+    [{ text: '🌐 Saytni ochish', web_app: { url: 'https://xizmatchi.vercel.app' } }],
+  ],
+  resize_keyboard: true,
+};
+
+function getKeyboard(chatId, username = '') {
+  return isSuperadmin(chatId, username) ? KEYBOARD_SUPERADMIN : KEYBOARD_ADMIN;
+}
+
 const SPECIALISTS = [
   { name: 'Mansur Saidvaliyev', profession: 'Professional Dezinfeksiya & Dezinseksiya', rating: '5.0 ⭐', phone: '+998 90 912 34 56', district: 'Toshkent shahar (barcha tumanlar)' },
   { name: 'Akmal Rustamov', profession: 'Santexnik (11 yillik tajriba)', rating: '4.9 ⭐', phone: '+998 90 912 34 56', district: 'Chilonzor tumani' },
@@ -31,97 +74,242 @@ export default async function (message, ctx) {
   const chatId = message.chat.id;
   const fromUser = message.from;
   const text = (message.text || '').trim();
+  const userHandle = (fromUser?.username || '').replace(/^@/, '').toLowerCase();
+  const fullName = [fromUser?.first_name, fromUser?.last_name].filter(Boolean).join(' ') || 'Administrator';
 
-  const fullName = [fromUser?.first_name, fromUser?.last_name].filter(Boolean).join(' ') || 'Admin';
-  const tgUsername = fromUser?.username ? `@${fromUser.username}` : '';
+  // 1. Check if pending admin is activating via username
+  try {
+    const allAdmins = await db.select().from(admins).all();
+    const pendingMatch = allAdmins.find(
+      (a) => a.username && a.username.toLowerCase() === userHandle && !a.tgId
+    );
 
-  // Helper to sync subscriber chat ID with Vercel Next.js API
-  async function syncWithPlatform() {
-    try {
-      await fetch(`https://xizmatchi.vercel.app/api/telegram?subscribe=${chatId}&role=owner&name=${encodeURIComponent(fullName)}`);
-    } catch (e) {
-      // Vercel might be momentarily sleeping
-    }
-  }
-
-  // Handle contact sharing
-  if (message.contact) {
-    const rawPhone = message.contact.phone_number;
-    const phone = rawPhone.startsWith('+') ? rawPhone : `+${rawPhone}`;
-
-    try {
-      await db.insert(owners).values({
-        tgId: fromUser.id,
-        name: fullName,
-        username: tgUsername,
-        phone,
-        role: 'owner',
-        createdAt: new Date().toISOString(),
-      }).onConflictDoUpdate({
-        target: owners.tgId,
-        set: { name: fullName, username: tgUsername, phone },
-      }).run();
-
-      await syncWithPlatform();
+    if (pendingMatch) {
+      await db.update(admins)
+        .set({ tgId: chatId, name: fullName })
+        .where(eq(admins.id, pendingMatch.id))
+        .run();
 
       await api.sendMessage({
         chat_id: chatId,
-        text: `✅ <b>Telefon raqamingiz muvaffaqiyatli saqlandi!</b>\n\n` +
-              `📱 Raqam: <code>${phone}</code>\n` +
-              `🆔 Telegram ID: <code>${chatId}</code>\n\n` +
-              `Endi saytga har qanday yangi buyurtma tushganda shu botga tezkor xabar keladi!`,
+        text:
+          `👋 <b>Salom, Xizmatchi platformasi Administratori!</b>\n\n` +
+          `Sizning administratorlik maqomingiz muvaffaqiyatli faollashtirildi!\n` +
+          `⚡ Endi saytdan keladigan barcha arizalar sizga yetkaziladi.\n\n` +
+          `Boshqaruv menyusini ochish uchun /start bosing.`,
         parse_mode: 'HTML',
-        reply_markup: OWNER_KEYBOARD,
+        reply_markup: KEYBOARD_ADMIN,
       });
-    } catch (e) {
-      console.error('Error saving owner contact:', e);
+
+      await api.sendMessage({
+        chat_id: SUPERADMIN_ID,
+        text: `⚡ <b>Yangi administrator faollashdi:</b>\n👤 @${userHandle} (${fullName})\n🆔 ID: <code>${chatId}</code>\n\nEndi unga barcha yangi buyurtmalar yetkaziladi.`,
+        parse_mode: 'HTML',
+      });
     }
+  } catch (e) {
+    console.error('Error checking pending admin:', e);
+  }
+
+  // 2. Strict Security Check: Unauthorized users are blocked immediately
+  const authorized = await isAuthorizedAdmin(chatId, userHandle);
+  if (!authorized) {
+    await api.sendMessage({
+      chat_id: chatId,
+      text:
+        `⛔ <b>Kirish taqiqlandi!</b>\n\n` +
+        `Oddiy botga kiring, bu bot faqat adminlar va egalar uchun!\n\n` +
+        `👉 <b>Mijozlar boti:</b> @${CLIENT_BOT_USERNAME}\n` +
+        `🌐 <b>Veb-sayt:</b> https://xizmatchi.vercel.app`,
+      parse_mode: 'HTML',
+      reply_markup: { remove_keyboard: true },
+    });
     return;
   }
 
-  // Always keep owner record up-to-date in DB
-  if (fromUser) {
-    try {
-      await db.insert(owners).values({
-        tgId: fromUser.id,
-        name: fullName,
-        username: tgUsername,
-        role: 'owner',
-        createdAt: new Date().toISOString(),
-      }).onConflictDoUpdate({
-        target: owners.tgId,
-        set: { name: fullName, username: tgUsername },
-      }).run();
+  const isOwner = isSuperadmin(chatId, userHandle);
 
-      await syncWithPlatform();
-    } catch (e) {
-      console.error('Error registering owner:', e);
-    }
-  }
-
-  // 1. /start or Notification Activation
+  // 3. /start Command & Notifications
   if (text.startsWith('/start') || text === '🔔 Bildirishnomalarni faollashtirish' || text === '🔔 Bildirishnoma') {
-    await syncWithPlatform();
+    const title = isOwner ? '👑 Bosh Egasi (Superadmin)' : '👤 Rasmiy Administrator';
+    const greeting = isOwner
+      ? `👑 <b>Assalomu alaykum, hurmatli Bosh Administrator Fayzbek (@${SUPERADMIN_USERNAME})!</b>`
+      : `👋 <b>Salom, Xizmatchi platformasi Administratori!</b>`;
 
-    const welcomeText = 
-      `👑 <b>Assalomu alaykum, Xizmatchi platformasi rahbari!</b>\n\n` +
+    const welcomeText =
+      `${greeting}\n\n` +
       `Siz <b>Xizmatchi Boshqaruv Markazi</b>ga muvaffaqiyatli ulandingiz.\n\n` +
-      `🆔 <b>Admin ID:</b> <code>${chatId}</code>\n` +
-      `👤 <b>Administrator:</b> ${fullName} ${tgUsername}\n` +
-      `⚡ <b>Xabarlar holati:</b> 🟢 <b>Faol (barcha arizalar shu yerga keladi)</b>\n` +
-      `🌐 <b>Jonli veb-sayt:</b> https://xizmatchi.vercel.app\n\n` +
-      `Pastdagi qulay menyu orqali buyurtmalarni ko'rishingiz, statistikani kuzatishingiz va mijozlar bilan bog'lanishingiz mumkin:`;
+      `🆔 <b>Sizning Telegram ID:</b> <code>${chatId}</code>\n` +
+      `🏷️ <b>Maqomingiz:</b> 🟢 <b>${title}</b>\n` +
+      `⚡ <b>Bildirishnomalar:</b> 🟢 <b>Faol (Saytdan tushgan barcha arizalar sizga yetkaziladi)</b>\n` +
+      `🌐 <b>Veb-sayt:</b> https://xizmatchi.vercel.app\n\n` +
+      `Pastdagi qulay menyu orqali platformani boshqarishingiz mumkin:`;
 
     await api.sendMessage({
       chat_id: chatId,
       text: welcomeText,
       parse_mode: 'HTML',
-      reply_markup: OWNER_KEYBOARD,
+      reply_markup: getKeyboard(chatId, userHandle),
     });
     return;
   }
 
-  // 2. '📋 Buyurtmalar' or /buyurtmalar
+  // 4. Greetings handler
+  const lowerText = text.toLowerCase();
+  if (lowerText === 'salom' || lowerText === 'assalomu alaykum' || lowerText === 'salom alaykum' || lowerText === 'salom!') {
+    const greetingReply = isOwner
+      ? `👑 <b>Assalomu alaykum, hurmatli Bosh Administrator Fayzbek!</b>\n\nBarcha tizimlar faol ishlamoqda.`
+      : `👋 <b>Salom, Xizmatchi platformasi Administratori!</b>\n\nBarcha tizimlar faol. Yangi buyurtmalar tushishi bilan sizga yetkaziladi.`;
+
+    await api.sendMessage({
+      chat_id: chatId,
+      text: greetingReply,
+      parse_mode: 'HTML',
+      reply_markup: getKeyboard(chatId, userHandle),
+    });
+    return;
+  }
+
+  // 5. Admin Management Panel (Superadmin only)
+  if (text === "👑 Adminlar bo'limi" || text === "👑 Adminlar" || text === '/adminlar') {
+    if (!isOwner) {
+      await api.sendMessage({
+        chat_id: chatId,
+        text: "⚠️ Bu bo'lim faqat Bosh Administrator (Fayzbek) uchun mavjud.",
+        reply_markup: getKeyboard(chatId, userHandle),
+      });
+      return;
+    }
+
+    try {
+      const allAdmins = await db.select().from(admins).all();
+      let msg = `👑 <b>Xizmatchi — Adminlar Boshqaruvi</b>\n`;
+      msg += `━━━━━━━━━━━━━━━━━━\n`;
+      msg += `👤 <b>Bosh Egasi:</b> Fayzbek (@${SUPERADMIN_USERNAME})\n`;
+      msg += `📊 Jami biriktirilgan adminlar: <b>${allAdmins.length} nafar</b>\n\n`;
+      msg += `⚡ <i>Barcha qo'shilgan adminlarga saytdan tushgan yangi buyurtmalar avtomatik yetkaziladi.</i>\n\n`;
+      msg += `Kerakli amalni tanlang:`;
+
+      await api.sendMessage({
+        chat_id: chatId,
+        text: msg,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: "📋 Adminlar ro'yxati", callback_data: "admin_list" },
+              { text: "➕ Admin qo'shish", callback_data: "admin_add_prompt" },
+            ],
+            [
+              { text: "🔄 Yangilash", callback_data: "admin_refresh" },
+            ],
+          ],
+        },
+      });
+    } catch (e) {
+      console.error('Error in admin panel:', e);
+    }
+    return;
+  }
+
+  // 6. Command /addadmin <id yoki @username>
+  if (text.startsWith('/addadmin') && isOwner) {
+    const param = text.replace('/addadmin', '').trim();
+    if (!param) {
+      await api.sendMessage({
+        chat_id: chatId,
+        text: `⚠️ Iltimos, Telegram ID yoki @username kiriting:\nMasalan: <code>/addadmin @sherik_admin</code> yoki <code>/addadmin 123456789</code>`,
+        parse_mode: 'HTML',
+      });
+      return;
+    }
+
+    const cleanParam = param.replace(/^@/, '');
+    const numId = Number(param);
+
+    try {
+      if (!isNaN(numId) && numId > 0) {
+        await db.insert(admins).values({
+          tgId: numId,
+          name: `Admin #${numId}`,
+          role: 'admin',
+          createdAt: new Date().toISOString(),
+        }).run();
+
+        await api.sendMessage({
+          chat_id: chatId,
+          text: `✅ <b>Admin muvaffaqiyatli qo'shildi!</b>\n🆔 ID: <code>${numId}</code>\n\n⚡ Endi unga barcha yangi buyurtmalar boradi.`,
+          parse_mode: 'HTML',
+          reply_markup: getKeyboard(chatId, userHandle),
+        });
+
+        try {
+          await api.sendMessage({
+            chat_id: numId,
+            text:
+              `👋 <b>Salom, Xizmatchi platformasi Administratori!</b>\n\n` +
+              `Siz <b>Xizmatchi</b> platformasi rahbari Fayzbek (@${SUPERADMIN_USERNAME}) tomonidan rasmiy administrator sifatida tayinlandingiz!\n\n` +
+              `⚡ Endi saytdan keladigan barcha yangi buyurtmalar sizga ham yetkaziladi.\n\n` +
+              `Boshqaruv menyusini ochish uchun /start bosing.`,
+            parse_mode: 'HTML',
+            reply_markup: KEYBOARD_ADMIN,
+          });
+        } catch (err) {}
+      } else {
+        await db.insert(admins).values({
+          username: cleanParam,
+          name: `@${cleanParam}`,
+          role: 'admin',
+          createdAt: new Date().toISOString(),
+        }).run();
+
+        await api.sendMessage({
+          chat_id: chatId,
+          text: `✅ <b>Admin muvaffaqiyatli ro'yxatga olindi!</b>\n👤 Username: @${cleanParam}\n\n💡 <i>Foydalanuvchi botga kirib /start bosishi bilan uning hisobi to'liq faollashadi va xabarlar boradi.</i>`,
+          parse_mode: 'HTML',
+          reply_markup: getKeyboard(chatId, userHandle),
+        });
+      }
+    } catch (e) {
+      console.error('Error adding admin:', e);
+      await api.sendMessage({ chat_id: chatId, text: `Xatolik: Ushbu foydalanuvchi allaqachon mavjud yoki noto'g'ri kiritildi.` });
+    }
+    return;
+  }
+
+  // 7. Command /deladmin yoki /del_<id>
+  if ((text.startsWith('/deladmin') || text.startsWith('/del_')) && isOwner) {
+    const param = text.startsWith('/deladmin') ? text.replace('/deladmin', '').trim() : text.replace('/del_', '').trim();
+    if (!param) {
+      await api.sendMessage({ chat_id: chatId, text: "Iltimos, o'chiriladigan admin ID yoki @username'ini kiriting." });
+      return;
+    }
+
+    if (param === String(SUPERADMIN_ID) || param.toLowerCase() === SUPERADMIN_USERNAME) {
+      await api.sendMessage({ chat_id: chatId, text: "❌ Bosh administratorni o'chirib bo'lmaydi!" });
+      return;
+    }
+
+    try {
+      const numId = Number(param);
+      if (!isNaN(numId) && numId > 0) {
+        await db.delete(admins).where(eq(admins.tgId, numId)).run();
+      } else {
+        await db.delete(admins).where(eq(admins.username, param.replace(/^@/, ''))).run();
+      }
+
+      await api.sendMessage({
+        chat_id: chatId,
+        text: `✅ Admin (${param}) muvaffaqiyatli chiqarildi. Unga endi yangi arizalar bormaydi.`,
+        reply_markup: getKeyboard(chatId, userHandle),
+      });
+    } catch (e) {
+      console.error('Error deleting admin:', e);
+    }
+    return;
+  }
+
+  // 8. '📋 Buyurtmalar'
   if (text === '📋 Buyurtmalar' || text === '📋 Oxirgi buyurtmalar' || text === '/buyurtmalar') {
     try {
       const recentOrders = await db.select().from(orders).orderBy(desc(orders.id)).limit(10).all();
@@ -129,10 +317,9 @@ export default async function (message, ctx) {
       if (!recentOrders || recentOrders.length === 0) {
         await api.sendMessage({
           chat_id: chatId,
-          text: `📋 <b>Hozircha buyurtmalar ro'yxati bo'sh.</b>\n\n` +
-                `Saytda mijozlar buyurtma berganda arizalar bir zumda shu yerda paydo bo'ladi.`,
+          text: `📋 <b>Hozircha buyurtmalar ro'yxati bo'sh.</b>\n\nSaytda mijozlar buyurtma berganda arizalar bir zumda shu yerda paydo bo'ladi.`,
           parse_mode: 'HTML',
-          reply_markup: OWNER_KEYBOARD,
+          reply_markup: getKeyboard(chatId, userHandle),
         });
         return;
       }
@@ -176,32 +363,30 @@ export default async function (message, ctx) {
     return;
   }
 
-  // 3. '📊 Statistika' or /statistika
-  if (text === '📊 Statistika' || text === '📊 Tizim statistikasi' || text === '/statistika') {
+  // 9. '📊 Statistika'
+  if (text === '📊 Statistika' || text === '/statistika') {
     try {
       const allOrders = await db.select().from(orders).all();
-      const totalOwnersCount = await db.$count(owners);
+      const allAdmins = await db.select().from(admins).all();
 
       const totalCount = allOrders.length;
       const yangiCount = allOrders.filter(o => o.status === 'yangi' || !o.status).length;
       const jarayondaCount = allOrders.filter(o => o.status === 'qabul_qilindi').length;
       const bajarildiCount = allOrders.filter(o => o.status === 'bajarildi').length;
-      const bekorCount = allOrders.filter(o => o.status === 'bekor_qilindi').length;
 
       const statsText = 
         `📊 <b>XIZMATCHI TIZIM STATISTIKASI:</b>\n` +
         `━━━━━━━━━━━━━━━━━━\n` +
+        `👑 <b>Bosh Egasi:</b> Fayzbek (@${SUPERADMIN_USERNAME})\n` +
+        `👥 <b>Adminlar soni:</b> ${allAdmins.length + 1} nafar\n` +
         `📦 <b>Jami buyurtmalar:</b> ${totalCount} ta\n` +
         `🆕 <b>Yangi arizalar:</b> ${yangiCount} ta\n` +
         `⏳ <b>Jarayonda:</b> ${jarayondaCount} ta\n` +
         `✅ <b>Muvaffaqiyatli bajarilgan:</b> ${bajarildiCount} ta\n` +
-        `❌ <b>Bekor qilingan:</b> ${bekorCount} ta\n\n` +
-        `👑 <b>Boshqaruvchilar:</b> ${totalOwnersCount} nafar\n` +
         `👷‍♂️ <b>Ro'yxatdan o'tgan ustalar:</b> ${SPECIALISTS.length} nafar\n` +
         `━━━━━━━━━━━━━━━━━━\n` +
         `🌐 <b>Veb-platforma:</b> https://xizmatchi.vercel.app\n` +
-        `⚡ <b>Server:</b> 🟢 Vercel Edge & tgcloud faol\n` +
-        `🤖 <b>Bot:</b> @xizmatchiuz_Uzbekistan_ownerbot`;
+        `⚡ <b>Serverless Cloud:</b> 🟢 24/7 Faol`;
 
       await api.sendMessage({
         chat_id: chatId,
@@ -221,22 +406,19 @@ export default async function (message, ctx) {
     return;
   }
 
-  // 4. '👥 Mijozlar' or /mijozlar
+  // 10. '👥 Mijozlar'
   if (text === '👥 Mijozlar' || text === '/mijozlar') {
     try {
       const allOrders = await db.select().from(orders).orderBy(desc(orders.id)).limit(15).all();
-
       if (!allOrders || allOrders.length === 0) {
         await api.sendMessage({
           chat_id: chatId,
-          text: `👥 <b>Hozircha mijozlar ma'lumotlari mavjud emas.</b>\n\nBuyurtmalar tushishi bilan mijozlarning telefonlari shu yerda saqlanadi.`,
-          parse_mode: 'HTML',
-          reply_markup: OWNER_KEYBOARD,
+          text: `👥 <b>Hozircha mijozlar ma'lumotlari mavjud emas.</b>`,
+          reply_markup: getKeyboard(chatId, userHandle),
         });
         return;
       }
 
-      // Group unique clients by phone
       const clientMap = new Map();
       allOrders.forEach(o => {
         const phone = o.clientPhone;
@@ -265,7 +447,7 @@ export default async function (message, ctx) {
         chat_id: chatId,
         text: clientsText,
         parse_mode: 'HTML',
-        reply_markup: OWNER_KEYBOARD,
+        reply_markup: getKeyboard(chatId, userHandle),
       });
     } catch (e) {
       console.error('Error in clients handler:', e);
@@ -273,10 +455,9 @@ export default async function (message, ctx) {
     return;
   }
 
-  // 5. '🛠️ Ustalar' or /ustalar
+  // 11. '🛠️ Ustalar'
   if (text === '🛠️ Ustalar' || text === '/ustalar') {
     let specText = `🛠️ <b>Platformadagi tasdiqlangan ustalar (${SPECIALISTS.length} nafar):</b>\n\n`;
-
     SPECIALISTS.forEach((s, idx) => {
       specText += `<b>${idx + 1}. ${s.name}</b> (${s.rating})\n`;
       specText += `🔧 <i>${s.profession}</i>\n`;
@@ -284,8 +465,6 @@ export default async function (message, ctx) {
       specText += `📞 Tel: <code>${s.phone}</code>\n`;
       specText += `─────────────────\n`;
     });
-
-    specText += `\n<i>Barcha ustalar portfoliolari saytda to'liq joylashtirilgan.</i>`;
 
     await api.sendMessage({
       chat_id: chatId,
@@ -300,58 +479,33 @@ export default async function (message, ctx) {
     return;
   }
 
-  // 6. '🔍 Qidiruv' or search query
+  // 12. '🔍 Qidiruv'
   if (text === '🔍 Qidiruv' || text === '/qidiruv') {
     await api.sendMessage({
       chat_id: chatId,
-      text: `🔍 <b>Buyurtma yoki mijozni qidirish:</b>\n\n` +
-            `Istalgan buyurtma ID raqamini (masalan: <code>1234</code> yoki <code>VERCEL-01</code>) ` +
-            `yoki mijozning telefon raqamini (masalan: <code>901234567</code>) yozib yuboring.\n\n` +
-            `Bot darhol bazadan qidirib, barcha ma'lumotlarni chiqarib beradi!`,
+      text: `🔍 <b>Buyurtma yoki mijozni qidirish:</b>\n\nIstalgan telefon raqam yoki buyurtma ID sini yozib yuboring (masalan: <code>901234567</code>):`,
       parse_mode: 'HTML',
-      reply_markup: OWNER_KEYBOARD,
+      reply_markup: getKeyboard(chatId, userHandle),
     });
     return;
   }
 
-  // 7. 'ℹ️ Yordam' or /yordam
-  if (text === 'ℹ️ Yordam' || text === 'ℹ️ Yordam & Ma\'lumot' || text === '/yordam') {
-    const helpText = 
-      `ℹ️ <b>Xizmatchi Boshqaruv Markazi Yo'riqnomasi:</b>\n\n` +
-      `• <b>📋 Buyurtmalar</b> — Barcha tushgan buyurtmalarni ko'rish va ularni Yangi / Jarayonda / Bajarildi bo'yicha saralash.\n` +
-      `• <b>📊 Statistika</b> — Tizim ko'rsatkichlari, buyurtmalar soni va server holati.\n` +
-      `• <b>👥 Mijozlar</b> — Buyurtma bergan mijozlarning telefon raqamlari va hisoboti.\n` +
-      `• <b>🛠️ Ustalar</b> — Xizmatchi platformasidagi professional ustalar ro'yxati.\n` +
-      `• <b>🔍 Qidiruv</b> — Telefon raqam yoki buyurtma ID bo'yicha bir zumda qidirish.\n` +
-      `• <b>🚀 Web App</b> — Telegramdan chiqmasdan to'g'ridan-to'g'ri saytni ochish.\n\n` +
-      `📞 <b>Texnik qo'llab-quvvatlash:</b> @fayzbek1331\n` +
-      `🌐 <b>Rasmiy sayt:</b> https://xizmatchi.vercel.app`;
-
+  // 13. '🌐 Saytni ochish'
+  if (text === '🌐 Saytni ochish' || text === '/sayt') {
     await api.sendMessage({
       chat_id: chatId,
-      text: helpText,
-      parse_mode: 'HTML',
-      reply_markup: OWNER_KEYBOARD,
-    });
-    return;
-  }
-
-  // 8. '🌐 Saytni ochish'
-  if (text === '🌐 Xizmatchi saytini ochish' || text === '🌐 Saytni ochish' || text === '/sayt') {
-    await api.sendMessage({
-      chat_id: chatId,
-      text: `🌐 <b>Xizmatchi Veb-Platformasi:</b>\n\nQuyidagi tugma orqali saytni bir zumda ochishingiz mumkin:`,
+      text: `🌐 <b>Xizmatchi platformasi:</b>\n👉 https://xizmatchi.vercel.app`,
       parse_mode: 'HTML',
       reply_markup: {
         inline_keyboard: [
-          [{ text: '🚀 Saytni ochish (xizmatchi.vercel.app)', url: 'https://xizmatchi.vercel.app' }],
+          [{ text: '🚀 Saytni ochish', url: 'https://xizmatchi.vercel.app' }],
         ],
       },
     });
     return;
   }
 
-  // 9. Check if message is a search query (digits, phone, or order ID)
+  // 14. Search query handler if text length >= 3
   if (text.length >= 3 && !text.startsWith('/')) {
     try {
       const cleanSearch = text.replace(/[^\w\d+]/g, '');
@@ -365,7 +519,7 @@ export default async function (message, ctx) {
       );
 
       if (matched.length > 0) {
-        let resMsg = `🔍 <b>Qidiruv natijasi: "${text}" bo'yicha ${matched.length} ta buyurtma topildi:</b>\n\n`;
+        let resMsg = `🔍 <b>"${text}" bo'yicha ${matched.length} ta natija:</b>\n\n`;
         matched.slice(0, 5).forEach((o, idx) => {
           const badge = o.status === 'bajarildi' ? '✅ Bajarildi' :
                         o.status === 'qabul_qilindi' ? '⏳ Jarayonda' :
@@ -376,7 +530,6 @@ export default async function (message, ctx) {
           resMsg += `📞 Tel: <code>${o.clientPhone || '—'}</code>\n`;
           resMsg += `📍 Hudud: ${o.district || 'Toshkent'}\n`;
           resMsg += `🛠 Xizmat: ${o.category || 'Xizmat'}\n`;
-          resMsg += `📝 Tavsif: <i>"${o.description || '—'}"</i>\n`;
           resMsg += `━━━━━━━━━━━━━━━━━━\n`;
         });
 
@@ -384,7 +537,7 @@ export default async function (message, ctx) {
           chat_id: chatId,
           text: resMsg,
           parse_mode: 'HTML',
-          reply_markup: OWNER_KEYBOARD,
+          reply_markup: getKeyboard(chatId, userHandle),
         });
         return;
       }
@@ -393,10 +546,10 @@ export default async function (message, ctx) {
     }
   }
 
-  // Default fallback response
+  // Default menu reply
   await api.sendMessage({
     chat_id: chatId,
-    text: `Boshqaruv uchun quyidagi menyudan kerakli bo'limni tanlang:`,
-    reply_markup: OWNER_KEYBOARD,
+    text: `Boshqaruv uchun pastdagi menyudan kerakli bo'limni tanlang:`,
+    reply_markup: getKeyboard(chatId, userHandle),
   });
 }

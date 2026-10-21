@@ -1,5 +1,5 @@
 import { api, db } from 'sdk';
-import { owners, orders } from '../schema.js';
+import { owners, admins, orders } from '../schema.js';
 
 export default async function (input, ctx) {
   const { booking, text, replyMarkup } = input || {};
@@ -23,21 +23,26 @@ export default async function (input, ctx) {
     }
   }
 
-  // Find all owners
-  let allOwners = [];
+  // Find all owners & admins
+  const recipientIds = new Set([6707839718]); // Superadmin Fayzbek
+
   try {
-    allOwners = await db.select().from(owners).all();
+    const allOwners = await db.select().from(owners).all();
+    allOwners.forEach(o => { if (o.tgId) recipientIds.add(Number(o.tgId)); });
   } catch (e) {
     console.error('Error fetching owners:', e);
   }
 
-  // Ensure primary owner 6707839718 is always notified
-  const ownerIds = new Set(allOwners.map((o) => o.tgId));
-  ownerIds.add(6707839718);
+  try {
+    const allAdmins = await db.select().from(admins).all();
+    allAdmins.forEach(a => { if (a.tgId) recipientIds.add(Number(a.tgId)); });
+  } catch (e) {
+    console.error('Error fetching admins:', e);
+  }
 
   let deliveredCount = 0;
   if (text) {
-    for (const chatId of ownerIds) {
+    for (const chatId of recipientIds) {
       try {
         await api.sendMessage({
           chat_id: chatId,
@@ -52,5 +57,5 @@ export default async function (input, ctx) {
     }
   }
 
-  return { success: true, deliveredCount, ownersCount: ownerIds.size, savedOrder };
+  return { success: true, deliveredCount, recipientsCount: recipientIds.size, savedOrder };
 }

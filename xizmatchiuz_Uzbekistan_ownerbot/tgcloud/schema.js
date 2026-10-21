@@ -10,6 +10,15 @@ export const owners = table('owners', {
   createdAt: text('created_at'),
 });
 
+export const admins = table('admins', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  tgId: integer('tg_id').unique(),
+  name: text('name'),
+  username: text('username'),
+  role: text('role').default('admin'),
+  createdAt: text('created_at'),
+});
+
 export const orders = table('orders', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   bookingId: text('booking_id'),
