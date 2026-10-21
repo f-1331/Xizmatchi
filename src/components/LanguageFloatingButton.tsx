@@ -9,7 +9,7 @@ export function LanguageFloatingButton() {
   const currentLangObj = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
 
   return (
-    <div className="fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-30 animate-fade-in">
+    <div className="hidden md:flex fixed bottom-6 right-6 z-30 animate-fade-in">
       <button
         type="button"
         onClick={() => setIsLangModalOpen(true)}
