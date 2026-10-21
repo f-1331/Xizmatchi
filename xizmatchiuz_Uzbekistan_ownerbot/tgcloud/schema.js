@@ -31,5 +31,6 @@ export const orders = table('orders', {
   urgency: text('urgency'),
   preferredTime: text('preferred_time'),
   status: text('status').default('yangi'),
+  photoUrl: text('photo_url'),
   createdAt: text('created_at'),
 });

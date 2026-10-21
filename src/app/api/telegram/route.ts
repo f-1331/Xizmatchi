@@ -89,26 +89,87 @@ export async function POST(req: NextRequest) {
 
     let deliveredCount = 0;
     const errors: string[] = [];
+    const photoUrl: string | undefined = booking.photoUrl;
 
     // Send order ONLY to authorized admin IDs via Owner Bot
     for (const chatId of adminIds) {
       try {
-        const sendRes = await fetch(`https://api.telegram.org/bot${OWNER_BOT_TOKEN}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: chatId,
-            text: text,
-            parse_mode: 'HTML',
-            reply_markup: replyMarkup,
-          }),
-        });
+        let sentOk = false;
 
-        const sendData = await sendRes.json();
-        if (sendData.ok) {
+        // 1. Try sending with photo if photoUrl is present
+        if (photoUrl) {
+          try {
+            if (photoUrl.startsWith('data:image/')) {
+              const matches = photoUrl.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+              if (matches) {
+                const mimeType = matches[1];
+                const buffer = Buffer.from(matches[2], 'base64');
+                const blob = new Blob([buffer], { type: mimeType });
+                const formData = new FormData();
+                formData.append('chat_id', String(chatId));
+                formData.append('photo', blob, `order_${booking.id || Date.now()}.jpg`);
+                formData.append('caption', text ? text.slice(0, 1024) : `Buyurtma #${booking.id}`);
+                formData.append('parse_mode', 'HTML');
+                formData.append('reply_markup', JSON.stringify(replyMarkup));
+
+                const photoRes = await fetch(`https://api.telegram.org/bot${OWNER_BOT_TOKEN}/sendPhoto`, {
+                  method: 'POST',
+                  body: formData,
+                });
+                const photoData = await photoRes.json();
+                if (photoData.ok) {
+                  sentOk = true;
+                } else {
+                  console.error(`sendPhoto (base64) failed for admin ${chatId}:`, photoData.description);
+                }
+              }
+            } else if (photoUrl.startsWith('http://') || photoUrl.startsWith('https://')) {
+              const photoRes = await fetch(`https://api.telegram.org/bot${OWNER_BOT_TOKEN}/sendPhoto`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  chat_id: chatId,
+                  photo: photoUrl,
+                  caption: text ? text.slice(0, 1024) : `Buyurtma #${booking.id}`,
+                  parse_mode: 'HTML',
+                  reply_markup: replyMarkup,
+                }),
+              });
+              const photoData = await photoRes.json();
+              if (photoData.ok) {
+                sentOk = true;
+              } else {
+                console.error(`sendPhoto (url) failed for admin ${chatId}:`, photoData.description);
+              }
+            }
+          } catch (photoErr: any) {
+            console.error(`Photo sending error for admin ${chatId}:`, photoErr?.message);
+          }
+        }
+
+        // 2. If no photo or sendPhoto did not succeed, fallback to sendMessage
+        if (!sentOk) {
+          const sendRes = await fetch(`https://api.telegram.org/bot${OWNER_BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: chatId,
+              text: text,
+              parse_mode: 'HTML',
+              reply_markup: replyMarkup,
+            }),
+          });
+
+          const sendData = await sendRes.json();
+          if (sendData.ok) {
+            sentOk = true;
+          } else {
+            errors.push(`Admin ${chatId}: ${sendData.description}`);
+          }
+        }
+
+        if (sentOk) {
           deliveredCount++;
-        } else {
-          errors.push(`Admin ${chatId}: ${sendData.description}`);
         }
       } catch (err: any) {
         errors.push(`Admin ${chatId}: ${err?.message}`);

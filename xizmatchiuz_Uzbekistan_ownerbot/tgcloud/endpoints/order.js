@@ -16,6 +16,7 @@ export default async function (input, ctx) {
         category: String(booking.categoryId || 'santexnika'),
         description: String(booking.description || ''),
         status: 'yangi',
+        photoUrl: booking.photoUrl || null,
         createdAt: new Date().toISOString(),
       }).returning().get();
     } catch (e) {
@@ -43,16 +44,35 @@ export default async function (input, ctx) {
   let deliveredCount = 0;
   if (text) {
     for (const chatId of recipientIds) {
-      try {
-        await api.sendMessage({
-          chat_id: chatId,
-          text: text,
-          parse_mode: 'HTML',
-          reply_markup: replyMarkup,
-        });
-        deliveredCount++;
-      } catch (err) {
-        console.error(`Failed to send order to ${chatId}:`, err);
+      let sent = false;
+      if (booking?.photoUrl) {
+        try {
+          await api.sendPhoto({
+            chat_id: chatId,
+            photo: booking.photoUrl,
+            caption: text.slice(0, 1024),
+            parse_mode: 'HTML',
+            reply_markup: replyMarkup,
+          });
+          sent = true;
+          deliveredCount++;
+        } catch (photoErr) {
+          console.error(`sendPhoto in endpoint failed for ${chatId}:`, photoErr?.message);
+        }
+      }
+
+      if (!sent) {
+        try {
+          await api.sendMessage({
+            chat_id: chatId,
+            text: text,
+            parse_mode: 'HTML',
+            reply_markup: replyMarkup,
+          });
+          deliveredCount++;
+        } catch (err) {
+          console.error(`Failed to send order to ${chatId}:`, err);
+        }
       }
     }
   }

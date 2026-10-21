@@ -373,5 +373,32 @@ export default async function (cb, ctx) {
     return;
   }
 
+  // 7. View Order Photo
+  if (data.startsWith('view_photo_')) {
+    const orderId = data.replace('view_photo_', '').trim();
+    await api.answerCallbackQuery({ callback_query_id: cb.id, text: "Rasm yuklanmoqda..." });
+
+    try {
+      const allOrders = await db.select().from(orders).where(eq(orders.bookingId, orderId)).all();
+      const order = allOrders[0];
+      if (order?.photoUrl) {
+        await api.sendPhoto({
+          chat_id: chatId,
+          photo: order.photoUrl,
+          caption: `📸 <b>Buyurtma #${order.bookingId || order.id} rasmi</b>\n👤 Mijoz: ${order.clientName}\n📞 Tel: ${order.clientPhone}`,
+          parse_mode: 'HTML',
+        });
+      } else {
+        await api.sendMessage({
+          chat_id: chatId,
+          text: `ℹ️ Ushbu buyurtma (#${orderId}) uchun rasm ilova qilinmagan.`,
+        });
+      }
+    } catch (e) {
+      console.error('Error viewing photo:', e);
+    }
+    return;
+  }
+
   await api.answerCallbackQuery({ callback_query_id: cb.id });
 }

@@ -73,7 +73,38 @@ export function BookingModal() {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setPhotoPreview(reader.result as string);
+        const rawResult = reader.result as string;
+        // Compress and resize image to ensure fast upload and Telegram compatibility
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 1200;
+          let width = img.width;
+          let height = img.height;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressed = canvas.toDataURL('image/jpeg', 0.85);
+            setPhotoPreview(compressed);
+          } else {
+            setPhotoPreview(rawResult);
+          }
+        };
+        img.onerror = () => {
+          setPhotoPreview(rawResult);
+        };
+        img.src = rawResult;
       };
       reader.readAsDataURL(file);
     }

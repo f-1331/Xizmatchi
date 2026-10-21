@@ -71,17 +71,57 @@ export async function sendBookingToTelegram(booking: BookingRequest): Promise<Te
     // Direct fallback if API route delivered 0 to owner
     if (deliveredCount === 0) {
       try {
-        const directRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_OWNER_BOT_TOKEN}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: 6707839718,
-            text: text,
-            parse_mode: 'HTML',
-          }),
-        });
-        const directData = await directRes.json();
-        if (directData.ok) {
+        let sentDirect = false;
+        if (booking.photoUrl) {
+          try {
+            if (booking.photoUrl.startsWith('data:image/')) {
+              const resBlob = await fetch(booking.photoUrl);
+              const blob = await resBlob.blob();
+              const fd = new FormData();
+              fd.append('chat_id', '6707839718');
+              fd.append('photo', blob, `order_${booking.id || Date.now()}.jpg`);
+              fd.append('caption', text ? text.slice(0, 1024) : `Buyurtma #${booking.id}`);
+              fd.append('parse_mode', 'HTML');
+              const directPhotoRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_OWNER_BOT_TOKEN}/sendPhoto`, {
+                method: 'POST',
+                body: fd,
+              });
+              const directPhotoData = await directPhotoRes.json();
+              if (directPhotoData.ok) sentDirect = true;
+            } else if (booking.photoUrl.startsWith('http')) {
+              const directPhotoRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_OWNER_BOT_TOKEN}/sendPhoto`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  chat_id: 6707839718,
+                  photo: booking.photoUrl,
+                  caption: text ? text.slice(0, 1024) : `Buyurtma #${booking.id}`,
+                  parse_mode: 'HTML',
+                }),
+              });
+              const directPhotoData = await directPhotoRes.json();
+              if (directPhotoData.ok) sentDirect = true;
+            }
+          } catch (pErr) {
+            console.error('Direct photo error:', pErr);
+          }
+        }
+
+        if (!sentDirect) {
+          const directRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_OWNER_BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: 6707839718,
+              text: text,
+              parse_mode: 'HTML',
+            }),
+          });
+          const directData = await directRes.json();
+          if (directData.ok) sentDirect = true;
+        }
+
+        if (sentDirect) {
           deliveredCount++;
         }
       } catch (directErr) {
@@ -99,17 +139,56 @@ export async function sendBookingToTelegram(booking: BookingRequest): Promise<Te
     // Direct emergency delivery directly from browser
     try {
       const emergencyText = formatBookingTelegramMessage(booking);
-      const emergencyRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_OWNER_BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: 6707839718,
-          text: emergencyText,
-          parse_mode: 'HTML',
-        }),
-      });
-      const emergencyData = await emergencyRes.json();
-      if (emergencyData.ok) {
+      let emergencySent = false;
+
+      if (booking.photoUrl) {
+        try {
+          if (booking.photoUrl.startsWith('data:image/')) {
+            const resBlob = await fetch(booking.photoUrl);
+            const blob = await resBlob.blob();
+            const fd = new FormData();
+            fd.append('chat_id', '6707839718');
+            fd.append('photo', blob, `order_${booking.id || Date.now()}.jpg`);
+            fd.append('caption', emergencyText ? emergencyText.slice(0, 1024) : `Buyurtma #${booking.id}`);
+            fd.append('parse_mode', 'HTML');
+            const emPhotoRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_OWNER_BOT_TOKEN}/sendPhoto`, {
+              method: 'POST',
+              body: fd,
+            });
+            const emPhotoData = await emPhotoRes.json();
+            if (emPhotoData.ok) emergencySent = true;
+          } else if (booking.photoUrl.startsWith('http')) {
+            const emPhotoRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_OWNER_BOT_TOKEN}/sendPhoto`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                chat_id: 6707839718,
+                photo: booking.photoUrl,
+                caption: emergencyText ? emergencyText.slice(0, 1024) : `Buyurtma #${booking.id}`,
+                parse_mode: 'HTML',
+              }),
+            });
+            const emPhotoData = await emPhotoRes.json();
+            if (emPhotoData.ok) emergencySent = true;
+          }
+        } catch (eErr) {}
+      }
+
+      if (!emergencySent) {
+        const emergencyRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_OWNER_BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: 6707839718,
+            text: emergencyText,
+            parse_mode: 'HTML',
+          }),
+        });
+        const emergencyData = await emergencyRes.json();
+        if (emergencyData.ok) emergencySent = true;
+      }
+
+      if (emergencySent) {
         return {
           success: true,
           deliveredCount: 1,

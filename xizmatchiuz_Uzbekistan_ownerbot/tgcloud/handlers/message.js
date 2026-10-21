@@ -336,24 +336,38 @@ export default async function (message, ctx) {
         msg += `📍 Hudud: ${o.district || 'Toshkent'} ${o.address ? `(${o.address})` : ''}\n`;
         msg += `🛠 Xizmat: <b>${o.category || 'Xizmat'}</b>\n`;
         if (o.description) msg += `📝 Tavsif: <i>"${o.description}"</i>\n`;
+        if (o.photoUrl) msg += `📸 <b>Muammo rasmi:</b> Ilova qilingan\n`;
         msg += `━━━━━━━━━━━━━━━━━━\n`;
       });
+
+      const inlineRows = [
+        [
+          { text: '🆕 Yangilar', callback_data: 'filter_orders_yangi' },
+          { text: '⏳ Jarayonda', callback_data: 'filter_orders_jarayonda' },
+        ],
+        [
+          { text: '✅ Bajarilganlar', callback_data: 'filter_orders_bajarildi' },
+          { text: '📋 Barchasi', callback_data: 'filter_orders_all' },
+        ],
+      ];
+
+      const photoOrders = recentOrders.filter(o => !!o.photoUrl);
+      if (photoOrders.length > 0) {
+        const photoButtons = photoOrders.slice(0, 4).map(o => ({
+          text: `📸 Rasm #${o.bookingId || o.id}`,
+          callback_data: `view_photo_${o.bookingId || o.id}`,
+        }));
+        for (let i = 0; i < photoButtons.length; i += 2) {
+          inlineRows.push(photoButtons.slice(i, i + 2));
+        }
+      }
 
       await api.sendMessage({
         chat_id: chatId,
         text: msg,
         parse_mode: 'HTML',
         reply_markup: {
-          inline_keyboard: [
-            [
-              { text: '🆕 Yangilar', callback_data: 'filter_orders_yangi' },
-              { text: '⏳ Jarayonda', callback_data: 'filter_orders_jarayonda' },
-            ],
-            [
-              { text: '✅ Bajarilganlar', callback_data: 'filter_orders_bajarildi' },
-              { text: '📋 Barchasi', callback_data: 'filter_orders_all' },
-            ],
-          ],
+          inline_keyboard: inlineRows,
         },
       });
     } catch (e) {

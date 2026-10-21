@@ -577,8 +577,28 @@ async function handleOrders(chatId, username = '') {
     text += `📞 Tel: <code>${b.clientPhone || 'N/A'}</code>\n`;
     text += `📍 Tuman: ${b.district || 'Toshkent'} ${b.address ? `(${b.address})` : ''}\n`;
     text += `🛠️ Tavsif: <i>"${b.description || 'Xizmat chaqiruvi'}"</i>\n`;
+    if (b.photoUrl) text += `📸 <b>Muammo rasmi:</b> Ilova qilingan\n`;
     text += `━━━━━━━━━━━━━━━━━━\n`;
   });
+
+  const photoOrders = recent.map(item => item.booking || item).filter(b => !!b.photoUrl);
+  if (photoOrders.length > 0) {
+    const photoButtons = photoOrders.slice(0, 4).map(b => ({
+      text: `📸 Rasm #${b.id}`,
+      callback_data: `view_photo_${b.id}`,
+    }));
+    const rows = [];
+    for (let i = 0; i < photoButtons.length; i += 2) {
+      rows.push(photoButtons.slice(i, i + 2));
+    }
+    await apiCall('sendMessage', {
+      chat_id: chatId,
+      text,
+      parse_mode: 'HTML',
+      reply_markup: { inline_keyboard: rows },
+    });
+    return;
+  }
 
   await apiCall('sendMessage', {
     chat_id: chatId,
@@ -853,6 +873,44 @@ async function processUpdate(update) {
         text: `❌ Buyurtma #${orderId} bekor qilindi.`,
         show_alert: true,
       });
+    } else if (data.startsWith('view_photo_')) {
+      const orderId = data.replace('view_photo_', '');
+      await apiCall('answerCallbackQuery', { callback_query_id: cb.id, text: 'Rasm yuklanmoqda...' });
+      const orders = getRecentOrders();
+      const match = orders.find(o => String((o.booking || o).id) === orderId);
+      const b = match ? (match.booking || match) : null;
+      if (b && b.photoUrl) {
+        if (b.photoUrl.startsWith('data:image/')) {
+          try {
+            const matches = b.photoUrl.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+            if (matches) {
+              const mimeType = matches[1];
+              const buffer = Buffer.from(matches[2], 'base64');
+              const blob = new Blob([buffer], { type: mimeType });
+              const formData = new FormData();
+              formData.append('chat_id', String(chatId));
+              formData.append('photo', blob, `order_${b.id}.jpg`);
+              formData.append('caption', `📸 <b>Buyurtma #${b.id} rasmi</b>\n👤 Mijoz: ${b.clientName}\n📞 Tel: ${b.clientPhone}`);
+              formData.append('parse_mode', 'HTML');
+              await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, { method: 'POST', body: formData });
+            }
+          } catch (err) {
+            console.error('Error sending photo buffer:', err);
+          }
+        } else {
+          await apiCall('sendPhoto', {
+            chat_id: chatId,
+            photo: b.photoUrl,
+            caption: `📸 <b>Buyurtma #${b.id} rasmi</b>\n👤 Mijoz: ${b.clientName}\n📞 Tel: ${b.clientPhone}`,
+            parse_mode: 'HTML',
+          });
+        }
+      } else {
+        await apiCall('sendMessage', {
+          chat_id: chatId,
+          text: `ℹ️ Buyurtma #${orderId} uchun rasm topilmadi.`,
+        });
+      }
     }
   }
 }
