@@ -38,7 +38,7 @@ body {
 }
 
 /* ========================================================
-   REMOVE NETLIFY BADGE & DRAWER OVERLAYS
+   REMOVE NETLIFY BADGE & DRAWER OVERLAYS (PERMANENT)
    ======================================================== */
 #nl-hud-frame,
 #nl-badge-frame,
@@ -46,7 +46,6 @@ iframe#nl-hud-frame,
 iframe#nl-badge-frame,
 [id*="nl-hud"],
 [id*="nl-badge"],
-iframe,
 iframe[src*="netlify"],
 iframe[title*="Netlify"],
 iframe#netlify-drawer,
@@ -55,16 +54,24 @@ iframe#netlify-drawer,
 [data-netlify-deploy-id],
 [data-netlify-badge],
 div[id*="netlify"],
+div[class*="netlify"],
 div[class*="netlify-drawer"],
 div[class*="netlify-badge"],
 netlify-drawer,
 netlify-badge,
-a[href*="netlify.com"]:not(footer a),
-a[href*="netlify.app"][class*="badge"],
+a[href*="netlify.com"],
+a[href*="netlify.app"],
+a[href*="netlify"],
+[aria-label*="Netlify" i],
+[aria-label*="Powered by Netlify" i],
+[title*="Netlify" i],
+[title*="Powered by Netlify" i],
 img[src*="netlify.com/img/global/badges"],
 img[src*="netlify.com/v1/badge"],
-img[alt*="Netlify"],
-img[alt*="netlify"] {
+img[src*="netlify"],
+img[alt*="Netlify" i],
+img[alt*="netlify" i],
+svg[aria-label*="Netlify" i] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;

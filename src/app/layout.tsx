@@ -79,35 +79,50 @@ export default function RootLayout({
                     'iframe#nl-badge-frame',
                     'iframe[src*="netlify"]',
                     'iframe[title*="Netlify"]',
-                    'iframe',
                     '#netlify-badge',
                     '.netlify-badge',
                     '[data-netlify-badge]',
                     '[data-netlify-deploy-id]',
                     'div[id*="netlify"]',
+                    'div[class*="netlify"]',
                     'div[class*="netlify-drawer"]',
                     'div[class*="netlify-badge"]',
                     'netlify-drawer',
                     'netlify-badge',
-                    'a[href*="netlify.com"]:not(footer a)',
+                    'a[href*="netlify.com"]',
+                    'a[href*="netlify.app"]',
+                    'a[href*="netlify"]',
                     'img[src*="netlify"]',
-                    'img[alt*="Netlify"]'
+                    'img[alt*="Netlify" i]',
+                    '[aria-label*="Netlify" i]',
+                    '[title*="Netlify" i]'
                   ];
 
                   selectors.forEach(function(sel) {
-                    var els = document.querySelectorAll(sel);
-                    els.forEach(function(el) {
-                      // Keep our dummy blockers if they prevent hud rendering, else hide/remove
-                      if (el.id === 'nl-hud-blocker' || el.id === 'nl-badge-blocker') return;
-                      try {
+                    try {
+                      var els = document.querySelectorAll(sel);
+                      els.forEach(function(el) {
                         el.style.setProperty('display', 'none', 'important');
                         el.style.setProperty('visibility', 'hidden', 'important');
                         el.style.setProperty('opacity', '0', 'important');
                         el.style.setProperty('pointer-events', 'none', 'important');
                         el.remove();
-                      } catch(e) {}
-                    });
+                      });
+                    } catch(e) {}
                   });
+
+                  // Scan any elements whose text content contains "powered by netlify"
+                  try {
+                    var candidates = document.querySelectorAll('a, div, span, p, footer, button');
+                    candidates.forEach(function(el) {
+                      var txt = (el.innerText || el.textContent || '').trim().toLowerCase();
+                      if (txt.indexOf('powered by netlify') !== -1) {
+                        el.style.setProperty('display', 'none', 'important');
+                        el.style.setProperty('visibility', 'hidden', 'important');
+                        el.remove();
+                      }
+                    });
+                  } catch(e) {}
                 }
 
                 killNetlify();

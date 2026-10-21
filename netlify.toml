@@ -4,6 +4,15 @@
 [build.environment]
   NODE_VERSION = "20"
   NPM_FLAGS = "--legacy-peer-deps"
+  NETLIFY_DEPLOY_PREVIEWS_DRAWER = "false"
+  NETLIFY_DRAWER = "false"
+  NETLIFY_FEEDBACK_DRAWER = "false"
+
+[context.deploy-preview]
+  environment = { NETLIFY_DEPLOY_PREVIEWS_DRAWER = "false", NETLIFY_DRAWER = "false" }
+
+[context.branch-deploy]
+  environment = { NETLIFY_DEPLOY_PREVIEWS_DRAWER = "false", NETLIFY_DRAWER = "false" }
 
 [[headers]]
   for = "/*"
