@@ -148,7 +148,7 @@ export function SpecialistCard({ specialist }: SpecialistCardProps) {
           ))}
           {specialist.completedOrdersCount > 0 && (
             <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-medium border border-emerald-100 flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3" /> {specialist.completedOrdersCount}+ ish
+              <CheckCircle2 className="w-3 h-3" /> {specialist.completedOrdersCount}+ {t('card.orders_done')}
             </span>
           )}
         </div>

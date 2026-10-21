@@ -145,14 +145,14 @@ export function ServicesCatalogSection() {
               <div className="mt-4 pt-3 border-t border-slate-100">
                 <div className="flex items-center justify-between mb-3 text-xs">
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Taxminiy narx:</span>
+                    <span className="text-slate-400 block text-[11px]">{t('catalog.approx_price')}</span>
                     <strong className="text-slate-900 text-sm font-black">
                       {job.averagePrice}
                     </strong>
                   </div>
 
                   <div className="text-right">
-                    <span className="text-slate-400 block text-[11px]">Bajarilish vaqti:</span>
+                    <span className="text-slate-400 block text-[11px]">{t('catalog.duration')}</span>
                     <span className="text-emerald-700 font-semibold flex items-center gap-1 justify-end">
                       <Clock className="w-3 h-3" /> {job.duration}
                     </span>
@@ -184,7 +184,7 @@ export function ServicesCatalogSection() {
         {filteredJobs.length === 0 && (
           <div className="bg-white rounded-2xl p-8 text-center border border-slate-200">
             <p className="text-sm text-slate-500">
-              Qidiruvingiz bo&apos;yicha xizmat turi topilmadi. Boshqa so&apos;z bilan qidirib ko&apos;ring.
+              {t('catalog.not_found')}
             </p>
           </div>
         )}

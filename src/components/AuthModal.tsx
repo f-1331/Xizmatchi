@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import {
   X,
   Phone,
@@ -17,6 +18,7 @@ import { UserProfile } from '../types';
 
 export function AuthModal() {
   const { isAuthModalOpen, setIsAuthModalOpen, currentUser, login, showToast } = useApp();
+  const { t } = useLanguage();
 
   const [step, setStep] = useState<'phone' | 'otp' | 'success'>('phone');
   const [phone, setPhone] = useState('+998 ');
@@ -198,10 +200,10 @@ export function AuthModal() {
             </div>
             <div>
               <span className="text-xs text-blue-200 font-semibold uppercase tracking-wider">
-                Yagona hisob
+                {t('auth.single_account')}
               </span>
               <h3 className="text-base sm:text-xl font-black text-white leading-tight">
-                {step === 'phone' ? "Tizimga kirish" : step === 'otp' ? "SMS Tasdiqlash" : "Muvaffaqiyatli!"}
+                {step === 'phone' ? t('auth.login_title') : step === 'otp' ? t('auth.otp_title') : t('auth.success_title')}
               </h3>
             </div>
           </div>
@@ -228,13 +230,13 @@ export function AuthModal() {
             <form onSubmit={handleSendCode} className="space-y-4">
               <div className="text-center pb-2">
                 <p className="text-sm text-slate-600">
-                  Telefon raqamingiz orqali kiring. Botdagi va saytdagi ma&apos;lumotlaringiz bir xil bo&apos;ladi.
+                  {t('auth.phone_intro')}
                 </p>
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Ismingiz (ixtiyoriy)
+                  {t('auth.name_optional')}
                 </label>
                 <div className="relative">
                   <User className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -242,7 +244,7 @@ export function AuthModal() {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Masalan: Sardor Rahimiy"
+                    placeholder="Masalan: Sardor"
                     className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-100 outline-hidden font-medium text-slate-900 transition-all text-sm"
                   />
                 </div>
@@ -250,7 +252,7 @@ export function AuthModal() {
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Telefon raqamingiz <span className="text-rose-500">*</span>
+                  {t('auth.phone_label')} <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
                   <Phone className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -263,25 +265,22 @@ export function AuthModal() {
                     className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-100 outline-hidden font-semibold text-slate-900 transition-all text-sm"
                   />
                 </div>
-                <p className="text-xs text-slate-500 mt-1">
-                  Ushbu raqamga 4 xonali SMS kod jo&apos;natiladi.
-                </p>
               </div>
 
               <div className="pt-2">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 px-6 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-lg shadow-blue-600/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="w-full py-3.5 px-6 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-lg shadow-blue-600/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                 >
                   {loading ? (
                     <>
                       <RefreshCw className="w-4 h-4 animate-spin" />
-                      SMS kod yuborilmoqda...
+                      {t('auth.sending_sms')}
                     </>
                   ) : (
                     <>
-                      <span>SMS kod olish</span>
+                      <span>{t('auth.send_sms_btn')}</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
@@ -382,7 +381,7 @@ export function AuthModal() {
                   ) : (
                     <>
                       <CheckCircle2 className="w-4 h-4" />
-                      <span>Tasdiqlash va Kirish</span>
+                      <span>{t('auth.verify_btn')}</span>
                     </>
                   )}
                 </button>

@@ -171,11 +171,11 @@ export function QrCodeModal() {
           <div className="grid grid-cols-2 gap-2 text-center">
             <div className="p-2 sm:p-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col items-center gap-1 text-[11px] font-semibold text-slate-700">
               <Camera className="w-4 h-4 text-blue-600" />
-              <span>Telefon kamerasi</span>
+              <span>{t('qrcode.phone_camera')}</span>
             </div>
             <div className="p-2 sm:p-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col items-center gap-1 text-[11px] font-semibold text-slate-700">
               <Send className="w-4 h-4 text-sky-500" />
-              <span>Telegram orqali</span>
+              <span>{t('qrcode.via_telegram')}</span>
             </div>
           </div>
 

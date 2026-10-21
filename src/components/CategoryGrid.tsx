@@ -106,7 +106,7 @@ export function CategoryGrid() {
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-slate-200/60 flex items-center justify-between text-xs font-semibold text-blue-600 group-hover:translate-x-0.5 transition-transform">
-                  <span>{isSelected ? 'Tanlangan ✓' : localizedName}</span>
+                  <span>{isSelected ? t('categories.selected') : localizedName}</span>
                   <ChevronRight className="w-4 h-4" />
                 </div>
               </div>

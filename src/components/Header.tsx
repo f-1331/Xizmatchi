@@ -185,7 +185,7 @@ export function Header() {
               </button>
 
               {langDropdownOpen && (
-                <div className="absolute right-0 mt-1.5 w-36 rounded-2xl bg-white border border-slate-200 shadow-2xl p-1.5 z-50 animate-scale-up space-y-1">
+                <div className="absolute right-0 mt-1.5 w-44 max-h-80 overflow-y-auto overscroll-contain rounded-2xl bg-white border border-slate-200 shadow-2xl p-1.5 z-50 animate-scale-up space-y-1">
                   {LANGUAGES.map((l) => (
                     <button
                       key={l.code}
@@ -480,7 +480,7 @@ export function Header() {
               <Globe className="w-4 h-4 text-blue-600" />
               <span>Tilni tanlang / Выберите язык / Select language:</span>
             </div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {LANGUAGES.map((l) => (
                 <button
                   key={l.code}

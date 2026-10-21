@@ -38,7 +38,7 @@ export function EmergencyBanner() {
               {t('emergency.title')}
             </div>
             <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-              Favqulodda holatmi? Suv toshishi, qisqa tutashuv yoki qulf buzildimi?
+              {t('emergency.headline')}
             </h3>
             <p className="text-xs sm:text-sm text-rose-100 max-w-2xl leading-relaxed">
               {t('emergency.desc')}

@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import { THEMES } from '../data/themes';
 import { ThemeId } from '../types';
 import {
@@ -18,6 +19,7 @@ import {
 
 export function ThemeModal() {
   const { theme, setTheme, isThemeModalOpen, setIsThemeModalOpen } = useApp();
+  const { t } = useLanguage();
 
   // Lock body scroll when theme modal is open
   useEffect(() => {
@@ -72,11 +74,11 @@ export function ThemeModal() {
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base sm:text-lg font-black tracking-tight text-white leading-tight">
-                  Dizayn & Ranglar rejimini tanlang
+                  {t('theme.title')}
                 </h3>
               </div>
               <p className="text-xs text-slate-300 mt-0.5">
-                Ko&apos;zingizga qulay va charchatmaydigan 5 ta zamonaviy ko&apos;rinish
+                {t('theme.subtitle')}
               </p>
             </div>
           </div>
@@ -185,14 +187,14 @@ export function ThemeModal() {
         <div className="p-3.5 sm:p-5 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 shrink-0">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>Tanlangan rejim xotirada saqlanadi va doimiy amal qiladi</span>
+            <span>{t('theme.saved_notice')}</span>
           </div>
 
           <button
             onClick={() => setIsThemeModalOpen(false)}
             className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md transition-colors cursor-pointer text-center"
           >
-            Tayyor (Yopish)
+            {t('theme.done_close')}
           </button>
         </div>
       </div>

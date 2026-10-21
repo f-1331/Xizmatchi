@@ -5,8 +5,13 @@ import { Language, TRANSLATIONS } from '../lib/translations';
 
 export const LANGUAGES = [
   { code: 'uz' as Language, label: "O'zbekcha", flag: '🇺🇿', short: 'UZ' },
+  { code: 'kaa' as Language, label: 'Qaraqalpaqsha', flag: '🇺🇿', short: 'KAA' },
   { code: 'ru' as Language, label: 'Русский', flag: '🇷🇺', short: 'RU' },
   { code: 'en' as Language, label: 'English', flag: '🇬🇧', short: 'EN' },
+  { code: 'tr' as Language, label: 'Türkçe', flag: '🇹🇷', short: 'TR' },
+  { code: 'kk' as Language, label: 'Қазақша', flag: '🇰🇿', short: 'KK' },
+  { code: 'tg' as Language, label: 'Тоҷикӣ', flag: '🇹🇯', short: 'TG' },
+  { code: 'ar' as Language, label: 'العربية', flag: '🇸🇦', short: 'AR' },
 ] as const;
 
 interface LanguageContextType {
@@ -26,8 +31,11 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const timer = setTimeout(() => {
       try {
         const savedLang = localStorage.getItem('xizmatchi_language') as Language;
-        if (savedLang && (savedLang === 'uz' || savedLang === 'ru' || savedLang === 'en')) {
+        const validCodes: Language[] = ['uz', 'kaa', 'ru', 'en', 'tr', 'kk', 'tg', 'ar'];
+        if (savedLang && validCodes.includes(savedLang)) {
           setLangState(savedLang);
+          document.documentElement.lang = savedLang;
+          document.documentElement.dir = savedLang === 'ar' ? 'rtl' : 'ltr';
         }
       } catch {
         // localStorage may be disabled in private browsing
@@ -41,6 +49,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     try {
       localStorage.setItem('xizmatchi_language', newLang);
       document.documentElement.lang = newLang;
+      document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
     } catch {
       // ignore
     }
@@ -49,10 +58,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const t = (key: string, defaultVal?: string): string => {
     const entry = TRANSLATIONS[key];
     if (entry && entry[lang]) {
-      return entry[lang];
+      return entry[lang] as string;
     }
     if (entry && entry['uz']) {
-      return entry['uz'];
+      return entry['uz'] as string;
     }
     return defaultVal || key;
   };
@@ -61,7 +70,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const key = `cat.${id}`;
     const entry = TRANSLATIONS[key];
     if (entry && entry[lang]) {
-      return entry[lang];
+      return entry[lang] as string;
+    }
+    if (entry && entry['uz']) {
+      return entry['uz'] as string;
     }
     return fallback || id;
   };
@@ -70,7 +82,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const key = `cat.${id}_desc`;
     const entry = TRANSLATIONS[key];
     if (entry && entry[lang]) {
-      return entry[lang];
+      return entry[lang] as string;
+    }
+    if (entry && entry['uz']) {
+      return entry['uz'] as string;
     }
     return fallback || '';
   };
