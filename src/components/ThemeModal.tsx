@@ -7,7 +7,6 @@ import { ThemeId } from '../types';
 import {
   X,
   Check,
-  Sparkles,
   SunMedium,
   Moon,
   Leaf,

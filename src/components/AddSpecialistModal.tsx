@@ -6,24 +6,16 @@ import { CATEGORIES, DISTRICTS } from '../data/mockData';
 import { formatPrice } from '../lib/storage';
 import {
   X,
-  User,
-  Briefcase,
   Phone,
   Send,
-  MapPin,
-  Clock,
   ShieldCheck,
   CheckCircle2,
-  DollarSign,
   Plus,
   Trash2,
-  Sparkles,
   ArrowRight,
   ArrowLeft,
-  Image as ImageIcon,
   AlertCircle,
   RefreshCw,
-  Smartphone,
   Lock,
 } from 'lucide-react';
 
@@ -73,10 +65,14 @@ export function AddSpecialistModal() {
     let interval: NodeJS.Timeout;
     if (isTimerActive && timer > 0) {
       interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
+        setTimer((prev) => {
+          if (prev <= 1) {
+            setIsTimerActive(false);
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
-    } else if (timer === 0) {
-      setIsTimerActive(false);
     }
     return () => clearInterval(interval);
   }, [isTimerActive, timer]);
@@ -148,8 +144,8 @@ export function AddSpecialistModal() {
         'info',
         'Xavfsizlik tekshiruvi'
       );
-    } catch (err: any) {
-      setSmsError(err?.message || 'SMS kod yuborishda xatolik yuz berdi.');
+    } catch (err: unknown) {
+      setSmsError(err instanceof Error ? err.message : 'SMS kod yuborishda xatolik yuz berdi.');
     } finally {
       setIsSendingSms(false);
     }
@@ -241,8 +237,8 @@ export function AddSpecialistModal() {
       });
 
       setStep(5);
-    } catch (err: any) {
-      setSmsError(err?.message || 'Tasdiqlashda xatolik yuz berdi.');
+    } catch (err: unknown) {
+      setSmsError(err instanceof Error ? err.message : 'Tasdiqlashda xatolik yuz berdi.');
     } finally {
       setIsVerifyingSms(false);
     }

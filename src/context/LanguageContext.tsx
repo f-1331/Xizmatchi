@@ -21,18 +21,19 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Language>('uz');
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    try {
-      const savedLang = localStorage.getItem('xizmatchi_language') as Language;
-      if (savedLang && (savedLang === 'uz' || savedLang === 'ru' || savedLang === 'en')) {
-        setLangState(savedLang);
+    const timer = setTimeout(() => {
+      try {
+        const savedLang = localStorage.getItem('xizmatchi_language') as Language;
+        if (savedLang && (savedLang === 'uz' || savedLang === 'ru' || savedLang === 'en')) {
+          setLangState(savedLang);
+        }
+      } catch {
+        // localStorage may be disabled in private browsing
       }
-    } catch {
-      // localStorage may be disabled in private browsing
-    }
-    setMounted(true);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const setLang = (newLang: Language) => {

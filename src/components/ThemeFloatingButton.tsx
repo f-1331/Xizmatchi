@@ -8,7 +8,6 @@ import {
   Leaf,
   Feather,
   Palette,
-  Eye,
 } from 'lucide-react';
 
 export function ThemeFloatingButton() {

@@ -17,7 +17,6 @@ import {
   CheckCircle2,
   Calendar,
   Eye,
-  Award,
   Image as ImageIcon,
 } from 'lucide-react';
 

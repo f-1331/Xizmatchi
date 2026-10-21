@@ -19,9 +19,10 @@ export async function GET(req: NextRequest) {
 
     const users = getAllUsers();
     return NextResponse.json({ success: true, users, total: users.length });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { message?: string };
     return NextResponse.json(
-      { success: false, message: error?.message || 'Server xatosi' },
+      { success: false, message: err?.message || 'Server xatosi' },
       { status: 500 }
     );
   }
@@ -49,9 +50,10 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, user });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { message?: string };
     return NextResponse.json(
-      { success: false, message: error?.message || 'Server xatosi' },
+      { success: false, message: err?.message || 'Server xatosi' },
       { status: 500 }
     );
   }

@@ -7,9 +7,7 @@ import {
   X,
   Heart,
   Star,
-  MapPin,
   Phone,
-  Calendar,
   Trash2,
   Eye,
 } from 'lucide-react';

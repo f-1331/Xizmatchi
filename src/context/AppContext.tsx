@@ -111,7 +111,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [specialists, setSpecialists] = useState<Specialist[]>([]);
   const [bookings, setBookings] = useState<BookingRequest[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
 
   const [filters, setFilters] = useState<FilterState>(defaultFilters);
 
@@ -146,34 +145,36 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize from LocalStorage
   useEffect(() => {
-    setSpecialists(getStoredSpecialists());
-    setBookings(getStoredBookings());
-    setFavorites(getStoredFavorites());
+    const timer = setTimeout(() => {
+      setSpecialists(getStoredSpecialists());
+      setBookings(getStoredBookings());
+      setFavorites(getStoredFavorites());
 
-    try {
-      const savedUser = localStorage.getItem('xizmatchi_current_user');
-      if (savedUser) {
-        setCurrentUser(JSON.parse(savedUser));
+      try {
+        const savedUser = localStorage.getItem('xizmatchi_current_user');
+        if (savedUser) {
+          setCurrentUser(JSON.parse(savedUser));
+        }
+      } catch (e) {
+        console.error('Error loading current user:', e);
       }
-    } catch (e) {
-      console.error('Error loading current user:', e);
-    }
 
-    try {
-      const savedTheme = localStorage.getItem('xizmatchi_theme_v2') as ThemeId;
-      if (savedTheme) {
-        setThemeState(savedTheme);
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        document.body.setAttribute('data-theme', savedTheme);
-      } else {
-        document.documentElement.setAttribute('data-theme', 'eye-comfort');
-        document.body.setAttribute('data-theme', 'eye-comfort');
+      try {
+        const savedTheme = localStorage.getItem('xizmatchi_theme_v2') as ThemeId;
+        if (savedTheme) {
+          setThemeState(savedTheme);
+          document.documentElement.setAttribute('data-theme', savedTheme);
+          document.body.setAttribute('data-theme', savedTheme);
+        } else {
+          document.documentElement.setAttribute('data-theme', 'eye-comfort');
+          document.body.setAttribute('data-theme', 'eye-comfort');
+        }
+      } catch (e) {
+        console.error('Error loading theme:', e);
       }
-    } catch (e) {
-      console.error('Error loading theme:', e);
-    }
+    }, 0);
 
-    setIsLoaded(true);
+    return () => clearTimeout(timer);
   }, []);
 
   // Universal body scroll lock whenever any modal or drawer is open

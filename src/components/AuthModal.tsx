@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   ArrowRight,
   RefreshCw,
-  Send,
   AlertCircle,
   Smartphone,
   User,
@@ -22,7 +21,7 @@ export function AuthModal() {
   const [step, setStep] = useState<'phone' | 'otp' | 'success'>('phone');
   const [phone, setPhone] = useState('+998 ');
   const [name, setName] = useState('');
-  const [district, setDistrict] = useState('Chilonzor tumani');
+  const [district] = useState('Chilonzor tumani');
   const [otp, setOtp] = useState(['', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -35,10 +34,14 @@ export function AuthModal() {
     let interval: NodeJS.Timeout;
     if (isTimerActive && timer > 0) {
       interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
+        setTimer((prev) => {
+          if (prev <= 1) {
+            setIsTimerActive(false);
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
-    } else if (timer === 0) {
-      setIsTimerActive(false);
     }
     return () => clearInterval(interval);
   }, [isTimerActive, timer]);
@@ -103,8 +106,8 @@ export function AuthModal() {
         'info',
         'SMS Yuborildi'
       );
-    } catch (err: any) {
-      setError(err?.message || 'Xatolik yuz berdi. Qaytadan urinib ko\'ring.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Xatolik yuz berdi. Qaytadan urinib ko\'ring.');
     } finally {
       setLoading(false);
     }
@@ -163,8 +166,8 @@ export function AuthModal() {
       login(data.user as UserProfile);
       setStep('success');
       showToast('Profil muvaffaqiyatli tasdiqlandi va saytga kirdingiz!', 'success', 'Xush kelibsiz!');
-    } catch (err: any) {
-      setError(err?.message || 'Kodni tekshirishda xatolik.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Kodni tekshirishda xatolik.');
     } finally {
       setLoading(false);
     }

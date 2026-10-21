@@ -21,17 +21,15 @@ export function QrCodeModal() {
   const { t } = useLanguage();
 
   const [copied, setCopied] = useState(false);
-  const [siteUrl, setSiteUrl] = useState('https://xizmatchi.vercel.app');
-
-  useEffect(() => {
+  const [siteUrl] = useState(() => {
     if (typeof window !== 'undefined') {
-      // Use current window origin or default domain
       const origin = window.location.origin;
       if (origin && !origin.includes('localhost')) {
-        setSiteUrl(origin);
+        return origin;
       }
     }
-  }, []);
+    return 'https://xizmatchi.vercel.app';
+  });
 
   // Handle ESC key to close modal
   useEffect(() => {

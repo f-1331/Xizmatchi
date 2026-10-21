@@ -10,16 +10,8 @@ import {
   Calendar,
   Clock,
   Flame,
-  MapPin,
-  Phone,
-  User,
   UploadCloud,
   CheckCircle2,
-  AlertCircle,
-  FileText,
-  Sparkles,
-  ArrowRight,
-  ShieldCheck,
   Send,
 } from 'lucide-react';
 import { sendBookingToTelegram, TELEGRAM_CLIENT_BOT_USERNAME } from '../lib/telegram';
@@ -108,10 +100,6 @@ export function BookingModal() {
       };
       reader.readAsDataURL(file);
     }
-  };
-
-  const handleSamplePhoto = (url: string) => {
-    setPhotoPreview(url);
   };
 
   const handleSubmit = (e: React.FormEvent) => {

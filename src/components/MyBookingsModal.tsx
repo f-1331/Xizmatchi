@@ -10,8 +10,6 @@ import {
   MapPin,
   CheckCircle2,
   XCircle,
-  AlertCircle,
-  Phone,
   Flame,
 } from 'lucide-react';
 

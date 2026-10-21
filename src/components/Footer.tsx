@@ -6,13 +6,10 @@ import { useLanguage } from '../context/LanguageContext';
 import { CATEGORIES } from '../data/mockData';
 import { Logo } from './Logo';
 import {
-  Wrench,
   Phone,
   Send,
-  Mail,
   MapPin,
   Heart,
-  ShieldCheck,
   PlusCircle,
 } from 'lucide-react';
 

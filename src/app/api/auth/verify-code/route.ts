@@ -65,10 +65,11 @@ export async function POST(req: NextRequest) {
       user,
       message: 'Telefon raqamingiz muvaffaqiyatli tasdiqlandi!',
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error in verify-code API:', error);
+    const err = error as { message?: string };
     return NextResponse.json(
-      { success: false, message: error?.message || 'Kodni tasdiqlashda xatolik yuz berdi.' },
+      { success: false, message: err?.message || 'Kodni tasdiqlashda xatolik yuz berdi.' },
       { status: 500 }
     );
   }

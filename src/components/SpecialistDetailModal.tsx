@@ -19,7 +19,6 @@ import {
   Layers,
   Image as ImageIcon,
   MessageSquare,
-  ThumbsUp,
   Share2,
 } from 'lucide-react';
 
@@ -38,13 +37,15 @@ export function SpecialistDetailModal() {
   const { t } = useLanguage();
 
   const [activeTab, setActiveTab] = useState<'services' | 'portfolio' | 'reviews'>('services');
+  const [prevSpecialistKey, setPrevSpecialistKey] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (selectedSpecialistTab) {
-      setActiveTab(selectedSpecialistTab);
-    }
-  }, [selectedSpecialist, selectedSpecialistTab]);
+  // Sync tab when a specialist modal opens with a specific tab
+  const currentKey = selectedSpecialist ? `${selectedSpecialist.id}_${selectedSpecialistTab || 'services'}` : null;
+  if (currentKey && currentKey !== prevSpecialistKey) {
+    setPrevSpecialistKey(currentKey);
+    setActiveTab(selectedSpecialistTab || 'services');
+  }
 
   // Lock body scroll when this modal is open
   useEffect(() => {

@@ -5,18 +5,16 @@ import { getAuthorizedAdminIds, getAdminsData } from '@/lib/adminStore';
 
 // Primary Owner Bot (Strictly for Owner & Verified Admins)
 const OWNER_BOT_TOKEN = '8668786258:AAGrl0W3txp5b-F_0o6Pj7snrS-f8xCd9CA';
-const OWNER_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_ownerbot';
 
 // Public Client Bot (For normal users)
-const CLIENT_BOT_TOKEN = '8977412958:AAH_xkRQQe6k49_JVxRvmuv6-vtl0Du5ao4';
 const CLIENT_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_bot';
 
 const ORDERS_LOG_FILE = path.join(process.cwd(), 'src', 'data', 'telegram_orders.json');
 
 // Helper to log orders sent
-function logOrder(orderData: any): void {
+function logOrder(orderData: Record<string, unknown>): void {
   try {
-    let orders: any[] = [];
+    let orders: Record<string, unknown>[] = [];
     if (fs.existsSync(ORDERS_LOG_FILE)) {
       orders = JSON.parse(fs.readFileSync(ORDERS_LOG_FILE, 'utf-8')) || [];
     }
@@ -27,7 +25,7 @@ function logOrder(orderData: any): void {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const adminIds = getAuthorizedAdminIds();
     const adminData = getAdminsData();
@@ -43,9 +41,10 @@ export async function GET(req: NextRequest) {
       })),
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { message?: string };
     return NextResponse.json(
-      { status: 'error', message: error?.message || "Tizim ma'lumotlarini olishda xatolik" },
+      { status: 'error', message: err?.message || "Tizim ma'lumotlarini olishda xatolik" },
       { status: 500 }
     );
   }
@@ -142,8 +141,9 @@ export async function POST(req: NextRequest) {
                 console.error(`sendPhoto (url) failed for admin ${chatId}:`, photoData.description);
               }
             }
-          } catch (photoErr: any) {
-            console.error(`Photo sending error for admin ${chatId}:`, photoErr?.message);
+          } catch (photoErr: unknown) {
+            const pErr = photoErr as { message?: string };
+            console.error(`Photo sending error for admin ${chatId}:`, pErr?.message);
           }
         }
 
@@ -171,8 +171,9 @@ export async function POST(req: NextRequest) {
         if (sentOk) {
           deliveredCount++;
         }
-      } catch (err: any) {
-        errors.push(`Admin ${chatId}: ${err?.message}`);
+      } catch (err: unknown) {
+        const errorObj = err as { message?: string };
+        errors.push(`Admin ${chatId}: ${errorObj?.message}`);
       }
     }
 
@@ -185,10 +186,11 @@ export async function POST(req: NextRequest) {
       message: `Buyurtma ${deliveredCount} ta rasmiy administratorga yetkazildi.`,
       errors: errors.length > 0 ? errors : undefined,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error in /api/telegram POST:', error);
+    const serverErr = error as { message?: string };
     return NextResponse.json(
-      { success: false, message: error?.message || 'Server xatosi yuz berdi' },
+      { success: false, message: serverErr?.message || 'Server xatosi yuz berdi' },
       { status: 500 }
     );
   }

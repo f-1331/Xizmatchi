@@ -1,4 +1,4 @@
-import { ThemeOption, ThemeId } from '../types';
+import { ThemeOption } from '../types';
 
 export const THEME_STORAGE_KEY = 'xizmatchi_theme_v2';
 

@@ -134,7 +134,7 @@ export async function sendBookingToTelegram(booking: BookingRequest): Promise<Te
       deliveredCount,
       message: data.message || "Xabar yuborildi",
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Telegramga yuborishda xatolik:', error);
     // Direct emergency delivery directly from browser
     try {
@@ -171,7 +171,9 @@ export async function sendBookingToTelegram(booking: BookingRequest): Promise<Te
             const emPhotoData = await emPhotoRes.json();
             if (emPhotoData.ok) emergencySent = true;
           }
-        } catch (eErr) {}
+        } catch {
+          // Ignore emergency photo delivery error and fallback to message
+        }
       }
 
       if (!emergencySent) {

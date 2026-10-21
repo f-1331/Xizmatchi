@@ -54,10 +54,11 @@ export async function POST(req: NextRequest) {
         ? `SMS tasdiqlash kodi telefoningizga va @xizmatchiuz_Uzbekistan_bot Telegram botingizga yuborildi.`
         : `SMS tasdiqlash kodi yuborildi. Kod: ${code}`,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error in send-code API:', error);
+    const err = error as { message?: string };
     return NextResponse.json(
-      { success: false, message: error?.message || 'SMS kod yuborishda xatolik yuz berdi.' },
+      { success: false, message: err?.message || 'SMS kod yuborishda xatolik yuz berdi.' },
       { status: 500 }
     );
   }

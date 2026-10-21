@@ -7,7 +7,6 @@ import { DISTRICTS } from '../data/mockData';
 import { Logo } from './Logo';
 import {
   Wrench,
-  Sparkles,
   MapPin,
   Heart,
   ClipboardList,
@@ -15,7 +14,6 @@ import {
   Menu,
   X,
   PhoneCall,
-  Search,
   Flame,
   RefreshCw,
   Palette,

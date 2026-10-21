@@ -1,4 +1,4 @@
-import { Specialist, BookingRequest, Review } from '../types';
+import { Specialist, BookingRequest } from '../types';
 import { INITIAL_SPECIALISTS, INITIAL_BOOKINGS } from '../data/mockData';
 
 const SPECIALISTS_STORAGE_KEY = 'xizmatchi_specialists_v2';

@@ -5,14 +5,10 @@ import { useApp } from '../context/AppContext';
 import { useLanguage } from '../context/LanguageContext';
 import { POPULAR_SERVICES_CATALOG } from '../data/mockData';
 import {
-  Wrench,
   Clock,
   Sparkles,
-  ArrowRight,
   Search,
-  CheckCircle2,
   Calendar,
-  Layers,
   ChevronRight,
   MapPin,
 } from 'lucide-react';
