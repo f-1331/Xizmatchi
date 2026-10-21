@@ -137,7 +137,7 @@ export function Logo({
 
           {variant === 'full' && (
             <span
-              className={`text-[10px] sm:text-[11px] font-semibold mt-0.5 tracking-wide hidden lg:block transition-colors ${style.subText}`}
+              className={`text-[10px] sm:text-[11px] font-semibold mt-0.5 tracking-wide hidden 2xl:block transition-colors ${style.subText}`}
             >
               Usta va maishiy xizmatlar
             </span>

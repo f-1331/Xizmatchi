@@ -90,24 +90,24 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full max-w-full overflow-x-clip bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs">
+    <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs">
       {/* TIER 1: Main Logo & Action Bar */}
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 w-full">
-        <div className="flex items-center justify-between h-14 sm:h-18 gap-1.5 sm:gap-2 w-full">
-          {/* Logo */}
-          <div className="flex items-center gap-1.5 sm:gap-4 shrink-0 min-w-0">
+      <div className="max-w-[1600px] mx-auto px-2 sm:px-4 lg:px-6 xl:px-8 w-full">
+        <div className="flex items-center justify-between h-14 sm:h-16 lg:h-18 gap-1.5 sm:gap-2 xl:gap-3 w-full">
+          {/* Logo & Quick District Selector */}
+          <div className="flex items-center gap-1.5 sm:gap-3 xl:gap-4 shrink-0 min-w-0">
             <a href="#" className="shrink-0 flex items-center">
               <Logo />
             </a>
 
             {/* Quick District Selector (Visible on laptops & desktops: 1024px+) */}
-            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100/90 border border-slate-200 text-xs text-slate-700 shrink-0 max-w-[200px]">
+            <div className="hidden lg:flex items-center gap-1 xl:gap-1.5 px-2.5 py-1.5 rounded-full bg-slate-100/90 border border-slate-200 text-xs text-slate-700 shrink-0">
               <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
               <select
                 aria-label="Hududni tanlang"
                 value={filters.district}
                 onChange={(e) => handleDistrictChange(e.target.value)}
-                className="bg-transparent font-semibold focus:outline-hidden cursor-pointer text-slate-800 truncate"
+                className="bg-transparent font-semibold focus:outline-hidden cursor-pointer text-slate-800 max-w-[90px] xl:max-w-[125px] 2xl:max-w-[160px] truncate"
               >
                 {DISTRICTS.map((d) => (
                   <option key={d.id} value={d.id === 'all' ? 'all' : d.name}>
@@ -130,82 +130,84 @@ export function Header() {
           </div>
 
           {/* Desktop & Laptop Navigation Links (Visible on 1024px+ screens) */}
-          <nav className="hidden lg:flex items-center gap-3.5 xl:gap-5 text-xs xl:text-sm font-semibold text-slate-600 shrink-0">
+          <nav className="hidden lg:flex items-center gap-2 xl:gap-3.5 2xl:gap-5 text-xs xl:text-sm font-semibold text-slate-600 shrink-0">
             <a
               href="#categories-section"
-              className="hover:text-blue-600 transition-colors py-1"
+              className="hover:text-blue-600 transition-colors py-1 whitespace-nowrap"
             >
               {t('nav.categories')}
             </a>
             <a
               href="#services-catalog"
-              className="hover:text-blue-600 transition-colors py-1"
+              className="hover:text-blue-600 transition-colors py-1 whitespace-nowrap"
             >
-              {t('nav.services')}
+              {t('nav.services_short')}
             </a>
             <a
               href="#specialists-section"
-              className="hover:text-blue-600 transition-colors py-1"
+              className="hover:text-blue-600 transition-colors py-1 whitespace-nowrap"
             >
-              {t('nav.specialists')}
+              {t('nav.specialists_short')}
             </a>
             <button
               onClick={handleEmergencyClick}
-              className="flex items-center gap-1 text-rose-600 hover:text-rose-700 font-bold transition-colors py-1 cursor-pointer"
+              className="flex items-center gap-1 text-rose-600 hover:text-rose-700 font-bold transition-colors py-1 cursor-pointer whitespace-nowrap"
             >
-              <Flame className="w-4 h-4 fill-rose-500 text-rose-500 animate-pulse" />
-              <span>{t('nav.emergency_24_7')}</span>
+              <Flame className="w-4 h-4 fill-rose-500 text-rose-500 animate-pulse shrink-0" />
+              <span className="hidden xl:inline">{t('nav.emergency_24_7')}</span>
+              <span className="xl:hidden">24/7</span>
             </button>
             <a
               href="#how-it-works"
-              className="hover:text-blue-600 transition-colors py-1"
+              className="hidden 2xl:inline hover:text-blue-600 transition-colors py-1 whitespace-nowrap"
             >
               {t('nav.how_it_works')}
             </a>
           </nav>
 
-          {/* Action Buttons: Responsive & Always Visible */}
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0 ml-auto">
-            {/* Language Switcher Button (Desktop, Tablet & Mobile) */}
+          {/* Action Buttons: Responsive & 100% visible on laptops at 100% zoom */}
+          <div className="flex items-center gap-1 sm:gap-1.5 xl:gap-2 shrink-0 ml-auto">
+            {/* 1. Language Switcher Button (Desktop, Tablet & Mobile) */}
             <button
               type="button"
               onClick={() => setIsLangModalOpen(true)}
-              className="flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-blue-200/90 hover:border-blue-500 bg-blue-50/70 hover:bg-blue-100/70 text-xs font-bold text-blue-900 transition-all cursor-pointer shrink-0 shadow-2xs"
+              className="flex items-center gap-1 px-1.5 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-blue-200/90 hover:border-blue-500 bg-blue-50/70 hover:bg-blue-100/70 text-xs font-bold text-blue-900 transition-all cursor-pointer shrink-0 shadow-2xs"
               title="Tilni almashtirish / Сменить язык / Change language (8 ta til)"
             >
               <Globe className="w-3.5 h-3.5 text-blue-600 shrink-0" />
               <span className="text-xs sm:text-sm">{currentLangObj.flag}</span>
               <span className="uppercase text-xs font-black">{currentLangObj.short}</span>
-              <span className="hidden sm:inline text-[11px] text-blue-700 font-bold">Til</span>
+              <span className="hidden 2xl:inline text-[11px] text-blue-700 font-bold">Til</span>
             </button>
 
-            {/* QR Code button (Visible on Laptops & Desktops) */}
+            {/* 2. QR Code button (Visible on Laptops & Desktops: md+) */}
             <button
               onClick={() => setIsQrModalOpen(true)}
-              className="hidden md:flex items-center gap-1 sm:gap-1.5 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-slate-200/90 hover:border-blue-400 bg-white hover:bg-blue-50/80 text-slate-700 hover:text-blue-700 transition-colors text-xs font-bold shrink-0 shadow-2xs cursor-pointer"
+              className="hidden md:flex items-center gap-1.5 p-2 xl:px-2.5 xl:py-1.5 rounded-xl border border-slate-200/90 hover:border-blue-400 bg-white hover:bg-blue-50/80 text-slate-700 hover:text-blue-700 transition-colors text-xs font-bold shrink-0 shadow-2xs cursor-pointer"
               title="QR Kod orqali saytga o'tish"
             >
               <QrCode className="w-4 h-4 text-blue-600 shrink-0" />
-              <span className="hidden xl:inline">{t('nav.qrcode', 'QR Kod')}</span>
+              <span className="hidden 2xl:inline">{t('nav.qrcode', 'QR Kod')}</span>
             </button>
 
-            {/* Theme / Dizayn button (Visible on Laptops & Desktops) */}
+            {/* 3. Theme / Dizayn button (Visible on Laptops & Desktops: md+) */}
             <button
               onClick={() => setIsThemeModalOpen(true)}
-              className="hidden md:flex items-center gap-1.5 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 hover:text-amber-600 hover:bg-amber-50/80 transition-colors border border-slate-200/80 cursor-pointer shrink-0"
-              title="Dizayn rejimini almashtirish"
+              className="hidden md:flex items-center gap-1.5 p-2 xl:px-2.5 xl:py-1.5 rounded-xl text-slate-700 hover:text-amber-600 hover:bg-amber-50/80 transition-colors border border-slate-200/80 cursor-pointer shrink-0 shadow-2xs"
+              title={t('nav.theme')}
             >
-              <Palette className="w-4 h-4 text-amber-500" />
-              <span className="hidden xl:inline text-xs font-semibold">{t('nav.theme')}</span>
+              <Palette className="w-4 h-4 text-amber-500 shrink-0" />
+              <span className="hidden 2xl:inline text-xs font-semibold">{t('nav.theme')}</span>
             </button>
 
-            {/* Favorites button (Visible on Laptops & Desktops) */}
+            {/* 4. Favorites button (Visible on Laptops & Desktops: md+) */}
             <button
               onClick={() => setIsFavoritesOpen(true)}
-              className="hidden md:flex relative p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 hover:text-rose-600 hover:bg-rose-50/80 transition-colors border border-slate-200/80 shrink-0 cursor-pointer"
+              className="hidden md:flex relative items-center gap-1.5 p-2 xl:px-2.5 xl:py-1.5 rounded-xl text-slate-700 hover:text-rose-600 hover:bg-rose-50/80 transition-colors border border-slate-200/80 shrink-0 cursor-pointer shadow-2xs"
               title={t('nav.favorites')}
             >
-              <Heart className="w-4 h-4 text-rose-500" />
+              <Heart className="w-4 h-4 text-rose-500 shrink-0" />
+              <span className="hidden 2xl:inline text-xs font-semibold">{t('nav.favorites')}</span>
               {favorites.length > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-600 text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
                   {favorites.length}
@@ -213,33 +215,33 @@ export function Header() {
               )}
             </button>
 
-            {/* Bookings button (Visible on Laptops & Desktops) */}
+            {/* 5. Bookings button (Visible on Laptops & Desktops: md+) */}
             <button
               onClick={() => setIsMyBookingsOpen(true)}
-              className="hidden md:flex relative items-center gap-1.5 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 hover:text-blue-600 hover:bg-blue-50/80 transition-colors border border-slate-200/80 text-xs font-medium shrink-0 cursor-pointer"
+              className="hidden md:flex relative items-center gap-1.5 p-2 xl:px-2.5 xl:py-1.5 rounded-xl text-slate-700 hover:text-blue-600 hover:bg-blue-50/80 transition-colors border border-slate-200/80 text-xs font-medium shrink-0 cursor-pointer shadow-2xs"
               title={t('nav.my_bookings')}
             >
-              <ClipboardList className="w-4 h-4 text-blue-600" />
+              <ClipboardList className="w-4 h-4 text-blue-600 shrink-0" />
               <span className="hidden 2xl:inline">{t('nav.my_bookings')}</span>
               {pendingBookingsCount > 0 && (
-                <span className="w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
                   {pendingBookingsCount}
                 </span>
               )}
             </button>
 
-            {/* User Profile / Auth Button (Visible on ALL devices) */}
+            {/* 6. User Profile / Auth Button (Visible on ALL devices) */}
             {currentUser ? (
               <div className="relative">
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100/80 border border-blue-200 text-xs font-semibold text-blue-900 transition-colors shrink-0 cursor-pointer"
+                  className="flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100/80 border border-blue-200 text-xs font-semibold text-blue-900 transition-colors shrink-0 cursor-pointer shadow-2xs"
                   title={t('nav.my_account')}
                 >
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] sm:text-xs font-bold">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] sm:text-xs font-bold shrink-0">
                     {currentUser.name ? currentUser.name[0].toUpperCase() : 'U'}
                   </div>
-                  <span className="hidden md:inline max-w-[80px] truncate">
+                  <span className="hidden xl:inline max-w-[70px] truncate">
                     {currentUser.name.split(' ')[0]}
                   </span>
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
@@ -282,22 +284,23 @@ export function Header() {
             ) : (
               <button
                 onClick={() => setIsAuthModalOpen(true)}
-                className="flex items-center gap-1 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-blue-600/30 text-blue-700 bg-blue-50/80 hover:bg-blue-100/80 transition-colors text-xs font-semibold shrink-0 cursor-pointer"
+                className="flex items-center gap-1 px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-blue-600/30 text-blue-700 bg-blue-50/80 hover:bg-blue-100/80 transition-colors text-xs font-semibold shrink-0 cursor-pointer shadow-2xs"
                 title={t('nav.login')}
               >
                 <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 shrink-0" />
-                <span className="hidden sm:inline text-xs">{t('nav.login')}</span>
+                <span className="hidden xl:inline text-xs">{t('nav.login')}</span>
               </button>
             )}
 
-            {/* Usta bo'lish CTA (Visible on ALL devices) */}
+            {/* 7. Usta bo'lish CTA (Visible on ALL devices) */}
             <button
               onClick={() => setIsAddSpecialistModalOpen(true)}
-              className="flex items-center gap-1 px-2 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-xs hover:shadow-md transition-all active:scale-95 shrink-0 cursor-pointer"
+              className="flex items-center gap-1 px-2 py-1.5 sm:px-2.5 sm:py-1.5 xl:px-3.5 xl:py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold shadow-xs hover:shadow-md transition-all active:scale-95 shrink-0 cursor-pointer"
+              title={t('nav.become_specialist')}
             >
               <PlusCircle className="w-3.5 h-3.5 stroke-[2.2] shrink-0" />
-              <span className="hidden sm:inline">{t('nav.become_specialist')}</span>
-              <span className="sm:hidden font-bold">{t('nav.become_specialist_short')}</span>
+              <span className="hidden 2xl:inline">{t('nav.become_specialist')}</span>
+              <span className="2xl:hidden font-bold">{t('nav.become_specialist_short')}</span>
             </button>
 
             {/* Hamburger Button (Visible on screens < 1024px) */}
