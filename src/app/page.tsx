@@ -21,7 +21,9 @@ import { Footer } from '../components/Footer';
 import { ToastContainer } from '../components/ToastContainer';
 import { ThemeModal } from '../components/ThemeModal';
 import { QrCodeModal } from '../components/QrCodeModal';
+import { LanguageModal } from '../components/LanguageModal';
 import { ThemeFloatingButton } from '../components/ThemeFloatingButton';
+import { LanguageFloatingButton } from '../components/LanguageFloatingButton';
 import { MobileBottomNav } from '../components/MobileBottomNav';
 import { Users, RotateCcw, PlusCircle } from 'lucide-react';
 import { LanguageProvider, useLanguage } from '../context/LanguageContext';
@@ -131,9 +133,11 @@ function MainContent() {
       <FavoritesDrawer />
       <ThemeModal />
       <QrCodeModal />
+      <LanguageModal />
 
-      {/* Floating Theme Switcher Button for Desktop */}
+      {/* Floating Buttons */}
       <ThemeFloatingButton />
+      <LanguageFloatingButton />
 
       {/* Mobile Sticky Bottom Navigation Bar */}
       <MobileBottomNav />

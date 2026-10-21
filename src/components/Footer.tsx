@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage, LANGUAGES } from '../context/LanguageContext';
 import { CATEGORIES } from '../data/mockData';
 import { Logo } from './Logo';
 import {
@@ -11,11 +11,12 @@ import {
   MapPin,
   Heart,
   PlusCircle,
+  Globe,
 } from 'lucide-react';
 
 export function Footer() {
   const { setFilters, setIsAddSpecialistModalOpen } = useApp();
-  const { t, getCategoryName } = useLanguage();
+  const { t, getCategoryName, lang, setLang, setIsLangModalOpen } = useLanguage();
 
   const handleCategoryClick = (catId: string) => {
     setFilters((prev) => ({ ...prev, categoryId: catId }));
@@ -119,8 +120,40 @@ export function Footer() {
           </div>
         </div>
 
+        {/* Multi-language selector in footer */}
+        <div className="pt-8 pb-4 border-t border-slate-900 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+            <Globe className="w-4 h-4 text-blue-500" />
+            <span>Tilni almashtirish / Сменить язык / Change language:</span>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-1.5">
+            {LANGUAGES.map((l) => (
+              <button
+                key={l.code}
+                onClick={() => setLang(l.code)}
+                className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  lang === l.code
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                }`}
+              >
+                <span>{l.flag}</span>
+                <span>{l.label}</span>
+              </button>
+            ))}
+
+            <button
+              onClick={() => setIsLangModalOpen(true)}
+              className="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-slate-850 hover:bg-slate-800 text-blue-400 border border-blue-900/50 flex items-center gap-1 cursor-pointer"
+            >
+              <span>+ Barchasi</span>
+            </button>
+          </div>
+        </div>
+
         {/* Bottom copyright */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>© {new Date().getFullYear()} Xizmatchi Platformasi. {t('footer.copyright')}</p>
           <p className="flex items-center gap-1">
             O&apos;zbekistonda mehr bilan yaratilgan <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 inline" />

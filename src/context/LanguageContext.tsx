@@ -17,6 +17,8 @@ export const LANGUAGES = [
 interface LanguageContextType {
   lang: Language;
   setLang: (lang: Language) => void;
+  isLangModalOpen: boolean;
+  setIsLangModalOpen: (open: boolean) => void;
   t: (key: string, defaultVal?: string) => string;
   getCategoryName: (id: string, fallback?: string) => string;
   getCategoryDesc: (id: string, fallback?: string) => string;
@@ -26,6 +28,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Language>('uz');
+  const [isLangModalOpen, setIsLangModalOpen] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -95,6 +98,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       value={{
         lang,
         setLang,
+        isLangModalOpen,
+        setIsLangModalOpen,
         t,
         getCategoryName,
         getCategoryDesc,

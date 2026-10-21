@@ -23,9 +23,7 @@ import {
   Layers,
   HelpCircle,
   ChevronRight,
-  ChevronDown,
   Globe,
-  Check,
   QrCode,
 } from 'lucide-react';
 
@@ -46,11 +44,10 @@ export function Header() {
     refreshData,
   } = useApp();
 
-  const { lang, setLang, t } = useLanguage();
+  const { lang, setLang, t, setIsLangModalOpen } = useLanguage();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const currentLangObj = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
@@ -170,45 +167,18 @@ export function Header() {
 
           {/* Action Buttons: Responsive & Always Visible */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0 ml-auto">
-            {/* Language Switcher (Desktop & Tablet) */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                className="flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-slate-200/90 hover:border-blue-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 transition-colors cursor-pointer shrink-0 shadow-2xs"
-                title="Tilni almashtirish / Сменить язык / Change language"
-              >
-                <Globe className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span className="text-xs sm:text-sm">{currentLangObj.flag}</span>
-                <span className="uppercase text-xs font-black">{currentLangObj.short}</span>
-                <ChevronDown className="w-3 h-3 text-slate-400 shrink-0 hidden sm:inline" />
-              </button>
-
-              {langDropdownOpen && (
-                <div className="absolute right-0 mt-1.5 w-44 max-h-80 overflow-y-auto overscroll-contain rounded-2xl bg-white border border-slate-200 shadow-2xl p-1.5 z-50 animate-scale-up space-y-1">
-                  {LANGUAGES.map((l) => (
-                    <button
-                      key={l.code}
-                      onClick={() => {
-                        setLang(l.code);
-                        setLangDropdownOpen(false);
-                      }}
-                      className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
-                        lang === l.code
-                          ? 'bg-blue-50 text-blue-700'
-                          : 'text-slate-700 hover:bg-slate-100'
-                      }`}
-                    >
-                      <span className="flex items-center gap-1.5">
-                        <span>{l.flag}</span>
-                        <span>{l.label}</span>
-                      </span>
-                      {lang === l.code && <Check className="w-3.5 h-3.5 text-blue-600" />}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            {/* Language Switcher Button (Desktop, Tablet & Mobile) */}
+            <button
+              type="button"
+              onClick={() => setIsLangModalOpen(true)}
+              className="flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-blue-200/90 hover:border-blue-500 bg-blue-50/70 hover:bg-blue-100/70 text-xs font-bold text-blue-900 transition-all cursor-pointer shrink-0 shadow-2xs"
+              title="Tilni almashtirish / Сменить язык / Change language (8 ta til)"
+            >
+              <Globe className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+              <span className="text-xs sm:text-sm">{currentLangObj.flag}</span>
+              <span className="uppercase text-xs font-black">{currentLangObj.short}</span>
+              <span className="hidden sm:inline text-[11px] text-blue-700 font-bold">Til</span>
+            </button>
 
             {/* QR Code button (Visible on Desktop & Tablet, compact icon on mobile) */}
             <button
@@ -499,6 +469,16 @@ export function Header() {
                 </button>
               ))}
             </div>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setIsLangModalOpen(true);
+              }}
+              className="w-full text-center pt-1 text-[11px] font-bold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
+            >
+              Barcha 8 ta til oynasini ochish →
+            </button>
           </div>
 
           {/* District selector in drawer */}
