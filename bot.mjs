@@ -1,7 +1,8 @@
 /**
- * Xizmatchi Platform — Telegram Bot Server
- * Bot Token: 8977412958:AAH_xkRQQe6k49_JVxRvmuv6-vtl0Du5ao4
+ * Xizmatchi Platform — Telegram Client Bot Server
  * Username: @xizmatchiuz_Uzbekistan_bot
+ * 
+ * Token maxfiy ravishda .env.local yoki muhit o'zgaruvchilaridan yuklanadi.
  */
 
 import fs from 'fs';
@@ -11,7 +12,39 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const TOKEN = '8977412958:AAH_xkRQQe6k49_JVxRvmuv6-vtl0Du5ao4';
+// Helper: load environment variables from .env.local / .env
+function loadEnv() {
+  for (const envFile of ['.env.local', '.env']) {
+    const fullPath = path.join(__dirname, envFile);
+    if (fs.existsSync(fullPath)) {
+      const content = fs.readFileSync(fullPath, 'utf-8');
+      for (const line of content.split('\n')) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('#')) continue;
+        const eqIdx = trimmed.indexOf('=');
+        if (eqIdx !== -1) {
+          const key = trimmed.slice(0, eqIdx).trim();
+          let val = trimmed.slice(eqIdx + 1).trim();
+          if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+            val = val.slice(1, -1);
+          }
+          if (!process.env[key]) {
+            process.env[key] = val;
+          }
+        }
+      }
+    }
+  }
+}
+loadEnv();
+
+const TOKEN = process.env.TELEGRAM_BOT_TOKEN || process.env.TELEGRAM_CLIENT_BOT_TOKEN;
+if (!TOKEN) {
+  console.error('\n❌ XATOLIK: TELEGRAM_BOT_TOKEN topilmadi!');
+  console.error('Iltimos .env.local faylida TELEGRAM_BOT_TOKEN ko\'rsatilganiga ishonch hosil qiling.\n');
+  process.exit(1);
+}
+
 const BASE_URL = `https://api.telegram.org/bot${TOKEN}`;
 const SUBSCRIBERS_FILE = path.join(__dirname, 'src', 'data', 'telegram_subscribers.json');
 const ORDERS_FILE = path.join(__dirname, 'src', 'data', 'telegram_orders.json');

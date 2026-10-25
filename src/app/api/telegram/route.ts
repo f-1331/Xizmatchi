@@ -3,8 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import { getAuthorizedAdminIds, getAdminsData } from '@/lib/adminStore';
 
-// Primary Owner Bot (Strictly for Owner & Verified Admins)
-const OWNER_BOT_TOKEN = '8668786258:AAGrl0W3txp5b-F_0o6Pj7snrS-f8xCd9CA';
+// Primary Owner Bot (Strictly for Owner & Verified Admins - kept secure in environment)
+const OWNER_BOT_TOKEN = process.env.TELEGRAM_OWNER_BOT_TOKEN || '';
 
 // Public Client Bot (For normal users)
 const CLIENT_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_bot';
@@ -59,6 +59,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { success: false, message: 'Buyurtma ma\'lumotlari topilmadi' },
         { status: 400 }
+      );
+    }
+
+    if (!OWNER_BOT_TOKEN) {
+      console.error('DIQQAT: TELEGRAM_OWNER_BOT_TOKEN topilmadi! Iltimos .env.local faylini tekshiring.');
+      return NextResponse.json(
+        { success: false, message: 'Serverda Telegram bot tokeni sozlanmagan' },
+        { status: 500 }
       );
     }
 

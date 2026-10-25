@@ -5,7 +5,7 @@ import { UserProfile, SmsVerificationSession } from '../types';
 const USERS_FILE = path.join(process.cwd(), 'src', 'data', 'users.json');
 const SMS_CODES_FILE = path.join(process.cwd(), 'src', 'data', 'sms_codes.json');
 const SUBSCRIBERS_FILE = path.join(process.cwd(), 'src', 'data', 'telegram_subscribers.json');
-const TELEGRAM_BOT_TOKEN = '8977412958:AAH_xkRQQe6k49_JVxRvmuv6-vtl0Du5ao4';
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || process.env.TELEGRAM_CLIENT_BOT_TOKEN || '';
 
 export function normalizePhone(phone: string): string {
   if (!phone) return '';

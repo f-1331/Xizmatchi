@@ -1,10 +1,9 @@
 /**
  * Xizmatchi Platform — Owner & Admin Telegram Bot Server
- * Bot Token: 8668786258:AAGrl0W3txp5b-F_0o6Pj7snrS-f8xCd9CA
  * Username: @xizmatchiuz_Uzbekistan_ownerbot
  * 
+ * Token maxfiy ravishda .env.local yoki muhit o'zgaruvchilaridan yuklanadi.
  * Bosh Egasi / Superadmin: Fayzbek (@fayzbek1331)
- * ID: 6707839718
  */
 
 import fs from 'fs';
@@ -14,13 +13,45 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const TOKEN = '8668786258:AAGrl0W3txp5b-F_0o6Pj7snrS-f8xCd9CA';
+// Helper: load environment variables from .env.local / .env
+function loadEnv() {
+  for (const envFile of ['.env.local', '.env']) {
+    const fullPath = path.join(__dirname, envFile);
+    if (fs.existsSync(fullPath)) {
+      const content = fs.readFileSync(fullPath, 'utf-8');
+      for (const line of content.split('\n')) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('#')) continue;
+        const eqIdx = trimmed.indexOf('=');
+        if (eqIdx !== -1) {
+          const key = trimmed.slice(0, eqIdx).trim();
+          let val = trimmed.slice(eqIdx + 1).trim();
+          if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+            val = val.slice(1, -1);
+          }
+          if (!process.env[key]) {
+            process.env[key] = val;
+          }
+        }
+      }
+    }
+  }
+}
+loadEnv();
+
+const TOKEN = process.env.TELEGRAM_OWNER_BOT_TOKEN;
+if (!TOKEN) {
+  console.error('\n❌ XATOLIK: TELEGRAM_OWNER_BOT_TOKEN topilmadi!');
+  console.error('Iltimos .env.local faylida TELEGRAM_OWNER_BOT_TOKEN ko\'rsatilganiga ishonch hosil qiling.\n');
+  process.exit(1);
+}
+
 const BASE_URL = `https://api.telegram.org/bot${TOKEN}`;
-const CLIENT_BOT_USERNAME = 'xizmatchiuz_Uzbekistan_bot';
+const CLIENT_BOT_USERNAME = process.env.TELEGRAM_CLIENT_BOT_USERNAME || 'xizmatchiuz_Uzbekistan_bot';
 
 // Permanent Chief Superadmin (Owner: Fayzbek)
-const SUPERADMIN_ID = 6707839718;
-const SUPERADMIN_USERNAME = 'fayzbek1331';
+const SUPERADMIN_ID = Number(process.env.SUPERADMIN_ID) || 6707839718;
+const SUPERADMIN_USERNAME = process.env.SUPERADMIN_USERNAME || 'fayzbek1331';
 
 const ADMINS_FILE = path.join(__dirname, 'src', 'data', 'telegram_admins.json');
 const SUBSCRIBERS_FILE = path.join(__dirname, 'src', 'data', 'telegram_subscribers.json');
