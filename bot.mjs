@@ -46,6 +46,7 @@ if (!TOKEN) {
 }
 
 const BASE_URL = `https://api.telegram.org/bot${TOKEN}`;
+const SITE_URL = process.env.SITE_URL || 'https://xizmatchi.vercel.app';
 const SUBSCRIBERS_FILE = path.join(__dirname, 'src', 'data', 'telegram_subscribers.json');
 const ORDERS_FILE = path.join(__dirname, 'src', 'data', 'telegram_orders.json');
 
@@ -109,9 +110,9 @@ async function apiCall(method, params = {}) {
 // Default keyboard
 const MAIN_KEYBOARD = {
   keyboard: [
-    [{ text: "📋 Oxirgi buyurtmalar" }, { text: "👨‍🔧 Sara ustalar" }],
-    [{ text: "📍 Tumanlar ro'yxati" }, { text: "🌐 Saytni ochish" }],
-    [{ text: "ℹ️ Yordam & Ma'lumot" }],
+    [{ text: "🌐 Saytni ochish" }, { text: "📋 Oxirgi buyurtmalar" }],
+    [{ text: "👨‍🔧 Sara ustalar" }, { text: "📍 Tumanlar ro'yxati" }],
+    [{ text: "👤 Mening profilim" }, { text: "ℹ️ Yordam & Ma'lumot" }],
   ],
   resize_keyboard: true,
 };
@@ -131,11 +132,14 @@ Pastdagi tugmalar orqali kerakli bo'limni tanlang:`;
   const inlineKeyboard = {
     inline_keyboard: [
       [
-        { text: "🌐 Saytni ochish (Web App)", web_app: { url: "https://xizmatchi.vercel.app" } },
+        { text: "🌐 Veb-saytni ochish (Vercel Web App)", web_app: { url: SITE_URL } },
       ],
       [
         { text: "👨‍🔧 Sara ustalar", callback_data: "cmd_specialists" },
         { text: "📍 Tumanlar", callback_data: "cmd_districts" },
+      ],
+      [
+        { text: "📋 Buyurtmalar", callback_data: "cmd_orders" },
       ],
     ],
   };
@@ -155,11 +159,33 @@ Pastdagi tugmalar orqali kerakli bo'limni tanlang:`;
   });
 }
 
+async function handleProfile(chatId, firstName, fromUser) {
+  const text = `👤 <b>Sizning profilingiz:</b>\n\n` +
+    `🆔 Telegram ID: <code>${chatId}</code>\n` +
+    `👤 Ism: <b>${firstName || fromUser?.first_name || 'Foydalanuvchi'}</b>\n` +
+    `${fromUser?.username ? `🔗 Username: @${fromUser.username}\n` : ''}` +
+    `⚡️ Holat: <b>Faol mijoz</b>\n\n` +
+    `🌐 Xizmatchi platformasidagi to'liq profilingiz, buyurtmalar tarixi va ustalarni rasmiy veb-saytda boshqarishingiz mumkin:\n👉 <a href="${SITE_URL}">${SITE_URL}</a>`;
+
+  await apiCall('sendMessage', {
+    chat_id: chatId,
+    text,
+    parse_mode: 'HTML',
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "🌐 Saytda ochish (Vercel Web App)", web_app: { url: SITE_URL } }],
+        [{ text: "📋 Buyurtmalar", callback_data: "cmd_orders" }],
+        [{ text: "👨‍🔧 Sara ustalar", callback_data: "cmd_specialists" }],
+      ],
+    },
+  });
+}
+
 async function handleOrders(chatId) {
   const orders = getRecentOrders();
 
   if (orders.length === 0) {
-    const text = `📋 <b>Hozircha yangi buyurtmalar yo'q</b>\n\nSaytda (http://localhost:3000) birorta xizmat buyurtma qilinganda, uning to'liq ma'lumoti ushbu botga darhol keladi!`;
+    const text = `📋 <b>Hozircha yangi buyurtmalar yo'q</b>\n\nRasmiy saytimizda (${SITE_URL}) birorta xizmat buyurtma qilinganda, uning to'liq ma'lumoti ushbu botga darhol keladi!`;
     await apiCall('sendMessage', {
       chat_id: chatId,
       text,
@@ -215,7 +241,7 @@ async function handleSpecialists(chatId) {
    📍 Shayxontohur tumani | 📞 +998 99 876 54 32
 
 🌐 <i>Barcha 32 ta sara ustalarni ko'rish uchun saytga kiring:</i>
-👉 <a href="http://localhost:3000/#specialists-section">Xizmatchi.uz ustalar katalogi</a>`;
+👉 <a href="${SITE_URL}/#specialists-section">Xizmatchi rasmiy ustalar katalogi</a>`;
 
   await apiCall('sendMessage', {
     chat_id: chatId,
@@ -245,7 +271,8 @@ async function handleDistricts(chatId) {
 • Samarqand shahri (1 ta usta)
 • Buxoro shahri (1 ta usta)
 
-💡 <i>Saytda istalgan tumanni tanlab, yonidagi <b>"Yangilash"</b> tugmasini bossangiz, o'sha tumandagi barcha xizmatchilar darhol ro'yxatda paydo bo'ladi!</i>`;
+💡 <i>Saytda istalgan tumanni tanlab, yonidagi <b>"Yangilash"</b> tugmasini bossangiz, o'sha tumandagi barcha xizmatchilar darhol ro'yxatda paydo bo'ladi!</i>
+👉 <a href="${SITE_URL}">Xizmatchi platformasiga o'tish →</a>`;
 
   await apiCall('sendMessage', {
     chat_id: chatId,
@@ -260,8 +287,8 @@ async function handleHelp(chatId) {
 
 Platforma xonadoningizda yuzaga keladigan har qanday muammoni (santexnika, elektr, maishiy texnika, konditsioner, kalit/qulf, klining, avto-yordam) vositachilarsiz va sifatli hal qilishga yordam beradi.
 
-🌐 <b>Veb-sayt:</b> <a href="http://localhost:3000">http://localhost:3000</a>
-🤖 <b>Telegram bot:</b> @xizmatchiuz_Uzbekistan_bot
+🌐 <b>Rasmiy veb-sayt:</b> <a href="${SITE_URL}">${SITE_URL}</a>
+🤖 <b>Mijoz boti:</b> @xizmatchiuz_Uzbekistan_bot
 📞 <b>Qo'llab-quvvatlash:</b> +998 (71) 200-00-00
 ⏱️ <b>Ish tartibi:</b> 24/7 (Shoshilinch xizmatlar mavjud)
 
@@ -290,24 +317,44 @@ async function processUpdate(update) {
 
     if (text === '/start' || text.startsWith('/start')) {
       await handleStart(chatId, firstName);
-    } else if (text === '/buyurtmalar' || text === '📋 Oxirgi buyurtmalar') {
+    } else if (text === '/profil' || text === '👤 Mening profilim' || text === '👤 Profil') {
+      await handleProfile(chatId, firstName, msg.from);
+    } else if (text === '/buyurtmalar' || text === '📋 Oxirgi buyurtmalar' || text === '📋 Buyurtmalar' || text === '📦 Mening buyurtmalarim') {
       await handleOrders(chatId);
-    } else if (text === '/ustalar' || text === '👨‍🔧 Sara ustalar') {
+    } else if (text === '/ustalar' || text === '👨‍🔧 Sara ustalar' || text === '🔍 Ustalar ro\'yxati') {
       await handleSpecialists(chatId);
-    } else if (text === '/tumanlar' || text === "📍 Tumanlar ro'yxati") {
+    } else if (text === '/tumanlar' || text === "📍 Tumanlar ro'yxati" || text === "📍 Tumanlar bo'yicha") {
       await handleDistricts(chatId);
-    } else if (text === '🌐 Saytni ochish') {
+    } else if (text === '🌐 Saytni ochish' || text === '🌐 Veb-sayt (Xizmatchi)' || text === '🌐 Veb-sayt') {
       await apiCall('sendMessage', {
         chat_id: chatId,
-        text: `🌐 <b>Xizmatchi platformasiga xush kelibsiz!</b>\n\nBrauzeringizda ochish uchun havola:\n👉 http://localhost:3000`,
+        text: `🌐 <b>Xizmatchi platformasiga xush kelibsiz!</b>\n\nRasmiy veb-sayt havolasi:\n👉 <a href="${SITE_URL}">${SITE_URL}</a>`,
         parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: "🚀 Veb-saytni ochish (Web App)", web_app: { url: SITE_URL } }],
+            [{ text: "🌐 Brauzerda ochish", url: SITE_URL }],
+          ],
+        },
       });
-    } else if (text === '/yordam' || text === "ℹ️ Yordam & Ma'lumot") {
+    } else if (text === "👷‍♂️ Usta bo'lish" || text === "👷 Usta bo'lish") {
+      await apiCall('sendMessage', {
+        chat_id: chatId,
+        text: `👷‍♂️ <b>Xizmatchi platformasida usta bo'lish:</b>\n\nSiz o'z sohangiz bo'yicha usta sifatida ro'yxatdan o'tib, kunlik buyurtmalarga ega bo'lishingiz mumkin.\n\n👉 Ro'yxatdan o'tish uchun rasmiy saytga kiring:\n<a href="${SITE_URL}/#specialists-section">${SITE_URL}/#specialists-section</a>`,
+        parse_mode: 'HTML',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: "📝 Usta bo'lish (Saytda)", url: `${SITE_URL}/#specialists-section` }],
+          ],
+        },
+      });
+    } else if (text === '/yordam' || text === "ℹ️ Yordam & Ma'lumot" || text === "📞 Bog'lanish & Yordam") {
       await handleHelp(chatId);
     } else {
       await apiCall('sendMessage', {
         chat_id: chatId,
-        text: `Salom! Men buyurtmalarni qabul qiluvchi botman. Buyurtmalarni ko'rish uchun quyidagi menyudan foydalaning:`,
+        text: `Salom! Men <b>Xizmatchi</b> platformasining rasmiy botiman.\n\nKerakli bo'limni tanlang yoki rasmiy veb-saytimizga kiring:\n👉 <a href="${SITE_URL}">${SITE_URL}</a>`,
+        parse_mode: 'HTML',
         reply_markup: MAIN_KEYBOARD,
       });
     }
@@ -323,6 +370,8 @@ async function processUpdate(update) {
       await handleOrders(chatId);
     } else if (data === 'cmd_specialists') {
       await handleSpecialists(chatId);
+    } else if (data === 'cmd_districts') {
+      await handleDistricts(chatId);
     }
 
     await apiCall('answerCallbackQuery', { callback_query_id: cb.id });
