@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: xizmatchi-telegram-bots
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install
+    startCommand: node server_bots.mjs
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CLIENT_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_OWNER_BOT_TOKEN
+        sync: false
+      - key: SUPERADMIN_ID
+        value: "6707839718"
+      - key: SUPERADMIN_USERNAME
+        value: "fayzbek1331"
+      - key: SITE_URL
+        value: "https://xizmatchi.vercel.app"
