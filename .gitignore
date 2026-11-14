@@ -53,3 +53,6 @@ next-env.d.ts
 **/.tgcloud/
 xizmatchiuz_Uzbekistan_bot/
 xizmatchiuz_Uzbekistan_ownerbot/
+
+.vercel
+.env*
