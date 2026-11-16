@@ -56,3 +56,9 @@ xizmatchiuz_Uzbekistan_ownerbot/
 
 .vercel
 .env*
+
+# HA Failover & Cloudflare Tunnel
+cloudflared.exe
+tunnel_url.txt
+failover_state.json
+*.log
