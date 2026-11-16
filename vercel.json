@@ -2,15 +2,15 @@
   "rewrites": [
     {
       "source": "/health",
-      "destination": "https://xizmatchi-telegram-bots.onrender.com"
+      "destination": "https://protect-sleeping-toolbox-korea.trycloudflare.com"
     },
     {
       "source": "/api/bot-health",
-      "destination": "https://xizmatchi-telegram-bots.onrender.com"
+      "destination": "https://protect-sleeping-toolbox-korea.trycloudflare.com"
     },
     {
       "source": "/api/bot-backend/:path*",
-      "destination": "https://xizmatchi-telegram-bots.onrender.com/:path*"
+      "destination": "https://protect-sleeping-toolbox-korea.trycloudflare.com/:path*"
     }
   ]
 }
