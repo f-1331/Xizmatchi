@@ -2,15 +2,15 @@
   "rewrites": [
     {
       "source": "/health",
-      "destination": "https://protect-sleeping-toolbox-korea.trycloudflare.com"
+      "destination": "https://inn-beta-msgstr-technician.trycloudflare.com"
     },
     {
       "source": "/api/bot-health",
-      "destination": "https://protect-sleeping-toolbox-korea.trycloudflare.com"
+      "destination": "https://inn-beta-msgstr-technician.trycloudflare.com"
     },
     {
       "source": "/api/bot-backend/:path*",
-      "destination": "https://protect-sleeping-toolbox-korea.trycloudflare.com/:path*"
+      "destination": "https://inn-beta-msgstr-technician.trycloudflare.com/:path*"
     }
   ]
 }
