@@ -2,15 +2,15 @@
   "rewrites": [
     {
       "source": "/health",
-      "destination": "https://inn-beta-msgstr-technician.trycloudflare.com"
+      "destination": "https://finder-physically-fix-cheapest.trycloudflare.com"
     },
     {
       "source": "/api/bot-health",
-      "destination": "https://inn-beta-msgstr-technician.trycloudflare.com"
+      "destination": "https://finder-physically-fix-cheapest.trycloudflare.com"
     },
     {
       "source": "/api/bot-backend/:path*",
-      "destination": "https://inn-beta-msgstr-technician.trycloudflare.com/:path*"
+      "destination": "https://finder-physically-fix-cheapest.trycloudflare.com/:path*"
     }
   ]
 }
