@@ -2,15 +2,15 @@
   "rewrites": [
     {
       "source": "/health",
-      "destination": "https://finder-physically-fix-cheapest.trycloudflare.com"
+      "destination": "https://surely-aluminum-assumption-washer.trycloudflare.com"
     },
     {
       "source": "/api/bot-health",
-      "destination": "https://finder-physically-fix-cheapest.trycloudflare.com"
+      "destination": "https://surely-aluminum-assumption-washer.trycloudflare.com"
     },
     {
       "source": "/api/bot-backend/:path*",
-      "destination": "https://finder-physically-fix-cheapest.trycloudflare.com/:path*"
+      "destination": "https://surely-aluminum-assumption-washer.trycloudflare.com/:path*"
     }
   ]
 }
