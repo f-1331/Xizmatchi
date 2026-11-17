@@ -2,15 +2,15 @@
   "rewrites": [
     {
       "source": "/health",
-      "destination": "https://weddings-deferred-salvador-trainers.trycloudflare.com"
+      "destination": "https://universe-relate-valley-larger.trycloudflare.com"
     },
     {
       "source": "/api/bot-health",
-      "destination": "https://weddings-deferred-salvador-trainers.trycloudflare.com"
+      "destination": "https://universe-relate-valley-larger.trycloudflare.com"
     },
     {
       "source": "/api/bot-backend/:path*",
-      "destination": "https://weddings-deferred-salvador-trainers.trycloudflare.com/:path*"
+      "destination": "https://universe-relate-valley-larger.trycloudflare.com/:path*"
     }
   ]
 }
