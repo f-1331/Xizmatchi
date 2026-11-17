@@ -2,15 +2,15 @@
   "rewrites": [
     {
       "source": "/health",
-      "destination": "https://surely-aluminum-assumption-washer.trycloudflare.com"
+      "destination": "https://weddings-deferred-salvador-trainers.trycloudflare.com"
     },
     {
       "source": "/api/bot-health",
-      "destination": "https://surely-aluminum-assumption-washer.trycloudflare.com"
+      "destination": "https://weddings-deferred-salvador-trainers.trycloudflare.com"
     },
     {
       "source": "/api/bot-backend/:path*",
-      "destination": "https://surely-aluminum-assumption-washer.trycloudflare.com/:path*"
+      "destination": "https://weddings-deferred-salvador-trainers.trycloudflare.com/:path*"
     }
   ]
 }
