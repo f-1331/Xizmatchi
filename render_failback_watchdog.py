@@ -9,13 +9,18 @@ import time
 from pathlib import Path
 import httpx
 
+BASE_DIR = Path(__file__).resolve().parent
+
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s | %(levelname)-8s | %(name)s : %(message)s"
+    format="%(asctime)s | %(levelname)-8s | %(name)s : %(message)s",
+    handlers=[
+        logging.FileHandler(BASE_DIR / "watchdog.log", encoding="utf-8"),
+        logging.StreamHandler(sys.stdout)
+    ]
 )
 logger = logging.getLogger("ha_failover_watchdog")
 
-BASE_DIR = Path(__file__).resolve().parent
 RENDER_URL = "https://xizmatchi-telegram-bots.onrender.com"
 RENDER_HEALTH_URL = f"{RENDER_URL}"
 LOCAL_HEALTH_URL = "http://127.0.0.1:3050"
@@ -101,6 +106,7 @@ def update_vercel_route(new_target_url: str, target_name: str) -> bool:
 
         subprocess.run(["git", "add", "vercel.json"], cwd=str(BASE_DIR), check=True)
         subprocess.run(["git", "commit", "-m", f"chore(ha-failover): auto-route to {target_name} ({new_target_url})"], cwd=str(BASE_DIR), check=True)
+        subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=str(BASE_DIR), check=False)
         subprocess.run(["git", "push", "origin", "main"], cwd=str(BASE_DIR), check=True)
         logger.info(f"✅ Successfully pushed route switch to GitHub -> {target_name}")
         return True

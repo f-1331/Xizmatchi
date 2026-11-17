@@ -8,14 +8,18 @@ import sys
 import time
 from pathlib import Path
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)-8s | %(name)s : %(message)s"
-)
-logger = logging.getLogger("unified_server")
-
 BASE_DIR = Path(__file__).resolve().parent
 LOCAL_PORT = int(os.environ.get("PORT", "3050"))
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)-8s | %(name)s : %(message)s",
+    handlers=[
+        logging.FileHandler(BASE_DIR / "unified_server.log", encoding="utf-8"),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger("unified_server")
 
 
 def start_cloudflared_tunnel():
@@ -83,6 +87,7 @@ def update_vercel_json_and_push(tunnel_url: str):
             # Git commit and push
             subprocess.run(["git", "add", "vercel.json"], cwd=str(BASE_DIR), check=True)
             subprocess.run(["git", "commit", "-m", f"chore(tunnel): route traffic to {tunnel_url}"], cwd=str(BASE_DIR), check=True)
+            subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=str(BASE_DIR), check=False)
             subprocess.run(["git", "push", "origin", "main"], cwd=str(BASE_DIR), check=True)
             logger.info("✅ Pushed new tunnel route to GitHub for instant Vercel sync!")
         else:
@@ -134,6 +139,13 @@ async def main_unified():
     )
     node_task = asyncio.create_task(monitor_stream(node_proc.stdout, "NodeBots"))
 
+    # Also start render_failback_watchdog.py automatically
+    logger.info("🛡️ Starting HA Failback Watchdog in background...")
+    watchdog_proc = subprocess.Popen(
+        [sys.executable, "render_failback_watchdog.py"],
+        cwd=str(BASE_DIR)
+    )
+
     try:
         # Keep waiting while node process is alive
         while node_proc.poll() is None:
@@ -143,6 +155,8 @@ async def main_unified():
     finally:
         if node_proc and node_proc.poll() is None:
             node_proc.terminate()
+        if watchdog_proc and watchdog_proc.poll() is None:
+            watchdog_proc.terminate()
         if cf_proc and cf_proc.poll() is None:
             cf_proc.terminate()
         cf_task.cancel()
