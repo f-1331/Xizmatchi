@@ -2,15 +2,15 @@
   "rewrites": [
     {
       "source": "/health",
-      "destination": "https://universe-relate-valley-larger.trycloudflare.com"
+      "destination": "https://sacramento-analysts-slideshow-hill.trycloudflare.com"
     },
     {
       "source": "/api/bot-health",
-      "destination": "https://universe-relate-valley-larger.trycloudflare.com"
+      "destination": "https://sacramento-analysts-slideshow-hill.trycloudflare.com"
     },
     {
       "source": "/api/bot-backend/:path*",
-      "destination": "https://universe-relate-valley-larger.trycloudflare.com/:path*"
+      "destination": "https://sacramento-analysts-slideshow-hill.trycloudflare.com/:path*"
     }
   ]
 }
